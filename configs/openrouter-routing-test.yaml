@@ -1,0 +1,63 @@
+schemaVersion: "1.0"
+
+# Minimal live routing check. Running this file with --preflight generates the
+# AIPerf config and sends only OpenRouter's one-token compatibility probe; it
+# does not execute the synthetic benchmark workload.
+benchmark:
+  name: openrouter-routing-test
+  description: Verify that OpenRouter honors an exact BaseTen provider pin for Kimi K3
+  seed: 20260903
+
+gateway:
+  type: openrouter
+  baseUrl: https://openrouter.ai/api/v1
+  apiKeyEnv: OPENROUTER_API_KEY
+  routing:
+    allowFallbacks: false
+    requireParameters: true
+
+providers:
+  - id: baseten
+    openrouterSlug: baseten
+
+models:
+  - id: kimi-k3
+    openrouterModel: moonshotai/kimi-k3
+    tokenizer: moonshotai/Kimi-K3
+    # Kimi's Hugging Face tokenizer contains required custom tokenizer code.
+    # Keep this explicit because enabling it executes code from that repository.
+    tokenizerTrustRemoteCode: true
+    contextLength: 1048576
+
+pricing:
+  enabled: true
+
+reliability:
+  enabled: true
+  collect:
+    httpErrors: true
+    timeouts: true
+    connectionErrors: true
+    parseErrors: true
+    contextOverflow: true
+  slo:
+    requestTimeoutSeconds: 60
+    maxP95TtftMs: 5000
+    minSuccessRate: 0.99
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: synthetic
+      inputTokens: 128
+      outputTokens: 16
+      datasetEntries: 64
+    load:
+      mode: concurrency
+      values: [1]
+    durationSeconds: 10
+    warmup:
+      requestCount: 0
+    useServerTokenCount: true

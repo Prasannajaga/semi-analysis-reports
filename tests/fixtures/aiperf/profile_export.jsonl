@@ -1,0 +1,8 @@
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":1000,"unit":"tokens"},"output_sequence_length":{"value":100,"unit":"tokens"}},"error":null}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":900,"unit":"tokens"},"output_sequence_length":{"value":90,"unit":"tokens"}},"error":null}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":800,"unit":"tokens"},"output_sequence_length":{"value":80,"unit":"tokens"}},"error":null}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":700,"unit":"tokens"}},"error":{"code":429,"type":"HTTPError","message":"rate limited"}}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":600,"unit":"tokens"}},"error":{"code":400,"type":"HTTPError","message":"bad request"}}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":500,"unit":"tokens"}},"error":{"code":503,"type":"HTTPError","message":"unavailable"}}
+{"metadata":{"phase_kind":"profiling"},"metrics":{"input_sequence_length":{"value":400,"unit":"tokens"}},"error":{"type":"TimeoutError","message":"request timed out"}}
+{"metadata":{"phase_kind":"warmup"},"metrics":{"input_sequence_length":{"value":99999,"unit":"tokens"}},"error":{"code":500,"type":"HTTPError","message":"warmup failure"}}

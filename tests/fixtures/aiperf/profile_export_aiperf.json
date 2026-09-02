@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.4",
+  "metadata": {
+    "scenario": "inferencex-agentx-mvp",
+    "submission_valid": true
+  },
+  "request_latency": {"unit": "ms", "avg": 900.0, "p50": 800.0, "p90": 1200.0, "p95": 1500.0, "p99": 1900.0, "min": 500.0, "max": 2000.0, "std": 200.0, "count": 7, "sum": 6300.0},
+  "time_to_first_token": {"unit": "ms", "avg": 210.0, "p50": 180.0, "p90": 330.0, "p95": 410.0, "p99": 500.0, "min": 100.0, "max": 520.0, "std": 60.0, "count": 7, "sum": 1470.0},
+  "inter_token_latency": {"unit": "ms", "avg": 19.0, "p50": 18.0, "p90": 23.0, "p95": 25.0, "p99": 29.0, "min": 10.0, "max": 30.0, "std": 3.0, "count": 7, "sum": 133.0},
+  "request_throughput": {"unit": "requests/sec", "avg": 3.5, "p50": 3.5, "p90": 3.8, "p95": 3.9, "p99": 4.0, "min": 3.0, "max": 4.0, "std": 0.2, "count": 1, "sum": 3.5},
+  "output_token_throughput": {"unit": "tokens/sec", "avg": 120.0, "p50": 120.0, "count": 1, "sum": 120.0},
+  "output_token_throughput_per_user": {"unit": "tokens/sec", "avg": 34.0, "p50": 35.0, "p95": 42.0, "count": 3, "sum": 102.0}
+}

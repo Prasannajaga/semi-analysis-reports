@@ -1,0 +1,22 @@
+# Python and uv
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+
+# Benchmark output
+artifacts/
+results/
+
+# Editors and operating systems
+.DS_Store
+
