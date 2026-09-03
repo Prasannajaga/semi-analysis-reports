@@ -261,6 +261,11 @@ def test_kimi_yaml_file_loads_validly():
         "TOGETHER_API_KEY",
         "BASETEN_API_KEY",
     }
+    assert [p.model for p in config.providers] == [
+        "accounts/fireworks/models/kimi-k3",
+        "moonshotai/Kimi-K3",
+        "moonshotai/Kimi-K3",
+    ]
 
 
 def test_kimi_direct_yaml_file_loads_validly():
@@ -276,3 +281,59 @@ def test_kimi_direct_yaml_file_loads_validly():
         "TOGETHER_API_KEY",
         "BASETEN_API_KEY",
     }
+    assert [p.model for p in config.providers] == [
+        "accounts/fireworks/models/kimi-k3",
+        "moonshotai/Kimi-K3",
+        "moonshotai/Kimi-K3",
+    ]
+    assert all(p.pricing is not None for p in config.providers)
+    assert [p.pricing.input_usd_per_million for p in config.providers] == [3.0, 3.0, 3.0]
+    assert [p.pricing.output_usd_per_million for p in config.providers] == [15.0, 15.0, 15.0]
+    assert [p.pricing.cached_input_usd_per_million for p in config.providers] == [0.3, 0.3, 0.3]
+
+
+def test_deepseek_direct_yaml_file_loads_validly():
+    from pathlib import Path
+    deepseek_path = Path("/data/semi-analysis-report/configs/deepseek.yaml")
+    config = load_config(deepseek_path)
+    assert config.is_direct is True
+    assert len(config.providers) == 3
+    assert [p.id for p in config.providers] == ["fireworks", "together", "baseten"]
+    assert [p.slug for p in config.providers] == ["fireworks", "together", "baseten"]
+    assert {p.api_key_env for p in config.providers} == {
+        "FIREWORKS_API_KEY",
+        "TOGETHER_API_KEY",
+        "BASETEN_API_KEY",
+    }
+    assert [p.model for p in config.providers] == [
+        "accounts/fireworks/models/deepseek-v4-pro-0813",
+        "deepseek-ai/DeepSeek-V4-Pro-0813",
+        "deepseek-ai/DeepSeek-V4-Pro",
+    ]
+    assert all(p.pricing is not None for p in config.providers)
+    assert [p.pricing.input_usd_per_million for p in config.providers] == [1.32, 1.32, 1.32]
+    assert [p.pricing.output_usd_per_million for p in config.providers] == [3.96, 3.96, 3.96]
+    assert [p.pricing.cached_input_usd_per_million for p in config.providers] == [0.044, 0.13, 0.132]
+
+
+def test_glm_direct_yaml_file_loads_validly():
+    from pathlib import Path
+    glm_path = Path("/data/semi-analysis-report/configs/glm.yaml")
+    config = load_config(glm_path)
+    assert config.is_direct is True
+    assert len(config.providers) == 3
+    assert [p.id for p in config.providers] == ["fireworks", "together", "baseten"]
+    assert [p.slug for p in config.providers] == ["fireworks", "together", "baseten"]
+    assert {p.api_key_env for p in config.providers} == {
+        "FIREWORKS_API_KEY",
+        "TOGETHER_API_KEY",
+        "BASETEN_API_KEY",
+    }
+    assert [p.model for p in config.providers] == [
+        "accounts/fireworks/models/glm-5p3-flash",
+        "zai-org/GLM-5.3-Flash",
+        "zai-org/GLM-5.3-Flash"]
+    assert all(p.pricing is not None for p in config.providers)
+    assert [p.pricing.input_usd_per_million for p in config.providers] == [0.15, 0.15, 0.15]
+    assert [p.pricing.output_usd_per_million for p in config.providers] == [0.50, 0.50, 0.50]
+    assert [p.pricing.cached_input_usd_per_million for p in config.providers] == [0.03, 0.03, 0.03]

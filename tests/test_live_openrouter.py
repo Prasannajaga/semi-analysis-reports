@@ -82,8 +82,8 @@ DIRECT_PROVIDERS: dict[str, dict[str, Any]] = {
         "auth_header": lambda k: {"Authorization": f"Api-Key {k}" if not k.startswith("Bearer ") else k},
         "models": {
             "kimi-k3": "moonshotai/Kimi-K3",
-            "deepseek-v4-pro": "deepseek-ai/DeepSeek-V4-Pro",
-            "glm-5.3-flash": "zai-org/GLM-5.3",
+            "deepseek-v4-pro": "deepseek-ai/DeepSeek-V4-Pro-0813",
+            "glm-5.3-flash": "zai-org/GLM-5.3-Flash",
         },
     },
 }

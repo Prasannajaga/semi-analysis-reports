@@ -30,25 +30,26 @@ phases:
     runner: aiperf
     workload:
       type: synthetic
-      inputTokens: 128
-      outputTokens: 16
+      inputTokens: 8192
+      outputTokens: 1024
       datasetEntries: 64
     load:
       mode: concurrency
       values: [1]
-    durationSeconds: 1800
+    durationSeconds: 300
     warmup:
-      requestCount: 10
+      requestCount: 1
     useServerTokenCount: true
 
   correctness:
-    enabled: false
+    enabled: true
     generation:
       temperature: 0
       maxTokens: 8192
     tasks: 
       - name: gsm8k
         runner: lm-eval 
+        limit: 500 
 
   pricing:
     enabled: true

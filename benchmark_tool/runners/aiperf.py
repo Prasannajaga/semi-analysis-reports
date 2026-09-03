@@ -59,6 +59,8 @@ def make_aiperf_config(config: BenchmarkConfig, job: Job, artifacts_dir: Path) -
             "dir": str(artifacts_dir.resolve()),
             "summary": ["json"],
             "records": ["jsonl"],
+            "raw": True,
+            "trace": True,
         },
     }
     if isinstance(phase.workload, AgentXWorkload):
@@ -142,7 +144,15 @@ def execute(
             "validation": validation,
         }
     process = run_process(
-        ["aiperf", "profile", "--config", str(path)],
+        [
+            "aiperf",
+            "profile",
+            "--config",
+            str(path),
+            "--export-level",
+            "raw",
+            "--export-http-trace",
+        ],
         job_dir,
         {env_name: api_key},
         log_prefix="aiperf",

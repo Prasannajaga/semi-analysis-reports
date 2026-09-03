@@ -318,10 +318,32 @@ def execute_benchmark(
                 direct_state = {"status": direct_status, "reason": status_reason}
                 states = {"plain": direct_state, "performance": direct_state, "tools": direct_state}
                 write_json(endpoint_dir / "preflight.json", states)
-                write_json(
-                    endpoint_dir / "pricing-snapshot.json",
-                    {"schemaVersion": "1.0", "status": direct_status, "reason": status_reason},
-                )
+                snapshot_data: dict[str, Any] = {
+                    "schemaVersion": "1.0",
+                    "status": direct_status,
+                    "reason": status_reason,
+                }
+                if provider.pricing:
+                    snapshot_data["matchingEndpoints"] = [
+                        {
+                            "name": f"{provider.id} direct",
+                            "pricing": {
+                                "prompt": provider.pricing.input_usd_per_million / 1_000_000,
+                                "completion": provider.pricing.output_usd_per_million / 1_000_000,
+                                "input_cache_read": (
+                                    provider.pricing.cached_input_usd_per_million / 1_000_000
+                                    if provider.pricing.cached_input_usd_per_million is not None
+                                    else None
+                                ),
+                                "input_cache_write": (
+                                    provider.pricing.cache_write_usd_per_million / 1_000_000
+                                    if provider.pricing.cache_write_usd_per_million is not None
+                                    else None
+                                ),
+                            },
+                        }
+                    ]
+                write_json(endpoint_dir / "pricing-snapshot.json", snapshot_data)
                 log_state("preflight", f"Direct provider endpoint configured for {model.id} on {provider.id}")
             elif client is None:
                 skipped = {"status": "not-run", "reason": "dry run: no network requests made"}

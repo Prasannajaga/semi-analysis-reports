@@ -17,7 +17,6 @@ from benchmark_tool.results import (
     TokenUsage,
 )
 
-
 PERFORMANCE_METRICS = {
     "request_latency": "e2e_latency",
     "time_to_first_token": "ttft",
@@ -65,7 +64,10 @@ def load_aiperf(job_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]], Pa
 def metric_stats(raw: Any) -> MetricStats | None:
     if not isinstance(raw, dict):
         return None
-    numeric = lambda name: float(raw[name]) if isinstance(raw.get(name), (int, float)) else None
+
+    def numeric(name: str) -> float | None:
+        return float(raw[name]) if isinstance(raw.get(name), (int, float)) else None
+
     count = raw.get("count")
     return MetricStats(
         unit=str(raw["unit"]) if raw.get("unit") is not None else None,
@@ -248,8 +250,37 @@ def _record_metric(record: dict[str, Any], *names: str) -> float:
 def token_usage(records: list[dict[str, Any]]) -> TokenUsage:
     records = profiling_records(records)
     return TokenUsage(
-        input_tokens=round(sum(_record_metric(item, "input_sequence_length", "input_token_count") for item in records)),
-        output_tokens=round(sum(_record_metric(item, "output_sequence_length", "output_token_count") for item in records)),
-        cached_input_tokens=round(sum(_record_metric(item, "cached_input_tokens", "cache_read_input_tokens") for item in records)),
-        cache_write_tokens=round(sum(_record_metric(item, "cache_write_tokens") for item in records)),
+        input_tokens=round(
+            sum(
+                _record_metric(item, "input_sequence_length", "input_token_count")
+                for item in records
+            )
+        ),
+        output_tokens=round(
+            sum(
+                _record_metric(item, "output_sequence_length", "output_token_count")
+                for item in records
+            )
+        ),
+        cached_input_tokens=round(
+            sum(
+                _record_metric(
+                    item,
+                    "usage_prompt_cache_read_tokens",
+                    "cached_input_tokens",
+                    "cache_read_input_tokens",
+                )
+                for item in records
+            )
+        ),
+        cache_write_tokens=round(
+            sum(
+                _record_metric(
+                    item,
+                    "usage_prompt_cache_write_tokens",
+                    "cache_write_tokens",
+                )
+                for item in records
+            )
+        ),
     )

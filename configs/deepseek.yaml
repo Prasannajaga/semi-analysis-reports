@@ -2,28 +2,39 @@ schemaVersion: "1.0"
 DEBUG: true
 benchmark:
   name: deepseek-v4-pro-isl8k-osl1k
-  description: Benchmark DeepSeek V4 Pro across Fireworks and Together with 1M context
+  description: Benchmark DeepSeek V4 Pro across Fireworks, Together, and Baseten with 1M context
   seed: 42
 
 gateway:
-  type: openrouter
-  baseUrl: https://openrouter.ai/api/v1
-  apiKeyEnv: OPENROUTER_API_KEY
-  retries:
-    maxRetries: 3
-    retryDelaySeconds: 2.0
-    backoffFactor: 2.0
-  routing:
-    allowFallbacks: false
-    requireParameters: true
-
-providers:
-  - id: fireworks
-    openrouterSlug: fireworks
-  - id: together
-    openrouterSlug: together
-  - id: baseten
-    openrouterSlug: baseten
+  type: directProviders
+  providers:
+    - id: fireworks
+      slug: fireworks
+      endpoints: https://api.fireworks.ai/inference/v1
+      apikeyENV: FIREWORKS_API_KEY
+      model: accounts/fireworks/models/deepseek-v4-pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.044
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.13
+    - id: baseten
+      slug: baseten
+      endpoints: https://inference.baseten.co/v1
+      apikeyENV: BASETEN_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.132
 
 models:
   - id: deepseek-v4-pro
@@ -40,7 +51,7 @@ phases:
       type: synthetic
       inputTokens: 8192
       outputTokens: 1024
-      datasetEntries: 64
+      datasetEntries: 12
     load:
       mode: concurrency
       values: [1]
@@ -50,13 +61,14 @@ phases:
     useServerTokenCount: true
 
   correctness:
-    enabled: false
+    enabled: true
     generation:
       temperature: 0
-      maxTokens: 8192
+      maxTokens: 1024
     tasks:
       - name: gsm8k
         runner: lm-eval
+        limit: 100
 
   pricing:
     enabled: true

@@ -7,6 +7,7 @@ requires-python = ">=3.12,<3.14"
 dependencies = [
     "aiperf==0.12.0",
     "httpx>=0.28.1,<1",
+    "lm-eval[api]==0.4.13",
     "pydantic>=2.12.5,<3",
     "python-dotenv>=1.1.1,<2",
     "pyyaml>=6.0.3,<7",
@@ -15,9 +16,6 @@ dependencies = [
 [project.optional-dependencies]
 bfcl = [
     "bfcl-eval==2026.3.23",
-]
-lm-eval = [
-    "lm-eval[api]==0.4.13",
 ]
 
 [dependency-groups]

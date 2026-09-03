@@ -40,10 +40,14 @@ def test_openrouter_provider_body_is_top_level():
 def test_aiperf_config_uses_endpoint_extra_and_env_reference(benchmark_config, tmp_path):
     native = make_aiperf_config(benchmark_config, performance_job(benchmark_config), tmp_path)
     endpoint = native["benchmark"]["endpoint"]
+    artifacts = native["benchmark"]["artifacts"]
     assert endpoint["extra"]["provider"]["only"] == ["provider-a"]
     assert endpoint["extra"]["provider"]["allow_fallbacks"] is False
     assert endpoint["extra"]["provider"]["require_parameters"] is True
     assert endpoint["apiKey"] == "${OPENROUTER_API_KEY}"
+    assert artifacts["raw"] is True
+    assert artifacts["trace"] is True
+    assert artifacts["records"] == ["jsonl"]
     assert native["benchmark"]["tokenizer"]["trustRemoteCode"] is False
     assert "secret-value" not in yaml.safe_dump(native)
 
@@ -128,6 +132,54 @@ def test_aiperf_native_validation_wrapper(monkeypatch, benchmark_config, tmp_pat
     assert captured["command"] == ["aiperf", "config", "validate", str(path)]
     assert captured["environment"] == {"OPENROUTER_API_KEY": "runtime-only"}
     assert captured["redact_values"] == ("runtime-only",)
+
+
+def test_aiperf_execution_enables_raw_records_and_http_trace(
+    monkeypatch, benchmark_config, tmp_path
+):
+    captured = {}
+
+    monkeypatch.setattr(
+        aiperf_runner,
+        "validate",
+        lambda *args, **kwargs: {"returnCode": 0},
+    )
+
+    def fake_run(
+        command,
+        work_dir,
+        environment=None,
+        log_prefix="process",
+        redact_values=(),
+    ):
+        captured.update(
+            command=command,
+            work_dir=work_dir,
+            environment=environment,
+            log_prefix=log_prefix,
+            redact_values=redact_values,
+        )
+        return {"returnCode": 0, "failureSummary": None}
+
+    monkeypatch.setattr(aiperf_runner, "run_process", fake_run)
+    result = aiperf_runner.execute(
+        benchmark_config,
+        performance_job(benchmark_config),
+        tmp_path,
+        "runtime-only",
+    )
+
+    assert result["status"] == "completed"
+    assert captured["command"] == [
+        "aiperf",
+        "profile",
+        "--config",
+        str(tmp_path / "aiperf-config.yaml"),
+        "--export-level",
+        "raw",
+        "--export-http-trace",
+    ]
+    assert captured["environment"] == {"OPENROUTER_API_KEY": "runtime-only"}
 
 
 def test_subprocess_artifacts_redact_secret(monkeypatch, tmp_path):
@@ -234,9 +286,17 @@ def test_aiperf_config_for_direct_provider(benchmark_config, tmp_path):
     job = performance_job(config)
     native = make_aiperf_config(config, job, tmp_path)
     endpoint = native["benchmark"]["endpoint"]
+    artifacts = native["benchmark"]["artifacts"]
     assert endpoint["url"] == "https://api.fireworks.ai/inference/v1/chat/completions"
     assert endpoint["apiKey"] == "${FIREWORKS_API_KEY}"
     assert "extra" not in endpoint
+    assert artifacts == {
+        "dir": str(tmp_path.resolve()),
+        "summary": ["json"],
+        "records": ["jsonl"],
+        "raw": True,
+        "trace": True,
+    }
 
 
 def test_lm_eval_config_for_direct_provider(benchmark_config, tmp_path):

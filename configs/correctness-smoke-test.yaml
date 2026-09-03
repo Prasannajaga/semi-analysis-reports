@@ -27,6 +27,7 @@ phases:
     generation:
       temperature: 0
       maxTokens: 512
+      eosString: <|im_end|>
     tasks:
       - name: gsm8k
         runner: lm-eval

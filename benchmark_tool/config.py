@@ -65,12 +65,55 @@ class Gateway(StrictModel):
         return self
 
 
+class ProviderPricing(StrictModel):
+    input_usd_per_million: Annotated[float, Field(ge=0)] = 0.0
+    output_usd_per_million: Annotated[float, Field(ge=0)] = 0.0
+    cached_input_usd_per_million: Annotated[float, Field(ge=0)] | None = None
+    cache_write_usd_per_million: Annotated[float, Field(ge=0)] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_pricing_keys(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            raw = dict(data)
+            if "inputUsdPerMillion" in raw:
+                raw["input_usd_per_million"] = raw.pop("inputUsdPerMillion")
+            elif "prompt" in raw:
+                raw["input_usd_per_million"] = raw.pop("prompt")
+            elif "input" in raw:
+                raw["input_usd_per_million"] = raw.pop("input")
+
+            if "outputUsdPerMillion" in raw:
+                raw["output_usd_per_million"] = raw.pop("outputUsdPerMillion")
+            elif "completion" in raw:
+                raw["output_usd_per_million"] = raw.pop("completion")
+            elif "output" in raw:
+                raw["output_usd_per_million"] = raw.pop("output")
+
+            if "cachedInputUsdPerMillion" in raw:
+                raw["cached_input_usd_per_million"] = raw.pop("cachedInputUsdPerMillion")
+            elif "cachedPrompt" in raw or "cached_prompt" in raw:
+                raw["cached_input_usd_per_million"] = raw.pop("cachedPrompt", None) or raw.pop("cached_prompt", None)
+            elif "cachedInput" in raw or "cached_input" in raw:
+                raw["cached_input_usd_per_million"] = raw.pop("cachedInput", None) or raw.pop("cached_input", None)
+            elif "cached" in raw:
+                raw["cached_input_usd_per_million"] = raw.pop("cached")
+
+            if "cacheWriteUsdPerMillion" in raw:
+                raw["cache_write_usd_per_million"] = raw.pop("cacheWriteUsdPerMillion")
+            elif "cacheWrite" in raw or "cache_write" in raw:
+                raw["cache_write_usd_per_million"] = raw.pop("cacheWrite", None) or raw.pop("cache_write", None)
+            return raw
+        return data
+
+
 class Provider(StrictModel):
     id: str = Field(min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._-]*$")
     openrouter_slug: str = Field(default="", pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$|^$")
     base_url: HttpUrl | None = None
     api_key_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
     model: str | None = None
+    pricing: ProviderPricing | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -95,6 +138,10 @@ class Provider(StrictModel):
             )
             if api_key is not None and "apiKeyEnv" not in raw and "api_key_env" not in raw:
                 raw["apiKeyEnv"] = api_key
+
+            model = raw.pop("modelName", None) or raw.pop("model_name", None)
+            if model is not None and "model" not in raw:
+                raw["model"] = model
             return raw
         return data
 
@@ -201,6 +248,7 @@ class Performance(StrictModel):
 class Generation(StrictModel):
     temperature: Annotated[float, Field(ge=0, le=2)] = 0
     max_tokens: PositiveInt = 1024
+    eos_string: str | None = Field(default=None, min_length=1)
 
 
 class CorrectnessTask(StrictModel):

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,6 @@ from benchmark_tool.io import write_yaml
 from benchmark_tool.matrix import Job
 from benchmark_tool.openrouter import provider_routing
 from benchmark_tool.runners.common import run_process
-
 
 TASK_ALIASES = {
     "gpqa_diamond": "gpqa_diamond_cot_zeroshot",
@@ -47,17 +47,21 @@ def make_lm_eval_config(config: BenchmarkConfig, job: Job, output_dir: Path) -> 
     if not is_direct:
         gen_kwargs["provider"] = provider_routing(job.provider_slug, config.gateway)
 
+    model_args: dict[str, Any] = {
+        "model": model_name,
+        "base_url": base_url,
+        "tokenizer_backend": "none",
+        "tokenized_requests": False,
+        "max_gen_toks": generation.max_tokens,
+        "seed": config.seed,
+        "timeout": config.reliability.slo.request_timeout_seconds,
+    }
+    if generation.eos_string is not None:
+        model_args["eos_string"] = generation.eos_string
+
     value: dict[str, Any] = {
         "model": "local-chat-completions",
-        "model_args": {
-            "model": model_name,
-            "base_url": base_url,
-            "tokenizer_backend": "none",
-            "tokenized_requests": False,
-            "max_gen_toks": generation.max_tokens,
-            "seed": config.seed,
-            "timeout": config.reliability.slo.request_timeout_seconds,
-        },
+        "model_args": model_args,
         "tasks": [resolved_task(job)],
         "apply_chat_template": True,
         "gen_kwargs": gen_kwargs,
@@ -70,7 +74,11 @@ def make_lm_eval_config(config: BenchmarkConfig, job: Job, output_dir: Path) -> 
     return value
 
 
-def build_lm_eval_request(config: BenchmarkConfig, job: Job, messages: list[dict[str, str]]) -> dict[str, Any]:
+def build_lm_eval_request(
+    config: BenchmarkConfig,
+    job: Job,
+    messages: list[dict[str, str]],
+) -> dict[str, Any]:
     """Mirror the runner's payload merge for a routing contract test."""
 
     correctness = config.phases.correctness
@@ -105,7 +113,7 @@ def prepare(config: BenchmarkConfig, job: Job, job_dir: Path) -> Path:
 def execute(config: BenchmarkConfig, job: Job, job_dir: Path, api_key: str) -> dict[str, object]:
     path = prepare(config, job, job_dir)
     process = run_process(
-        ["lm-eval", "run", "--config", str(path)],
+        [sys.executable, "-m", "lm_eval", "run", "--config", str(path)],
         job_dir,
         {"OPENAI_API_KEY": api_key},
         log_prefix="lm-eval",

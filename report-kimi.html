@@ -65,10 +65,11 @@ table { border-collapse: collapse; }
             <th class="py-2.5 px-3.5">Provider</th>
             <th class="py-2.5 px-3.5 text-right">Output TPS</th>
             <th class="py-2.5 px-3.5 text-right">TTFT p95</th>
-            <th class="py-2.5 px-3.5 text-right">Workload Cost</th>
+            <th class="py-2.5 px-3.5 text-right">$ / 1k Successful</th>
             <th class="py-2.5 px-3.5 text-right">Success Rate</th>
             <th class="py-2.5 px-3.5 text-right">Cache Hit Rate</th>
             <th class="py-2.5 px-3.5 text-right">Accuracy</th>
+            <th class="py-2.5 px-3.5 text-right">Value Index</th>
             <th class="py-2.5 px-3.5 text-center">Decision</th>
           </tr>
         </thead>
@@ -82,7 +83,8 @@ table { border-collapse: collapse; }
     <div class="mt-3 bg-slate-50/70 border border-slate-200/80 rounded-lg p-3 text-xs text-slate-600">
       <div class="font-semibold text-slate-800 mb-1.5">Formulas:</div>
       <ul class="space-y-1 text-[11px] font-mono text-slate-700">
-        <li>• <span class="font-sans font-semibold text-slate-800">Workload Cost</span> = Total spend across input, cached, and output tokens</li>
+        <li>• <span class="font-sans font-semibold text-slate-800">Raw Efficiency</span> = Output TPS ÷ Delivered Cost per 1k Successful</li>
+        <li>• <span class="font-sans font-semibold text-slate-800">Value Index</span> = (Provider Efficiency ÷ Max Eligible Efficiency) × 100</li>
         <li>• <span class="font-sans font-semibold text-slate-800">SLO Gate</span> = Success Rate ≥ Min Target AND TTFT p95 ≤ Max Target</li>
       </ul>
     </div>
@@ -204,7 +206,7 @@ table { border-collapse: collapse; }
             <span>3. Service Reliability & Rate Limits</span>
             <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
           </h3>
-          <p class="text-xs text-slate-500 mt-0.5">Request success rate (%, higher is better), failure counts, and error breakdown (429 rate limits, 5xx server errors, timeouts, etc.).</p>
+          <p class="text-xs text-slate-500 mt-0.5">Request success rate (%, higher is better), failure counts, and 429 rate limit distribution.</p>
         </div>
         <div id="rel-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
         </div>
@@ -357,7 +359,7 @@ table { border-collapse: collapse; }
 </div>
 
 <script>
-const records = __DATA__;
+const records = [{"schema_version": "1.0", "run_id": "kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "run_metadata": {"name": "kimi-k3-direct-metrics-smoke-test", "started_at": "2026-09-03T19:42:52.911567Z", "completed_at": "2026-09-03T19:45:24.850320Z", "benchmark_config_sha256": "2802521f12028f943b54e5d8a8893dd06a3cd0cb542d49552ca6c4f52689832c", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--baseten--synthetic--c1--c4832e86", "config_hash": "c4832e86ed0ca2f4", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 30}, "performance": {"e2e_latency": {"unit": "ms", "mean": 1488.0091782, "p50": 1307.660334, "p90": 1827.1194306000002, "p95": 2144.3429588000013, "p99": 3306.155958959998, "minimum": 1143.632406, "maximum": 3596.6092089999997, "stddev": 536.4867762070048, "count": 20, "total": 29760.183564}, "input_sequence_length": {"unit": "tokens", "mean": 1181.0, "p50": 1181.0, "p90": 1181.0, "p95": 1181.0, "p99": 1181.0, "minimum": 1181.0, "maximum": 1181.0, "stddev": 0.0, "count": 20, "total": 23620.0}, "itl": {"unit": "ms", "mean": 29.176001090000003, "p50": 25.1334766, "p90": 30.80561541333333, "p95": 35.34021001666673, "p99": 101.42829432333323, "minimum": 18.114469399999997, "maximum": 117.9503154, "stddev": 20.718861203937024, "count": 20, "total": 583.5200218}, "output_sequence_length": {"unit": "tokens", "mean": 16.0, "p50": 16.0, "p90": 16.0, "p95": 16.0, "p99": 16.0, "minimum": 16.0, "maximum": 16.0, "stddev": 0.0, "count": 20, "total": 320.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 10.665816800518439}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 40.23334910876371, "p50": 39.796123009796574, "p90": 52.35204865796513, "p95": 54.65012993137524, "p99": 55.09361600564377, "minimum": 8.47814604487272, "maximum": 55.2044875242109, "stddev": 9.950425525070969, "count": 20, "total": 804.6669821752743}, "request_count": {"unit": "requests", "mean": 20.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.6666135500324024}, "ttft": {"unit": "ms", "mean": 1050.36916185, "p50": 890.6345259999999, "p90": 1537.8397819, "p95": 1630.90426015, "p99": 1788.0644344299997, "minimum": 835.117275, "maximum": 1827.354478, "stddev": 289.61394071614365, "count": 20, "total": 21007.383237}}, "reliability": {"successful_requests": 20, "failed_requests": 0, "total_requests": 20, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 1630.90426015, "target": 30000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": false, "method": "derived_from_pricing_snapshot", "currency": "USD", "token_usage": {"input_tokens": 23620, "output_tokens": 320, "cached_input_tokens": 18608, "cache_write_tokens": 0}, "notes": ["No matching provider endpoint price was present in the snapshot."]}, "source": {"job": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--c4832e86/job.json", "jobDirectory": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--c4832e86", "pricingSnapshot": "models/kimi-k3/providers/baseten/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--c4832e86/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "summary": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--c4832e86/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "run_metadata": {"name": "kimi-k3-direct-metrics-smoke-test", "started_at": "2026-09-03T19:42:52.911567Z", "completed_at": "2026-09-03T19:45:24.850320Z", "benchmark_config_sha256": "2802521f12028f943b54e5d8a8893dd06a3cd0cb542d49552ca6c4f52689832c", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--fireworks--synthetic--c1--5ddfa462", "config_hash": "5ddfa46299454c07", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 30}, "performance": {"e2e_latency": {"unit": "ms", "mean": 2012.2150052, "p50": 1480.032682, "p90": 2850.7932852, "p95": 2889.9281846, "p99": 2921.2361041199997, "minimum": 1444.225448, "maximum": 2929.063084, "stddev": 671.6865761590717, "count": 5, "total": 10061.075026}, "input_sequence_length": {"unit": "tokens", "mean": 1184.0, "p50": 1184.0, "p90": 1184.0, "p95": 1184.0, "p99": 1184.0, "minimum": 1184.0, "maximum": 1184.0, "stddev": 0.0, "count": 5, "total": 5920.0}, "itl": {"unit": "ms", "mean": 14.363533026666666, "p50": 11.048999266666668, "p90": 21.632975039999998, "p95": 22.070260586666667, "p99": 22.420089024, "minimum": 8.573690666666666, "maximum": 22.50754613333333, "stddev": 5.853177135150238, "count": 5, "total": 71.81766513333332}, "output_sequence_length": {"unit": "tokens", "mean": 16.0, "p50": 16.0, "p90": 16.0, "p95": 16.0, "p99": 16.0, "minimum": 16.0, "maximum": 16.0, "stddev": 0.0, "count": 5, "total": 80.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 2.6665378382240883}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 81.50937528784468, "p50": 90.50593414526367, "p90": 112.68778057232983, "p95": 114.66183286647416, "p99": 116.24107470178963, "minimum": 44.42954349959169, "maximum": 116.6358851606185, "stddev": 29.566394874570456, "count": 5, "total": 407.5468764392234}, "request_count": {"unit": "requests", "mean": 5.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.16665861488900552}, "ttft": {"unit": "ms", "mean": 1796.7620097999998, "p50": 1345.759865, "p90": 2532.8579428000003, "p95": 2578.5521254, "p99": 2615.1074714799997, "minimum": 1278.4904589999999, "maximum": 2624.2463079999998, "stddev": 587.3005039021986, "count": 5, "total": 8983.810049}}, "reliability": {"successful_requests": 5, "failed_requests": 0, "total_requests": 5, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 2578.5521254, "target": 30000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": false, "method": "derived_from_pricing_snapshot", "currency": "USD", "token_usage": {"input_tokens": 5920, "output_tokens": 80, "cached_input_tokens": 4732, "cache_write_tokens": 0}, "notes": ["No matching provider endpoint price was present in the snapshot."]}, "source": {"job": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--5ddfa462/job.json", "jobDirectory": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--5ddfa462", "pricingSnapshot": "models/kimi-k3/providers/fireworks/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--5ddfa462/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "summary": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--5ddfa462/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "run_metadata": {"name": "kimi-k3-direct-metrics-smoke-test", "started_at": "2026-09-03T19:42:52.911567Z", "completed_at": "2026-09-03T19:45:24.850320Z", "benchmark_config_sha256": "2802521f12028f943b54e5d8a8893dd06a3cd0cb542d49552ca6c4f52689832c", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--together--synthetic--c1--c3b5afe5", "config_hash": "c3b5afe5c038e251", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 30}, "performance": {"e2e_latency": {"unit": "ms", "mean": 1217.384091875, "p50": 1022.526221, "p90": 1698.7345919, "p95": 2111.4045122999987, "p99": 2551.81479551, "minimum": 826.376013, "maximum": 2661.75067, "stddev": 459.6084935706724, "count": 24, "total": 29217.218204999997}, "input_sequence_length": {"unit": "tokens", "mean": 1181.0, "p50": 1181.0, "p90": 1181.0, "p95": 1181.0, "p99": 1181.0, "minimum": 1181.0, "maximum": 1181.0, "stddev": 0.0, "count": 24, "total": 28344.0}, "itl": {"unit": "ms", "mean": 16.837565419444445, "p50": 9.3768655, "p90": 35.76997538, "p95": 36.669475369999994, "p99": 58.53470610533332, "minimum": 6.7522535999999995, "maximum": 65.02310966666666, "stddev": 14.201065266313531, "count": 24, "total": 404.1015700666666}, "output_sequence_length": {"unit": "tokens", "mean": 16.0, "p50": 16.0, "p90": 16.0, "p95": 16.0, "p99": 16.0, "minimum": 16.0, "maximum": 16.0, "stddev": 0.0, "count": 24, "total": 384.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 12.799516676597472}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 89.15762091685713, "p50": 106.67643870664119, "p90": 122.6544418432258, "p95": 123.32322779099997, "p99": 142.40281197409047, "minimum": 15.379147585010662, "maximum": 148.09870292786397, "stddev": 39.28370924616121, "count": 24, "total": 2139.782902004571}, "request_count": {"unit": "requests", "mean": 24.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.799969792287342}, "ttft": {"unit": "ms", "mean": 964.8206105833333, "p50": 790.6154985, "p90": 1227.8617782, "p95": 1519.0164627499992, "p99": 2089.6599547399996, "minimum": 704.755009, "maximum": 2245.203725, "stddev": 353.95626318058845, "count": 24, "total": 23155.694654}}, "reliability": {"successful_requests": 24, "failed_requests": 0, "total_requests": 24, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 1519.0164627499992, "target": 30000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": false, "method": "derived_from_pricing_snapshot", "currency": "USD", "token_usage": {"input_tokens": 28344, "output_tokens": 384, "cached_input_tokens": 26618, "cache_write_tokens": 0}, "notes": ["No matching provider endpoint price was present in the snapshot."]}, "source": {"job": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--c3b5afe5/job.json", "jobDirectory": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--c3b5afe5", "pricingSnapshot": "models/kimi-k3/providers/together/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--c3b5afe5/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-direct-metrics-smoke-test-20260903T194252Z-2802521f", "summary": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--c3b5afe5/artifacts/profile_export_aiperf.json"}}];
 
 const modelSelect = document.getElementById("model-select");
 
@@ -535,7 +537,7 @@ function render() {
 
   // Determine winners
   const perfWinner = [...stats].filter(s => s.tokTput != null).sort((a, b) => b.tokTput - a.tokTput)[0];
-  const costWinner = [...stats].filter(s => s.costUsd != null).sort((a, b) => a.costUsd - b.costUsd)[0];
+  const costWinner = [...stats].filter(s => s.costPer1kSuccessful != null).sort((a, b) => a.costPer1kSuccessful - b.costPer1kSuccessful)[0];
   const relWinner = [...stats].filter(s => s.relRate != null).sort((a, b) => (b.relRate - a.relRate) || (a.failRequests - b.failRequests))[0];
   const cacheWinner = [...stats].sort((a, b) => (b.cacheHitRate ?? 0) - (a.cacheHitRate ?? 0) || (a.cachedPrice ?? 999) - (b.cachedPrice ?? 999))[0];
   const corrWinner = [...stats].filter(s => s.corrScore != null).sort((a, b) => b.corrScore - a.corrScore)[0];
@@ -567,7 +569,7 @@ function render() {
 
   const costTag = document.getElementById("cost-winner-tag");
   if (costTag) costTag.innerHTML = costWinner
-    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest workload cost: ${costWinner.name} (${fmtUsd(costWinner.costUsd, 3)} spend · ${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k successful)</span>`
+    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest effective cost: ${costWinner.name} (${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k successful)</span>`
     : "No data";
 
   const relTag = document.getElementById("rel-winner-tag");
@@ -589,7 +591,7 @@ function render() {
   const rankedStats = [...stats].sort((a, b) => {
     if (a.id === valueWinner?.id) return -1;
     if (b.id === valueWinner?.id) return 1;
-    return (b.tokTput ?? -1) - (a.tokTput ?? -1) || a.name.localeCompare(b.name);
+    return (b.valueScore ?? -1) - (a.valueScore ?? -1) || a.name.localeCompare(b.name);
   });
   const matrixTbody = document.getElementById("matrix-tbody");
   if (matrixTbody) {
@@ -615,10 +617,11 @@ function render() {
         <td class="py-2.5 px-3.5 font-sans font-semibold text-slate-900 cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${esc(s.name)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isPerf ? 'font-bold text-blue-700' : ''}" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.tokTput, 1)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.ttftP95, 0)} ms</td>
-        <td class="py-2.5 px-3.5 text-right cursor-help ${isCost ? 'font-bold text-emerald-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costUsd, 3)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isCost ? 'font-bold text-emerald-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costPer1kSuccessful, 3)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isRel ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="rel">${fmtPct(s.relRate)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isCache ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cache">${fmtPct(s.cacheHitRate, 1)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isCorr ? 'font-bold text-purple-700' : ''}" data-tip-provider="${s.id}" data-tip-type="corr">${fmtPct(s.corrScore)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isValue ? 'font-bold text-slate-900' : 'text-slate-600'}" data-tip-provider="${s.id}" data-tip-type="value">${s.valueScore != null ? num(s.valueScore, 0) : "—"}</td>
         <td class="py-2.5 px-3.5 text-center text-[11px] cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${badge}</td>
       </tr>`;
     }).join("");
@@ -630,19 +633,19 @@ function render() {
       const costText = valueWinner.costPer1kSuccessful != null ? ` · ${fmtUsd(valueWinner.costPer1kSuccessful, 3)}/1k successful` : "";
       const subtitle = hasCostData
         ? "Delivers the highest measured output throughput per dollar among providers meeting all SLO targets."
-        : "Delivers the highest measured output throughput among providers meeting all SLO targets.";
+        : "Delivers the highest measured output throughput among providers meeting all SLO targets (direct provider run; pricing snapshot not applicable).";
       valSummaryEl.innerHTML = `
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1">
           <div class="text-xs text-slate-700">
             <span class="font-semibold text-slate-900">Recommended Provider: ${esc(valueWinner.name)}</span>
             <span class="text-slate-500"> · ${num(valueWinner.tokTput, 1)} TPS${costText} · ${fmtPct(valueWinner.relRate)} success${valueWinner.corrScore != null ? ` · ${fmtPct(valueWinner.corrScore)} accuracy` : ""}</span>
           </div>
-          <span class="font-mono text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Recommended</span>
+          <span class="font-mono text-[11px] text-slate-700 font-semibold bg-white px-2 py-0.5 rounded border border-slate-200">${num(valueWinner.valueScore, 0)} ${hasCostData ? "value index" : "perf index"}${valueLead != null ? ` · ${num(valueLead, 0)}% lead` : ""}</span>
         </div>
         <div class="text-[11px] text-slate-500">${subtitle}</div>
       `;
     } else {
-      valSummaryEl.innerHTML = '<p class="text-xs text-slate-500">No providers met the required SLO targets to qualify for recommendation.</p>';
+      valSummaryEl.innerHTML = '<p class="text-xs text-slate-500">No providers met the required SLO targets to qualify for value recommendation.</p>';
     }
   }
 
@@ -706,40 +709,16 @@ function costDetailLines(s) {
   ].filter(Boolean);
 }
 
-const knownErrorLabels = {
-  http_429: "HTTP 429 Rate Limits",
-  http_5xx: "HTTP 5xx Server Errors",
-  http_4xx: "HTTP 4xx Client Errors",
-  timeouts: "Timeouts",
-  connection_errors: "Connection Errors",
-  parse_errors: "Parse Errors",
-  context_overflow: "Context Overflow",
-  cancelled_requests: "Cancelled Requests",
-  other: "Other Errors"
-};
-
-const knownErrorColors = {
-  http_429: "#f43f5e",
-  http_5xx: "#ea580c",
-  http_4xx: "#f59e0b",
-  timeouts: "#8b5cf6",
-  connection_errors: "#0284c7",
-  parse_errors: "#ec4899",
-  context_overflow: "#b45309",
-  cancelled_requests: "#64748b",
-  other: "#94a3b8"
-};
-
 function relDetailLines(s) {
-  const errEntries = Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0);
-  const errorBreakdown = errEntries.length
-    ? errEntries.map(([k, v]) => `${knownErrorLabels[k] || titleCase(k)}: ${v}`).join(", ")
-    : "None";
+  const otherErrors = Object.entries(s.errorMap || {})
+    .filter(([k, v]) => k !== "http_429" && v > 0)
+    .map(([k, v]) => `${titleCase(k)}: ${v}`)
+    .join(", ");
   return [
     `Success Rate: ${fmtPct(s.relRate)} (${s.succRequests.toLocaleString()} / ${s.totalRequests.toLocaleString()})`,
     `Failed Requests: ${s.failRequests.toLocaleString()} (${fmtPct(s.errorRate)} error rate)`,
     `HTTP 429 Rate Limits: ${s.http429s.toLocaleString()}`,
-    `Error Breakdown: ${errorBreakdown}`,
+    otherErrors ? `Other Errors: ${otherErrors}` : `Other Errors: None`,
     `SLO Success Target: >= ${fmtPct(s.successSloTarget)} (${s.successSloTarget != null && s.relRate != null && s.relRate >= s.successSloTarget * 100 ? "PASS" : "FAIL"})`,
     `SLO TTFT p95 Target: <= ${s.ttftSloTarget != null ? num(s.ttftSloTarget, 0) + " ms" : "—"} (${s.ttftSloTarget != null && s.ttftP95 != null && s.ttftP95 <= s.ttftSloTarget ? "PASS" : "FAIL"})`,
     `SLO Decision: ${s.sloPassed ? "PASSED all configured targets" : "FAILED one or more SLO checks"}`
@@ -775,7 +754,7 @@ function providerSummaryLines(s) {
     `Reliability: ${fmtPct(s.relRate)} success (${s.http429s} 429s)`,
     s.corrScore != null ? `Accuracy: ${fmtPct(s.corrScore)} (${s.corrTask})` : null,
     `Cache Hit Rate: ${fmtPct(s.cacheHitRate, 1)} (saved ${fmtUsd(s.cacheSavings, 3)})`,
-    `SLO: ${s.sloPassed ? "Passed" : "Below SLO"}`
+    `SLO: ${s.sloPassed ? "Passed" : "Below SLO"} · Value Index: ${s.valueScore != null ? num(s.valueScore, 0) : "—"}`
   ].filter(Boolean);
 }
 
@@ -891,27 +870,11 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
     });
   }
 
-  // 3. Reliability Chart (Success Rate % vs Error Breakdown)
+  // 3. Reliability Chart (Success Rate % vs Failed Requests Count)
   if (relChartInstance) relChartInstance.destroy();
   const relCanvas = document.getElementById("rel-chart");
   if (relCanvas) {
     const relCtx = relCanvas.getContext("2d");
-    const activeErrorKeys = [...new Set(
-      stats.flatMap(s => Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0).map(([k]) => k))
-    )];
-    const errorKeysToShow = activeErrorKeys.length > 0
-      ? [...new Set(["http_429", ...activeErrorKeys])]
-      : ["http_429"];
-
-    const errorDatasets = errorKeysToShow.map(k => ({
-      label: `${knownErrorLabels[k] || titleCase(k)} (count) ↓`,
-      data: stats.map(s => (s.errorMap && s.errorMap[k]) || 0),
-      backgroundColor: knownErrorColors[k] || "#94a3b8",
-      borderRadius: 4,
-      stack: "errors",
-      yAxisID: "y1"
-    }));
-
     relChartInstance = new Chart(relCtx, {
       type: "bar",
       data: {
@@ -922,10 +885,15 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
             data: stats.map(s => s.relRate != null ? Number(s.relRate.toFixed(1)) : null),
             backgroundColor: "#0d9488",
             borderRadius: 4,
-            stack: "success",
             yAxisID: "y"
           },
-          ...errorDatasets
+          {
+            label: "HTTP 429 Errors (count) ↓",
+            data: stats.map(s => s.http429s || 0),
+            backgroundColor: stats.map(s => s.http429s ? "#f43f5e" : "#e2e8f0"),
+            borderRadius: 4,
+            yAxisID: "y1"
+          }
         ]
       },
       options: {
@@ -948,10 +916,8 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
           y1: {
             type: "linear",
             position: "right",
-            beginAtZero: true,
-            title: { display: true, text: "Errors (count)", color: "#e11d48", font: { weight: '600' } },
-            grid: { drawOnChartArea: false },
-            ticks: { precision: 0 }
+            title: { display: true, text: "429 Rate Limits", color: "#f43f5e", font: { weight: '600' } },
+            grid: { drawOnChartArea: false }
           },
           x: { grid: { display: false } }
         }
@@ -1093,10 +1059,7 @@ function renderSectionTables(stats, rows) {
   const relTbody = document.getElementById("rel-table-body");
   if (relTbody) {
     relTbody.innerHTML = stats.map(s => {
-      const errEntries = Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0);
-      const errList = errEntries.length
-        ? errEntries.map(([k, v]) => `${knownErrorLabels[k] || k}: ${v}`).join(", ")
-        : "None";
+      const errList = Object.entries(s.errorMap || {}).map(([k, v]) => `${k}:${v}`).join(", ") || "None";
       const sloBadge = s.sloPassed
         ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Passed</span>'
         : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Failed</span>';
@@ -1199,6 +1162,13 @@ document.addEventListener("mouseover", e => {
     showTooltip(e, `${stat.name} · Correctness & Accuracy`, corrDetailLines(stat));
   } else if (tipType === "cache" && stat) {
     showTooltip(e, `${stat.name} · Prefix Caching & Hit Rate`, cacheDetailLines(stat));
+  } else if (tipType === "value" && stat) {
+    showTooltip(e, `${stat.name} · Value Index`, [
+      `Value Index: ${stat.valueScore != null ? num(stat.valueScore, 0) : "—"}`,
+      `Formula: Output TPS (${num(stat.tokTput, 1)}) ÷ Cost/1k Successful (${fmtUsd(stat.costPer1kSuccessful, 3)})`,
+      `Raw efficiency: ${stat.valueRaw ? num(stat.valueRaw, 1) + " tokens / $" : "—"}`,
+      `Normalized to 100 among SLO-passing providers.`
+    ]);
   } else if (tipType === "summary" && stat) {
     showTooltip(e, `${stat.name} · ${model}`, providerSummaryLines(stat));
   } else if (tipType === "sec-perf") {

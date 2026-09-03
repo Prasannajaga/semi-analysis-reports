@@ -109,6 +109,34 @@ def normalize_job(
             usage = token_usage(records)
             snapshot_path = job_dir.parents[2] / "endpoint" / "pricing-snapshot.json"
             snapshot = read_json(snapshot_path) if snapshot_path.exists() else {}
+            if not snapshot.get("matchingEndpoints"):
+                provider_cfg = next(
+                    (p for p in config.providers if p.id == data["provider"].id), None
+                )
+                if provider_cfg and provider_cfg.pricing:
+                    snapshot = {
+                        "schemaVersion": "1.0",
+                        "status": "supported",
+                        "matchingEndpoints": [
+                            {
+                                "name": f"{provider_cfg.id} direct",
+                                "pricing": {
+                                    "prompt": provider_cfg.pricing.input_usd_per_million / 1_000_000,
+                                    "completion": provider_cfg.pricing.output_usd_per_million / 1_000_000,
+                                    "input_cache_read": (
+                                        provider_cfg.pricing.cached_input_usd_per_million / 1_000_000
+                                        if provider_cfg.pricing.cached_input_usd_per_million is not None
+                                        else None
+                                    ),
+                                    "input_cache_write": (
+                                        provider_cfg.pricing.cache_write_usd_per_million / 1_000_000
+                                        if provider_cfg.pricing.cache_write_usd_per_million is not None
+                                        else None
+                                    ),
+                                },
+                            }
+                        ],
+                    }
             request_count = data["reliability"].total_requests if data.get("reliability") else None
             data["pricing"] = normalize_pricing(
                 snapshot, usage, config.pricing.enabled, request_count=request_count
