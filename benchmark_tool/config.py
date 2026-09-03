@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 import yaml
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field, HttpUrl, model_validator
@@ -26,21 +26,99 @@ NonNegativeInt = Annotated[int, Field(ge=0)]
 Probability = Annotated[float, Field(ge=0, le=1)]
 
 
+class GatewayRetries(StrictModel):
+    max_retries: NonNegativeInt = 3
+    retry_delay_seconds: Annotated[float, Field(gt=0)] = 2.0
+    backoff_factor: Annotated[float, Field(ge=1.0)] = 2.0
+
+
 class GatewayRouting(StrictModel):
     allow_fallbacks: Literal[False] = False
     require_parameters: Literal[True] = True
 
 
 class Gateway(StrictModel):
-    type: Literal["openrouter"] = "openrouter"
+    type: Literal["openrouter", "directProviders", "direct"] = "openrouter"
     base_url: HttpUrl = HttpUrl("https://openrouter.ai/api/v1")
-    api_key_env: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
+    api_key_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
+    retries: GatewayRetries = Field(default_factory=GatewayRetries)
     routing: GatewayRouting = Field(default_factory=GatewayRouting)
+    providers: Any | None = None
+    openrouter: Any | None = None
+    direct_providers: Any | None = Field(default=None, alias="directProviders")
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_gateway(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            raw = dict(data)
+            gt = raw.get("type")
+            if gt in ("direct_providers", "direct"):
+                raw["type"] = "directProviders"
+            return raw
+        return data
+
+    @model_validator(mode="after")
+    def validate_gateway(self) -> Gateway:
+        if self.type == "openrouter" and not self.api_key_env:
+            raise ValueError("apiKeyEnv is required for openrouter gateway")
+        return self
 
 
 class Provider(StrictModel):
     id: str = Field(min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._-]*$")
-    openrouter_slug: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    openrouter_slug: str = Field(default="", pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$|^$")
+    base_url: HttpUrl | None = None
+    api_key_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
+    model: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            raw = dict(data)
+            slug = raw.pop("slug", None)
+            if slug is not None and "openrouterSlug" not in raw and "openrouter_slug" not in raw:
+                raw["openrouterSlug"] = slug
+
+            endpoint = raw.pop("endpoints", None)
+            if endpoint is None:
+                endpoint = raw.pop("endpoint", None)
+            if endpoint is not None and "baseUrl" not in raw and "base_url" not in raw:
+                raw["baseUrl"] = endpoint
+
+            api_key = (
+                raw.pop("apikeyENV", None)
+                or raw.pop("apiKey_env", None)
+                or raw.pop("apikeyEnv", None)
+                or raw.pop("apiKeyEnv", None)
+            )
+            if api_key is not None and "apiKeyEnv" not in raw and "api_key_env" not in raw:
+                raw["apiKeyEnv"] = api_key
+            return raw
+        return data
+
+    @model_validator(mode="after")
+    def _default_slug(self) -> Provider:
+        if not self.openrouter_slug:
+            self.openrouter_slug = self.id
+        return self
+
+    @property
+    def slug(self) -> str:
+        return self.openrouter_slug
+
+    @property
+    def endpoints(self) -> HttpUrl | None:
+        return self.base_url
+
+    @property
+    def endpoint(self) -> HttpUrl | None:
+        return self.base_url
+
+    @property
+    def apikey_env(self) -> str | None:
+        return self.api_key_env
 
 
 class Model(StrictModel):
@@ -141,6 +219,8 @@ class Correctness(StrictModel):
 class Phases(StrictModel):
     performance: Performance | None = None
     correctness: Correctness | None = None
+    pricing: Pricing = Field(default_factory=Pricing)
+    reliability: Reliability = Field(default_factory=Reliability)
 
 
 class BenchmarkMetadata(StrictModel):
@@ -150,21 +230,154 @@ class BenchmarkMetadata(StrictModel):
 
 
 class BenchmarkConfig(StrictModel):
+    debug: bool = Field(default=False, alias="DEBUG")
     schema_version: Literal["1.0"] = "1.0"
     benchmark: BenchmarkMetadata
     gateway: Gateway
     providers: list[Provider] = Field(min_length=1)
+    openrouter_providers: list[Provider] = Field(default_factory=list)
+    direct_providers: list[Provider] = Field(default_factory=list)
     models: list[Model] = Field(min_length=1)
-    pricing: Pricing = Field(default_factory=Pricing)
-    reliability: Reliability = Field(default_factory=Reliability)
     phases: Phases
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_phases_and_providers(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            phases = data.setdefault("phases", {})
+            if isinstance(phases, dict):
+                if "pricing" in data and "pricing" not in phases:
+                    phases["pricing"] = data.pop("pricing")
+                if "reliability" in data and "reliability" not in phases:
+                    phases["reliability"] = data.pop("reliability")
+
+            raw_gateway = data.get("gateway")
+            gateway_type = "openrouter"
+            if isinstance(raw_gateway, dict):
+                gt = raw_gateway.get("type", "openrouter")
+                if gt in ("directProviders", "direct_providers", "direct"):
+                    gateway_type = "directProviders"
+
+            openrouter_raw: list[Any] | None = None
+            direct_raw: list[Any] | None = None
+
+            if isinstance(raw_gateway, dict):
+                gw_providers = raw_gateway.get("providers")
+                if isinstance(gw_providers, dict):
+                    openrouter_raw = gw_providers.get("openrouter")
+                    direct_raw = (
+                        gw_providers.get("directProviders")
+                        or gw_providers.get("direct_providers")
+                        or gw_providers.get("direct")
+                    )
+                elif isinstance(gw_providers, list):
+                    if gateway_type == "openrouter":
+                        openrouter_raw = gw_providers
+                    else:
+                        direct_raw = gw_providers
+                    data["providers"] = gw_providers
+
+                if "openrouter" in raw_gateway:
+                    or_val = raw_gateway["openrouter"]
+                    if isinstance(or_val, dict) and "providers" in or_val:
+                        openrouter_raw = or_val["providers"]
+                    elif isinstance(or_val, list):
+                        openrouter_raw = or_val
+
+                for k in ("directProviders", "direct_providers", "direct"):
+                    if k in raw_gateway:
+                        dp_val = raw_gateway[k]
+                        if isinstance(dp_val, dict) and "providers" in dp_val:
+                            direct_raw = dp_val["providers"]
+                        elif isinstance(dp_val, list):
+                            direct_raw = dp_val
+
+            top_providers = data.get("providers")
+            if isinstance(top_providers, dict):
+                if openrouter_raw is None:
+                    openrouter_raw = top_providers.get("openrouter")
+                if direct_raw is None:
+                    direct_raw = (
+                        top_providers.get("directProviders")
+                        or top_providers.get("direct_providers")
+                        or top_providers.get("direct")
+                    )
+
+            if gateway_type == "openrouter":
+                if openrouter_raw is not None:
+                    data["providers"] = openrouter_raw
+            elif gateway_type == "directProviders":
+                if direct_raw is not None:
+                    data["providers"] = direct_raw
+
+            if openrouter_raw is not None:
+                data["openrouterProviders"] = openrouter_raw
+            if direct_raw is not None:
+                data["directProviders"] = direct_raw
+
+        return data
+
+    @property
+    def pricing(self) -> Pricing:
+        return self.phases.pricing
+
+    @property
+    def reliability(self) -> Reliability:
+        return self.phases.reliability
+
+    @property
+    def is_direct(self) -> bool:
+        return self.gateway.type in ("directProviders", "direct")
+
+    @property
+    def is_openrouter(self) -> bool:
+        return self.gateway.type == "openrouter"
+
+    def get_provider(self, provider_id: str) -> Provider | None:
+        for provider in self.providers:
+            if provider.id == provider_id:
+                return provider
+        return None
+
+    @property
+    def grouped_providers(self) -> dict[str, list[Provider]]:
+        return {
+            "openrouter": self.openrouter_providers,
+            "directProviders": self.direct_providers,
+        }
 
     @model_validator(mode="after")
     def cross_validate(self) -> BenchmarkConfig:
+        is_direct = self.gateway.type in ("directProviders", "direct")
+        direct_to_validate = list(self.direct_providers)
+        if is_direct:
+            for p in self.providers:
+                if p not in direct_to_validate:
+                    direct_to_validate.append(p)
+
+        for p in direct_to_validate:
+            if not p.base_url:
+                raise ValueError(
+                    f"Direct provider '{p.id}' is missing required 'endpoints' (or 'baseUrl')"
+                )
+            if not p.api_key_env:
+                raise ValueError(
+                    f"Direct provider '{p.id}' is missing required 'apiKeyEnv' (or 'apikeyENV')"
+                )
+
         for label, values in (("provider", self.providers), ("model", self.models)):
             ids = [value.id for value in values]
             if len(ids) != len(set(ids)):
                 raise ValueError(f"duplicate {label} id")
+
+        if self.openrouter_providers:
+            or_ids = [p.id for p in self.openrouter_providers]
+            if len(or_ids) != len(set(or_ids)):
+                raise ValueError("duplicate provider id in openrouter providers")
+        if self.direct_providers:
+            dp_ids = [p.id for p in self.direct_providers]
+            if len(dp_ids) != len(set(dp_ids)):
+                raise ValueError("duplicate provider id in direct providers")
 
         performance = self.phases.performance
         correctness = self.phases.correctness
@@ -219,7 +432,12 @@ class BenchmarkConfig(StrictModel):
     def public_dump(self) -> dict[str, object]:
         """Return reproducibility metadata; the API key itself is never in this model."""
 
-        return self.model_dump(mode="json", by_alias=True, exclude_none=True)
+        dump = self.model_dump(mode="json", by_alias=True, exclude_none=True)
+        if not self.openrouter_providers:
+            dump.pop("openrouterProviders", None)
+        if not self.direct_providers:
+            dump.pop("directProviders", None)
+        return dump
 
 
 def load_config(path: Path) -> BenchmarkConfig:

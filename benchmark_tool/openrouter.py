@@ -6,6 +6,7 @@ import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from http import HTTPStatus
+import time
 from typing import Any
 from urllib.parse import quote
 
@@ -34,24 +35,66 @@ class OpenRouterClient:
     base_url: str
     api_key: str
     timeout_seconds: float
+    max_retries: int = 0
+    retry_delay_seconds: float = 1.0
+    backoff_factor: float = 2.0
+    extra_headers: dict[str, str] | None = None
+    verbose: bool = False
 
     @property
     def headers(self) -> dict[str, str]:
-        return {
+        base = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "X-OpenRouter-Metadata": "enabled",
         }
+        if self.extra_headers:
+            base.update(self.extra_headers)
+        return base
 
     def endpoint_metadata(self, model: str) -> dict[str, Any]:
         encoded = quote(model, safe="/")
-        with httpx.Client(timeout=self.timeout_seconds, headers=self.headers) as client:
-            response = client.get(f"{self.base_url.rstrip('/')}/models/{encoded}/endpoints")
-            response.raise_for_status()
-            value = response.json()
-        if not isinstance(value, dict):
-            raise ValueError("OpenRouter endpoint metadata was not a JSON object")
-        return value
+        attempt = 0
+        while True:
+            try:
+                with httpx.Client(timeout=self.timeout_seconds, headers=self.headers) as client:
+                    response = client.get(f"{self.base_url.rstrip('/')}/models/{encoded}/endpoints")
+                    response.raise_for_status()
+                    value = response.json()
+                if not isinstance(value, dict):
+                    raise ValueError("OpenRouter endpoint metadata was not a JSON object")
+                return value
+            except (httpx.HTTPStatusError, httpx.TransportError) as err:
+                is_retryable = False
+                retry_after: float | None = None
+                if isinstance(err, httpx.HTTPStatusError):
+                    status = err.response.status_code
+                    is_retryable = status in {408, 409, 429, 502, 503, 504, 529}
+                    ra_str = err.response.headers.get("retry-after")
+                    if ra_str:
+                        try:
+                            retry_after = min(max(float(ra_str), 0.5), 60.0)
+                        except ValueError:
+                            pass
+                elif isinstance(err, httpx.TransportError):
+                    is_retryable = True
+
+                if is_retryable and attempt < self.max_retries:
+                    delay = (
+                        retry_after
+                        if retry_after is not None
+                        else (self.retry_delay_seconds * (self.backoff_factor**attempt))
+                    )
+                    if self.verbose:
+                        print(
+                            f"\n  ↳ [Retry {attempt + 1}/{self.max_retries}] Metadata for {model} "
+                            f"failed ({err}). Retrying in {delay:.1f}s...",
+                            flush=True,
+                        )
+                    time.sleep(delay)
+                    attempt += 1
+                    continue
+                raise
 
     def generation_metadata(self, generation_id: str) -> dict[str, Any]:
         with httpx.Client(timeout=self.timeout_seconds, headers=self.headers) as client:
@@ -64,7 +107,7 @@ class OpenRouterClient:
             raise ValueError("OpenRouter generation metadata was not a JSON object")
         return value
 
-    def preflight(
+    def _single_preflight(
         self,
         model: str,
         provider_slug: str,
@@ -219,6 +262,59 @@ class OpenRouterClient:
             result["failureCategory"] = "client"
             result["retryable"] = False
             result["reason"] = f"{type(error).__name__}: {error}"
+            return result
+
+    def preflight(
+        self,
+        model: str,
+        provider_slug: str,
+        *,
+        require_agentx: bool = False,
+        require_streaming: bool = False,
+        require_tools: bool = False,
+        require_seed: bool = False,
+    ) -> dict[str, Any]:
+        attempt = 0
+        while True:
+            result = self._single_preflight(
+                model,
+                provider_slug,
+                require_agentx=require_agentx,
+                require_streaming=require_streaming,
+                require_tools=require_tools,
+                require_seed=require_seed,
+            )
+            if (
+                result.get("status") != "supported"
+                and result.get("retryable")
+                and attempt < self.max_retries
+            ):
+                retry_after: float | None = None
+                err_obj = result.get("error")
+                if isinstance(err_obj, dict):
+                    hdrs = err_obj.get("responseHeaders")
+                    if isinstance(hdrs, dict) and hdrs.get("retry-after"):
+                        try:
+                            retry_after = min(max(float(hdrs["retry-after"]), 0.5), 60.0)
+                        except ValueError:
+                            pass
+                delay = (
+                    retry_after
+                    if retry_after is not None
+                    else (self.retry_delay_seconds * (self.backoff_factor**attempt))
+                )
+                if self.verbose:
+                    print(
+                        f"\n  ↳ [Retry {attempt + 1}/{self.max_retries}] {model} on {provider_slug}: "
+                        f"{result.get('failureCategory', 'error')} ({result.get('reason')}). "
+                        f"Retrying in {delay:.1f}s...",
+                        flush=True,
+                    )
+                time.sleep(delay)
+                attempt += 1
+                continue
+            if attempt > 0:
+                result["retriesAttempted"] = attempt
             return result
 
 

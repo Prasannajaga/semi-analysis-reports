@@ -16,19 +16,36 @@ def make_aiperf_config(config: BenchmarkConfig, job: Job, artifacts_dir: Path) -
     phase = config.phases.performance
     if phase is None or job.concurrency is None or job.tokenizer is None:
         raise ValueError("performance phase, concurrency, and tokenizer are required")
-    endpoint_url = f"{str(config.gateway.base_url).rstrip('/')}/chat/completions"
+    provider = config.get_provider(job.provider_id)
+    is_direct = config.is_direct or (provider is not None and provider.base_url is not None)
+
+    if is_direct and provider and provider.base_url:
+        endpoint_base = str(provider.base_url).rstrip("/")
+        endpoint_url = f"{endpoint_base}/chat/completions"
+        api_key_env = provider.api_key_env or config.gateway.api_key_env or "API_KEY"
+        model_name = provider.model or job.openrouter_model
+    else:
+        endpoint_url = f"{str(config.gateway.base_url).rstrip('/')}/chat/completions"
+        api_key_env = config.gateway.api_key_env
+        model_name = job.openrouter_model
+
+    endpoint_payload: dict[str, Any] = {
+        "url": endpoint_url,
+        "type": "chat",
+        "apiKey": f"${{{api_key_env}}}",
+        "streaming": True,
+        "timeout": config.reliability.slo.request_timeout_seconds,
+        "useLegacyMaxTokens": True,
+        "useServerTokenCount": phase.use_server_token_count,
+    }
+    if not is_direct:
+        endpoint_payload["extra"] = {
+            "provider": provider_routing(job.provider_slug, config.gateway)
+        }
+
     benchmark: dict[str, Any] = {
-        "model": job.openrouter_model,
-        "endpoint": {
-            "url": endpoint_url,
-            "type": "chat",
-            "apiKey": f"${{{config.gateway.api_key_env}}}",
-            "streaming": True,
-            "timeout": config.reliability.slo.request_timeout_seconds,
-            "useLegacyMaxTokens": True,
-            "useServerTokenCount": phase.use_server_token_count,
-            "extra": {"provider": provider_routing(job.provider_slug, config.gateway)},
-        },
+        "model": model_name,
+        "endpoint": endpoint_payload,
         "tokenizer": {
             "name": job.tokenizer,
             "trustRemoteCode": job.tokenizer_trust_remote_code,
@@ -82,8 +99,10 @@ def validate(
     path: Path,
     job_dir: Path,
     api_key: str | None = None,
+    api_key_env: str | None = None,
 ) -> dict[str, object]:
-    environment = {config.gateway.api_key_env: api_key} if api_key is not None else None
+    env_name = api_key_env or config.gateway.api_key_env or "API_KEY"
+    environment = {env_name: api_key} if api_key is not None else None
     return run_process(
         ["aiperf", "config", "validate", str(path)],
         job_dir,
@@ -98,9 +117,17 @@ def execute(
     job: Job,
     job_dir: Path,
     api_key: str,
+    api_key_env: str | None = None,
 ) -> dict[str, object]:
     path = prepare(config, job, job_dir)
-    validation = validate(config, path, job_dir, api_key)
+    provider = config.get_provider(job.provider_id)
+    env_name = (
+        api_key_env
+        or (provider.api_key_env if provider and provider.api_key_env else None)
+        or config.gateway.api_key_env
+        or "API_KEY"
+    )
+    validation = validate(config, path, job_dir, api_key, api_key_env=env_name)
     if validation["returnCode"] != 0:
         return {
             "status": "failed",
@@ -117,7 +144,7 @@ def execute(
     process = run_process(
         ["aiperf", "profile", "--config", str(path)],
         job_dir,
-        {config.gateway.api_key_env: api_key},
+        {env_name: api_key},
         log_prefix="aiperf",
         redact_values=(api_key,),
     )

@@ -4,19 +4,21 @@ from __future__ import annotations
 
 import os
 import sys
+import time
 from datetime import UTC, datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from dotenv import load_dotenv
 
 from benchmark_tool.config import AgentXWorkload, BenchmarkConfig, load_config
 from benchmark_tool.io import slug, stable_hash, write_json, write_text
-from benchmark_tool.matrix import Job, expand_matrix
 from benchmark_tool.manifest import RunManifest
+from benchmark_tool.matrix import Job, expand_matrix
 from benchmark_tool.openrouter import OpenRouterClient, pricing_snapshot
 from benchmark_tool.runners import aiperf, bfcl, lm_eval
+from benchmark_tool.state_logging import configure_debug, log_error, log_state
 
 
 def utc_now() -> str:
@@ -71,6 +73,120 @@ def _version(distribution: str) -> str | None:
         return None
 
 
+def _preflight(
+    client: OpenRouterClient,
+    kind: str,
+    model: str,
+    provider: str,
+    **requirements: bool,
+) -> dict[str, Any]:
+    started = time.monotonic()
+    enabled_requirements = [name for name, enabled in requirements.items() if enabled]
+    suffix = f" ({', '.join(enabled_requirements)})" if enabled_requirements else ""
+    log_state("preflight", f"Starting {kind} check for {model} on {provider}{suffix}")
+    try:
+        result = client.preflight(model, provider, **requirements)
+    except Exception as error:  # preserve the rest of the endpoint matrix
+        reason = f"Unexpected preflight error: {type(error).__name__}: {error}"
+        log_error(f"{kind} preflight for {model} on {provider} failed: {reason}")
+        return {"status": "failed", "reason": reason}
+    elapsed = time.monotonic() - started
+    detail = f": {result['reason']}" if result.get("reason") else ""
+    log_state(
+        "preflight",
+        f"{kind} check {result.get('status', 'unknown')} in {elapsed:.3f}s{detail}",
+    )
+    return result
+
+
+def _execute_job(
+    config: BenchmarkConfig,
+    job: Job,
+    directory: Path,
+    state: dict[str, Any],
+    *,
+    api_key: str | None,
+    dry_run: bool,
+    preflight_during_dry_run: bool,
+) -> dict[str, Any]:
+    write_json(directory / "preflight.json", state)
+    log_state("prepare", f"Generating {job.runner} configuration in {directory}")
+    if job.runner == "aiperf":
+        runner_config = aiperf.prepare(config, job, directory)
+    elif job.runner == "lm-eval":
+        runner_config = lm_eval.prepare(config, job, directory)
+    else:
+        runner_config = bfcl.prepare(config, job, directory)
+    log_state("prepare", f"Generated runner configuration: {runner_config}")
+
+    if dry_run:
+        validation = None
+        if job.runner == "aiperf":
+            log_state("validate", f"Validating AIPerf configuration for {job.job_id}")
+            provider = config.get_provider(job.provider_id)
+            env_name = (
+                provider.api_key_env
+                if provider and provider.api_key_env
+                else config.gateway.api_key_env
+            )
+            validation = aiperf.validate(
+                config,
+                runner_config,
+                directory,
+                api_key=api_key or "dry-run-validation-placeholder",
+                api_key_env=env_name,
+            )
+        if preflight_during_dry_run and state.get("status") != "supported":
+            status = "unsupported" if state.get("status") == "unsupported" else "failed"
+            return _job_record(
+                job,
+                status,
+                reason=state.get("reason", "preflight failed"),
+                validation=validation,
+            )
+        if validation is not None and validation["returnCode"] != 0:
+            return _job_record(
+                job,
+                "failed",
+                reason=(
+                    "AIPerf native configuration validation failed"
+                    + (
+                        f": {validation['failureSummary']}"
+                        if validation.get("failureSummary")
+                        else ""
+                    )
+                ),
+                validation=validation,
+            )
+        if validation is not None:
+            return _job_record(
+                job,
+                "planned",
+                reason="dry run: configuration generated and AIPerf-validated",
+                validation=validation,
+            )
+        return _job_record(job, "planned", reason="dry run: configuration generated")
+
+    if state.get("status") != "supported":
+        status = "unsupported" if state.get("status") == "unsupported" else "failed"
+        return _job_record(job, status, reason=state.get("reason", "preflight failed"))
+
+    started = utc_now()
+    log_state("execute", f"Starting {job.runner} runner for {job.job_id}")
+    if job.runner == "aiperf":
+        execution = aiperf.execute(config, job, directory, api_key or "")
+    elif job.runner == "lm-eval":
+        execution = lm_eval.execute(config, job, directory, api_key or "")
+    else:
+        execution = bfcl.execute(config, job, directory, api_key or "")
+    return _job_record(
+        job,
+        startedAt=started,
+        finishedAt=utc_now(),
+        **cast(dict[str, Any], execution),
+    )
+
+
 def execute_benchmark(
     config_path: Path,
     output_root: Path,
@@ -78,13 +194,24 @@ def execute_benchmark(
     dry_run: bool = False,
     preflight_during_dry_run: bool = False,
 ) -> Path:
+    configure_debug(False)
     load_dotenv()
     config = load_config(config_path)
+    configure_debug(config.debug)
+    log_state("config", f"Loaded configuration: {config_path.resolve()}")
+    log_state("config", f"DEBUG={str(config.debug).lower()}")
     jobs = expand_matrix(config)
+    log_state(
+        "matrix",
+        f"Expanded {len(jobs)} jobs across {len(config.models)} model(s) "
+        f"and {len(config.providers)} provider(s)",
+    )
     identifier = run_id(config)
     run_dir = output_root.resolve() / identifier
     run_dir.mkdir(parents=True, exist_ok=False)
+    log_state("run", f"Created run directory: {run_dir}")
     write_text(run_dir / "config.yaml", config_path.read_text(encoding="utf-8"))
+    log_state("artifact", f"Copied source configuration to {run_dir / 'config.yaml'}")
     manifest: dict[str, Any] = {
         "schemaVersion": "1.0",
         "runId": identifier,
@@ -92,7 +219,7 @@ def execute_benchmark(
         "benchmarkConfigSha256": stable_hash(config.public_dump(), 64),
         "startedAt": utc_now(),
         "dryRun": dry_run,
-        "apiKeyEnv": config.gateway.api_key_env,
+        "apiKeyEnv": config.gateway.api_key_env or "DIRECT_PROVIDERS",
         "versions": {
             "benchmarkTool": "0.1.0",
             "python": sys.version.split()[0],
@@ -109,13 +236,36 @@ def execute_benchmark(
         "jobs": [],
     }
     _write_manifest(run_dir, manifest)
+    log_state("manifest", f"Initialized {run_dir / 'manifest.json'}")
 
-    api_key = os.getenv(config.gateway.api_key_env)
-    if (not dry_run or preflight_during_dry_run) and not api_key:
-        manifest["status"] = "failed"
-        manifest["reason"] = f"required environment variable {config.gateway.api_key_env} is not set"
-        _write_manifest(run_dir, manifest)
-        raise RuntimeError(str(manifest["reason"]))
+    if not config.is_direct:
+        api_key = os.getenv(config.gateway.api_key_env or "")
+        if (not dry_run or preflight_during_dry_run) and not api_key:
+            manifest["status"] = "failed"
+            manifest["reason"] = f"required environment variable {config.gateway.api_key_env} is not set"
+            _write_manifest(run_dir, manifest)
+            raise RuntimeError(str(manifest["reason"]))
+        credential_state = "available" if api_key else "not required for offline dry run"
+        log_state(
+            "credentials",
+            f"{config.gateway.api_key_env} is {credential_state}; its value will not be logged",
+        )
+    else:
+        api_key = None
+        missing_envs = [
+            p.api_key_env
+            for p in config.providers
+            if p.api_key_env and not os.getenv(p.api_key_env)
+        ]
+        if (not dry_run or preflight_during_dry_run) and missing_envs:
+            manifest["status"] = "failed"
+            manifest["reason"] = f"required environment variable(s) not set: {', '.join(missing_envs)}"
+            _write_manifest(run_dir, manifest)
+            raise RuntimeError(str(manifest["reason"]))
+        log_state(
+            "credentials",
+            f"Direct provider credentials verified for {len(config.providers)} provider(s)",
+        )
 
     performance = config.phases.performance
     correctness = config.phases.correctness
@@ -139,19 +289,41 @@ def execute_benchmark(
             str(config.gateway.base_url).rstrip("/"),
             api_key or "",
             config.reliability.slo.request_timeout_seconds,
+            max_retries=config.gateway.retries.max_retries,
+            retry_delay_seconds=config.gateway.retries.retry_delay_seconds,
+            backoff_factor=config.gateway.retries.backoff_factor,
         )
-        if api_key and (not dry_run or preflight_during_dry_run)
+        if not config.is_direct and api_key and (not dry_run or preflight_during_dry_run)
         else None
     )
     endpoint_state: dict[tuple[str, str], dict[str, dict[str, Any]]] = {}
+    endpoint_total = len(config.models) * len(config.providers)
+    endpoint_index = 0
     for model in config.models:
         for provider in config.providers:
+            endpoint_index += 1
+            log_state(
+                "endpoint",
+                f"[{endpoint_index}/{endpoint_total}] model={model.id} provider={provider.id}",
+            )
             key = (model.id, provider.id)
             endpoint_dir = (
                 run_dir / "models" / slug(model.id) / "providers" / slug(provider.id) / "endpoint"
             )
             endpoint_dir.mkdir(parents=True, exist_ok=True)
-            if client is None:
+            states: dict[str, dict[str, Any]]
+            if config.is_direct:
+                status_reason = "direct provider endpoint configured"
+                direct_status = "supported" if (not dry_run or preflight_during_dry_run) else "not-run"
+                direct_state = {"status": direct_status, "reason": status_reason}
+                states = {"plain": direct_state, "performance": direct_state, "tools": direct_state}
+                write_json(endpoint_dir / "preflight.json", states)
+                write_json(
+                    endpoint_dir / "pricing-snapshot.json",
+                    {"schemaVersion": "1.0", "status": direct_status, "reason": status_reason},
+                )
+                log_state("preflight", f"Direct provider endpoint configured for {model.id} on {provider.id}")
+            elif client is None:
                 skipped = {"status": "not-run", "reason": "dry run: no network requests made"}
                 states = {"plain": skipped, "performance": skipped, "tools": skipped}
                 write_json(endpoint_dir / "preflight.json", states)
@@ -159,9 +331,15 @@ def execute_benchmark(
                     endpoint_dir / "pricing-snapshot.json",
                     {"schemaVersion": "1.0", "status": "not-run", "reason": "dry run"},
                 )
+                log_state("preflight", "Skipped network checks for offline dry run")
             else:
                 snapshot: dict[str, Any] | None = None
                 try:
+                    metadata_started = time.monotonic()
+                    log_state(
+                        "metadata",
+                        f"Fetching endpoint metadata for {model.openrouter_model}",
+                    )
                     metadata = client.endpoint_metadata(model.openrouter_model)
                     write_json(endpoint_dir / "endpoint-metadata.json", metadata)
                     snapshot = pricing_snapshot(
@@ -171,24 +349,39 @@ def execute_benchmark(
                         endpoint_dir / "pricing-snapshot.json",
                         snapshot,
                     )
+                    log_state(
+                        "metadata",
+                        f"Saved endpoint metadata and pricing snapshot in "
+                        f"{time.monotonic() - metadata_started:.3f}s",
+                    )
                 except Exception as error:  # metadata failure must not hide the routing check
+                    reason = f"{type(error).__name__}: {error}"
                     write_json(
                         endpoint_dir / "pricing-snapshot.json",
                         {
                             "schemaVersion": "1.0",
                             "status": "failed",
-                            "reason": f"{type(error).__name__}: {error}",
+                            "reason": reason,
                         },
                     )
+                    log_error(
+                        f"Endpoint metadata for {model.openrouter_model} failed: {reason}"
+                    )
                 plain = (
-                    client.preflight(
-                        model.openrouter_model, provider.openrouter_slug, require_seed=True
+                    _preflight(
+                        client,
+                        "plain",
+                        model.openrouter_model,
+                        provider.openrouter_slug,
+                        require_seed=True,
                     )
                     if needs_plain
                     else {"status": "not-required"}
                 )
                 performance_state = (
-                    client.preflight(
+                    _preflight(
+                        client,
+                        "performance",
                         model.openrouter_model,
                         provider.openrouter_slug,
                         require_agentx=uses_agentx,
@@ -198,7 +391,9 @@ def execute_benchmark(
                     else {"status": "not-required"}
                 )
                 tools = (
-                    client.preflight(
+                    _preflight(
+                        client,
+                        "tools",
                         model.openrouter_model,
                         provider.openrouter_slug,
                         require_tools=True,
@@ -224,9 +419,11 @@ def execute_benchmark(
                         and isinstance(performance.workload, AgentXWorkload)
                     ):
                         contexts = [
-                            item.get("context_length")
+                            context
                             for item in matches
-                            if isinstance(item, dict) and isinstance(item.get("context_length"), int)
+                            if isinstance(item, dict)
+                            for context in [item.get("context_length")]
+                            if isinstance(context, int)
                         ]
                         required_context = performance.workload.dataset.max_context_length
                         if contexts and max(contexts) < required_context:
@@ -236,9 +433,16 @@ def execute_benchmark(
                                 f"advertises at most {max(contexts)}"
                             )
                 write_json(endpoint_dir / "preflight.json", states)
+                log_state("artifact", f"Saved endpoint checks: {endpoint_dir / 'preflight.json'}")
             endpoint_state[key] = states
 
-    for job in jobs:
+    for job_index, job in enumerate(jobs, 1):
+        job_started = time.monotonic()
+        log_state(
+            "job",
+            f"[{job_index}/{len(jobs)}] Starting {job.job_id} "
+            f"(phase={job.phase}, runner={job.runner})",
+        )
         directory = job_directory(run_dir, job)
         directory.mkdir(parents=True, exist_ok=True)
         states = endpoint_state[(job.model_id, job.provider_id)]
@@ -249,66 +453,32 @@ def execute_benchmark(
             if job.runner == "bfcl"
             else states["plain"]
         )
-        write_json(directory / "preflight.json", state)
-        if job.runner == "aiperf":
-            runner_config = aiperf.prepare(config, job, directory)
-        elif job.runner == "lm-eval":
-            runner_config = lm_eval.prepare(config, job, directory)
-        else:
-            runner_config = bfcl.prepare(config, job, directory)
-
-        if dry_run:
-            validation = None
-            if job.runner == "aiperf":
-                validation = aiperf.validate(
-                    config,
-                    runner_config,
-                    directory,
-                    api_key=api_key or "dry-run-validation-placeholder",
-                )
-            if preflight_during_dry_run and state.get("status") != "supported":
-                status = "unsupported" if state.get("status") == "unsupported" else "failed"
-                result = _job_record(
-                    job,
-                    status,
-                    reason=state.get("reason", "preflight failed"),
-                    validation=validation,
-                )
-            elif validation is not None and validation["returnCode"] != 0:
-                result = _job_record(
-                    job,
-                    "failed",
-                    reason=(
-                        "AIPerf native configuration validation failed"
-                        + (
-                            f": {validation['failureSummary']}"
-                            if validation.get("failureSummary")
-                            else ""
-                        )
-                    ),
-                    validation=validation,
-                )
-            elif validation is not None:
-                result = _job_record(
-                    job,
-                    "planned",
-                    reason="dry run: configuration generated and AIPerf-validated",
-                    validation=validation,
-                )
-            else:
-                result = _job_record(job, "planned", reason="dry run: configuration generated")
-        elif state.get("status") != "supported":
-            status = "unsupported" if state.get("status") == "unsupported" else "failed"
-            result = _job_record(job, status, reason=state.get("reason", "preflight failed"))
-        else:
-            started = utc_now()
-            if job.runner == "aiperf":
-                execution = aiperf.execute(config, job, directory, api_key or "")
-            elif job.runner == "lm-eval":
-                execution = lm_eval.execute(config, job, directory, api_key or "")
-            else:
-                execution = bfcl.execute(config, job, directory, api_key or "")
-            result = _job_record(job, startedAt=started, finishedAt=utc_now(), **execution)
+        provider = config.get_provider(job.provider_id)
+        job_api_key = (
+            os.getenv(provider.api_key_env)
+            if config.is_direct and provider and provider.api_key_env
+            else api_key
+        )
+        try:
+            result = _execute_job(
+                config,
+                job,
+                directory,
+                state,
+                api_key=job_api_key,
+                dry_run=dry_run,
+                preflight_during_dry_run=preflight_during_dry_run,
+            )
+        except Exception as error:
+            reason = f"Runner error: {type(error).__name__}: {error}"
+            log_error(f"Job {job.job_id} failed: {reason}")
+            result = _job_record(
+                job,
+                "failed",
+                startedAt=utc_now(),
+                finishedAt=utc_now(),
+                reason=reason,
+            )
         write_json(directory / "job.json", result)
         manifest["jobs"].append(
             {
@@ -319,6 +489,12 @@ def execute_benchmark(
             }
         )
         _write_manifest(run_dir, manifest)
+        detail = f": {result['reason']}" if result.get("reason") else ""
+        log_state(
+            "job",
+            f"[{job_index}/{len(jobs)}] {job.job_id} -> {result['status']} "
+            f"in {time.monotonic() - job_started:.3f}s{detail}",
+        )
 
     if dry_run:
         manifest["status"] = (
@@ -334,4 +510,5 @@ def execute_benchmark(
         )
     manifest["completedAt"] = utc_now()
     _write_manifest(run_dir, manifest)
+    log_state("run", f"Finished with status {manifest['status']}: {run_dir}")
     return run_dir

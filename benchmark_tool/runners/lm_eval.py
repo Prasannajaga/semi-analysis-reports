@@ -29,11 +29,29 @@ def make_lm_eval_config(config: BenchmarkConfig, job: Job, output_dir: Path) -> 
     if correctness is None:
         raise ValueError("correctness phase is required")
     generation = correctness.generation
+    provider = config.get_provider(job.provider_id)
+    is_direct = config.is_direct or (provider is not None and provider.base_url is not None)
+
+    if is_direct and provider and provider.base_url:
+        endpoint_base = str(provider.base_url).rstrip("/")
+        base_url = f"{endpoint_base}/chat/completions"
+        model_name = provider.model or job.openrouter_model
+    else:
+        base_url = f"{str(config.gateway.base_url).rstrip('/')}/chat/completions"
+        model_name = job.openrouter_model
+
+    gen_kwargs: dict[str, Any] = {
+        "temperature": generation.temperature,
+        "max_tokens": generation.max_tokens,
+    }
+    if not is_direct:
+        gen_kwargs["provider"] = provider_routing(job.provider_slug, config.gateway)
+
     value: dict[str, Any] = {
         "model": "local-chat-completions",
         "model_args": {
-            "model": job.openrouter_model,
-            "base_url": f"{str(config.gateway.base_url).rstrip('/')}/chat/completions",
+            "model": model_name,
+            "base_url": base_url,
             "tokenizer_backend": "none",
             "tokenized_requests": False,
             "max_gen_toks": generation.max_tokens,
@@ -42,11 +60,7 @@ def make_lm_eval_config(config: BenchmarkConfig, job: Job, output_dir: Path) -> 
         },
         "tasks": [resolved_task(job)],
         "apply_chat_template": True,
-        "gen_kwargs": {
-            "temperature": generation.temperature,
-            "max_tokens": generation.max_tokens,
-            "provider": provider_routing(job.provider_slug, config.gateway),
-        },
+        "gen_kwargs": gen_kwargs,
         "seed": config.seed,
         "output_path": str(output_dir.resolve()),
         "log_samples": True,
@@ -63,13 +77,23 @@ def build_lm_eval_request(config: BenchmarkConfig, job: Job, messages: list[dict
     if correctness is None:
         raise ValueError("correctness phase is required")
     generation = correctness.generation
-    return {
+    provider = config.get_provider(job.provider_id)
+    is_direct = config.is_direct or (provider is not None and provider.base_url is not None)
+    model_name = (
+        provider.model
+        if is_direct and provider and provider.model
+        else job.openrouter_model
+    )
+
+    payload: dict[str, Any] = {
         "messages": messages,
-        "model": job.openrouter_model,
+        "model": model_name,
         "temperature": generation.temperature,
         "max_tokens": generation.max_tokens,
-        "provider": provider_routing(job.provider_slug, config.gateway),
     }
+    if not is_direct:
+        payload["provider"] = provider_routing(job.provider_slug, config.gateway)
+    return payload
 
 
 def prepare(config: BenchmarkConfig, job: Job, job_dir: Path) -> Path:

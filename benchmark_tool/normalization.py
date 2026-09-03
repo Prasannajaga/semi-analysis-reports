@@ -113,13 +113,13 @@ def normalize_job(
             data["pricing"] = normalize_pricing(
                 snapshot, usage, config.pricing.enabled, request_count=request_count
             )
-            data["source"].update(
-                {
-                    "summary": str(summary_path.relative_to(run_dir)),
-                    "records": str(records_path.relative_to(run_dir)),
-                    "pricingSnapshot": str(snapshot_path.relative_to(run_dir)),
-                }
-            )
+            sources = {
+                "summary": str(summary_path.relative_to(run_dir)),
+                "records": str(records_path.relative_to(run_dir)),
+            }
+            if snapshot_path.exists():
+                sources["pricingSnapshot"] = str(snapshot_path.relative_to(run_dir))
+            data["source"].update(sources)
         elif raw["runner"] == "lm-eval":
             runner_task = data["workload"].runner_task or data["workload"].name
             correctness, source_path = parse_lm_eval(job_dir, data["workload"].name, runner_task)

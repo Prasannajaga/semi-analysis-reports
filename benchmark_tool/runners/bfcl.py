@@ -22,12 +22,24 @@ def make_bfcl_config(config: BenchmarkConfig, job: Job, job_dir: Path) -> dict[s
     correctness = config.phases.correctness
     if correctness is None:
         raise ValueError("correctness phase is required")
-    return {
+    provider = config.get_provider(job.provider_id)
+    is_direct = config.is_direct or (provider is not None and provider.base_url is not None)
+
+    if is_direct and provider and provider.base_url:
+        endpoint_base = str(provider.base_url).rstrip("/")
+        api_url = endpoint_base
+        model_name = provider.model or job.openrouter_model
+        registry_name = f"direct-{job.config_hash}"
+    else:
+        api_url = str(config.gateway.base_url).rstrip("/")
+        model_name = job.openrouter_model
+        registry_name = f"openrouter-{job.config_hash}"
+
+    payload: dict[str, Any] = {
         "schemaVersion": "1.0",
-        "model": job.openrouter_model,
-        "registryName": f"openrouter-{job.config_hash}",
-        "provider": provider_routing(job.provider_slug, config.gateway),
-        "baseUrl": str(config.gateway.base_url).rstrip("/"),
+        "model": model_name,
+        "registryName": registry_name,
+        "baseUrl": api_url,
         "temperature": correctness.generation.temperature,
         "maxTokens": correctness.generation.max_tokens,
         "seed": config.seed,
@@ -37,6 +49,9 @@ def make_bfcl_config(config: BenchmarkConfig, job: Job, job_dir: Path) -> dict[s
         "resultDir": str((job_dir / "artifacts" / "results").resolve()),
         "scoreDir": str((job_dir / "artifacts" / "scores").resolve()),
     }
+    if not is_direct:
+        payload["provider"] = provider_routing(job.provider_slug, config.gateway)
+    return payload
 
 
 def prepare(config: BenchmarkConfig, job: Job, job_dir: Path) -> Path:
@@ -48,16 +63,26 @@ def prepare(config: BenchmarkConfig, job: Job, job_dir: Path) -> Path:
 def execute(config: BenchmarkConfig, job: Job, job_dir: Path, api_key: str) -> dict[str, object]:
     path = prepare(config, job, job_dir)
     bridge = Path(__file__).resolve().with_name("bfcl_bridge.py")
+    provider = config.get_provider(job.provider_id)
+    is_direct = config.is_direct or (provider is not None and provider.base_url is not None)
+
+    environment: dict[str, str] = {
+        "OPENAI_API_KEY": api_key,
+        "OPENAI_BASE_URL": (
+            str(provider.base_url).rstrip("/")
+            if is_direct and provider and provider.base_url
+            else str(config.gateway.base_url).rstrip("/")
+        ),
+    }
+    if not is_direct:
+        environment["BENCHMARK_OPENROUTER_ROUTING"] = json.dumps(
+            provider_routing(job.provider_slug, config.gateway), separators=(",", ":")
+        )
+
     process = run_process(
         [sys.executable, str(bridge), str(path)],
         job_dir,
-        {
-            "OPENAI_API_KEY": api_key,
-            "OPENAI_BASE_URL": str(config.gateway.base_url).rstrip("/"),
-            "BENCHMARK_OPENROUTER_ROUTING": json.dumps(
-                provider_routing(job.provider_slug, config.gateway), separators=(",", ":")
-            ),
-        },
+        environment,
         log_prefix="bfcl",
         redact_values=(api_key,),
     )

@@ -63,6 +63,15 @@ Performance  Reliability     Pricing
 
 ## Quick Start
 
+Set the top-level `DEBUG` flag in the benchmark YAML to control terminal detail:
+
+```yaml
+DEBUG: true  # detailed [state] : message execution logs and live runner output
+```
+
+Use `DEBUG: false` (the default when omitted) to show only the final job summary and
+errors. API keys are redacted from both terminal output and runner log artifacts.
+
 ### 1. Dry Run & Preflight
 
 ```bash
@@ -92,7 +101,7 @@ uv run python view.py results/<run-id>/results.jsonl --output report.html
 ### 4. Tests
 
 ```bash
-uv run pytest -m "not integration"
+uv run pytest
 ```
 
 

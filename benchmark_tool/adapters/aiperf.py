@@ -33,9 +33,22 @@ PERFORMANCE_METRICS = {
 
 
 def find_artifact(job_dir: Path, name: str) -> Path:
-    matches = sorted((job_dir / "artifacts").rglob(name))
-    if len(matches) != 1:
-        raise ValueError(f"expected one {name} under {job_dir / 'artifacts'}, found {len(matches)}")
+    artifacts_dir = job_dir / "artifacts"
+    # 1. Check direct file in root artifacts
+    direct = artifacts_dir / name
+    if direct.is_file():
+        return direct
+    # 2. Check main profiling phase artifact
+    profiling = artifacts_dir / "phases" / "profiling" / name
+    if profiling.is_file():
+        return profiling
+    # 3. Filter out warmup artifacts from rglob matches
+    non_warmup = [p for p in sorted(artifacts_dir.rglob(name)) if "warmup" not in p.parts]
+    if non_warmup:
+        return non_warmup[0]
+    matches = sorted(artifacts_dir.rglob(name))
+    if not matches:
+        raise ValueError(f"expected {name} under {artifacts_dir}, found 0")
     return matches[0]
 
 

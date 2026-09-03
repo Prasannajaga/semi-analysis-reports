@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenRouter Provider Benchmark</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+body {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+table { border-collapse: collapse; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-white text-slate-800 min-h-screen antialiased selection:bg-slate-200">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+  <!-- Minimal Header -->
+  <header class="border-b border-slate-200 pb-5 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">OpenRouter Provider Benchmark</h1>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">schema 1.0</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Empirical comparison of output TPS, latency, delivered cost, correctness, and reliability.</p>
+      </div>
+
+      <!-- Specific Model Dropdown (No All Models) -->
+      <div class="flex items-center gap-2.5 self-start sm:self-auto">
+        <label for="model-select" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Model:</label>
+        <select id="model-select" class="bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm rounded px-3 py-1.5 focus:outline-none focus:border-slate-500 font-medium cursor-pointer shadow-xs">
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Provider Matrix Table (Executive Summary) -->
+  <section class="mb-8">
+    <div class="flex items-center justify-between mb-2.5">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Provider Comparison Matrix</h2>
+      <span id="matrix-model-label" class="text-xs font-mono text-slate-500"></span>
+    </div>
+    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-mono text-[11px] uppercase">
+          <tr>
+            <th class="py-2.5 px-3.5">Provider</th>
+            <th class="py-2.5 px-3.5 text-right">Output TPS</th>
+            <th class="py-2.5 px-3.5 text-right">TTFT p95</th>
+            <th class="py-2.5 px-3.5 text-right">$ / 1k Successful</th>
+            <th class="py-2.5 px-3.5 text-right">Success Rate</th>
+            <th class="py-2.5 px-3.5 text-right">Accuracy</th>
+            <th class="py-2.5 px-3.5 text-right">Value Index</th>
+            <th class="py-2.5 px-3.5 text-center">Decision</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody" class="divide-y divide-slate-100 font-mono text-slate-800">
+        </tbody>
+      </table>
+      <div id="value-summary" class="border-t border-slate-200 bg-slate-50 px-3.5 py-3"></div>
+    </div>
+    <p class="mt-2 text-[11px] leading-5 text-slate-500">
+      <span class="font-semibold text-slate-600">Value calculation:</span>
+      output TPS ÷ effective cost per 1,000 successful requests, normalized to 100 among providers that pass every configured SLO (or among all observed providers if none pass). Correctness is shown separately so evaluation variance does not distort price-performance. All formulas use canonical records produced by <code class="font-mono text-slate-600">analysis.py</code>.
+    </p>
+  </section>
+
+  <!-- CORE DATA SECTIONS -->
+  <div class="space-y-8">
+
+    <!-- 1. PERFORMANCE SECTION -->
+    <section id="sec-performance" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-perf">
+            <span>1. Performance & Latency</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Output TPS (generated tokens/sec, higher is better) vs TTFT latency (p95 ms, lower is better).</p>
+        </div>
+        <div id="perf-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Performance Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="perf-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Performance Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Output TPS</th>
+              <th class="py-2 px-3 text-right">RPS</th>
+              <th class="py-2 px-3 text-right">TTFT Mean</th>
+              <th class="py-2 px-3 text-right">TTFT p95</th>
+              <th class="py-2 px-3 text-right">ITL p95</th>
+              <th class="py-2 px-3 text-right">E2E p95</th>
+            </tr>
+          </thead>
+          <tbody id="perf-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] leading-5 text-slate-500">
+        <span class="font-semibold text-slate-700">How calculated:</span>
+        Output TPS is the mean of <code class="font-mono text-slate-600">performance.output_token_throughput.mean</code> across completed performance jobs. Latency values are means of each job-level statistic; TTFT p95 is therefore an average of run p95s, not a percentile recomputed from raw requests.
+      </div>
+    </section>
+
+    <!-- 2. COST SECTION -->
+    <section id="sec-cost" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-cost">
+            <span>2. Cost Economics</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Measured workload spend and effective cost normalized per 1,000 successful requests.</p>
+        </div>
+        <div id="cost-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Cost Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="cost-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Cost Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Workload Cost</th>
+              <th class="py-2 px-3 text-right">$ / 1k Attempts</th>
+              <th class="py-2 px-3 text-right">$ / 1k Successful</th>
+              <th class="py-2 px-3 text-right">Prompt ($/1M)</th>
+              <th class="py-2 px-3 text-right">Completion ($/1M)</th>
+              <th class="py-2 px-3 text-right">Input Tokens</th>
+              <th class="py-2 px-3 text-right">Output Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="cost-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] leading-5 text-slate-500">
+        <span class="font-semibold text-slate-700">How calculated:</span>
+        Workload cost is <code class="font-mono text-slate-600">Σ pricing.estimated_cost_usd</code> for completed performance jobs. Effective $/1k successful is <code class="font-mono text-slate-600">total cost ÷ Σ successful requests × 1,000</code>. Each job cost is <code class="font-mono text-slate-600">((uncached input × input rate) + (cached input × cache rate) + (output × output rate) + (cache writes × write rate)) ÷ 1M</code>.
+      </div>
+    </section>
+
+    <!-- 3. RELIABILITY SECTION -->
+    <section id="sec-reliability" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-rel">
+            <span>3. Service Reliability & Rate Limits</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Request success rate (%, higher is better), failure counts, and 429 rate limit distribution.</p>
+        </div>
+        <div id="rel-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Reliability Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="rel-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Reliability Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Success Rate</th>
+              <th class="py-2 px-3 text-right">Total Requests</th>
+              <th class="py-2 px-3 text-right">Successful</th>
+              <th class="py-2 px-3 text-right">Failed</th>
+              <th class="py-2 px-3 text-right">HTTP 429s</th>
+              <th class="py-2 px-3">Error Breakdown</th>
+              <th class="py-2 px-3 text-center">SLO Status</th>
+            </tr>
+          </thead>
+          <tbody id="rel-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] leading-5 text-slate-500">
+        <span class="font-semibold text-slate-700">How calculated:</span>
+        Success rate is <code class="font-mono text-slate-600">Σ successful ÷ Σ total × 100</code>; failures and HTTP 429s are summed from normalized request outcomes. A provider passes only when every included performance job has <code class="font-mono text-slate-600">reliability.slo.passed = true</code>.
+      </div>
+    </section>
+
+    <!-- 4. CORRECTNESS SECTION -->
+    <section id="sec-correctness" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-corr">
+            <span>4. Correctness</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Benchmark accuracy score (%, higher is better), evaluation task, and standard error.</p>
+        </div>
+        <div id="corr-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Correctness Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="corr-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Correctness Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3">Benchmark Task</th>
+              <th class="py-2 px-3">Metric</th>
+              <th class="py-2 px-3 text-right">Accuracy Score</th>
+              <th class="py-2 px-3 text-right">Samples</th>
+              <th class="py-2 px-3 text-right">Stderr (± pp)</th>
+              <th class="py-2 px-3 text-right">Eval Cost</th>
+            </tr>
+          </thead>
+          <tbody id="corr-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] leading-5 text-slate-500">
+        <span class="font-semibold text-slate-700">How calculated:</span>
+        Accuracy is the sample-weighted mean <code class="font-mono text-slate-600">Σ(score × samples) ÷ Σ samples × 100</code>. Standard errors are combined using the same sample weights and displayed in percentage points; evaluation cost is summed across correctness jobs.
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Granular Audit Tables (Collapsible) -->
+  <details class="mt-8 border border-slate-200 rounded-lg bg-white overflow-hidden">
+    <summary class="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600 cursor-pointer hover:bg-slate-50 select-none flex items-center justify-between">
+      <span>Detailed Run Records & Metadata (Audit)</span>
+      <span class="text-[11px] text-slate-400 font-mono">Expand ↓</span>
+    </summary>
+    <div class="p-4 border-t border-slate-200 space-y-5 text-xs">
+      <div>
+        <h4 class="font-semibold text-slate-800 mb-1.5">Run Metadata</h4>
+        <div id="table-metadata" class="overflow-x-auto border border-slate-200 rounded"></div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-800 mb-1.5">Performance & AgentX Validity</h4>
+        <div id="table-performance" class="overflow-x-auto border border-slate-200 rounded"></div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-800 mb-1.5">Failures & Rate Limits</h4>
+        <div id="table-failures" class="overflow-x-auto border border-slate-200 rounded"></div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-800 mb-1.5">Raw JSONL Records</h4>
+        <pre id="raw-records" class="bg-slate-900 p-3 rounded text-[11px] font-mono text-slate-200 max-h-64 overflow-auto border border-slate-800"></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Floating Minimal Hover Tooltip -->
+  <div id="hover-tooltip" class="fixed hidden pointer-events-none z-50 px-3 py-2 bg-slate-900/95 text-slate-100 text-[11px] font-mono rounded shadow-lg border border-slate-800 transition-opacity leading-relaxed max-w-sm"></div>
+
+</div>
+
+<script>
+const records = __DATA__;
+
+const modelSelect = document.getElementById("model-select");
+
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = (v, d = 1) => typeof v === "number" ? v.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "—";
+const fmtUsd = (v, d = 4) => typeof v === "number" ? "$" + v.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "—";
+const fmtPct = (v, d = 1) => typeof v === "number" ? (v > 1 ? v : v * 100).toFixed(d) + "%" : "—";
+const fmtPp = (v, d = 2) => typeof v === "number" ? (v * 100).toFixed(d) + " pp" : "—";
+const validNumbers = values => values.filter(v => typeof v === "number" && Number.isFinite(v));
+const average = values => {
+  const valid = validNumbers(values);
+  return valid.length ? valid.reduce((a, v) => a + v, 0) / valid.length : null;
+};
+const total = values => {
+  const valid = validNumbers(values);
+  return valid.length ? valid.reduce((a, v) => a + v, 0) : null;
+};
+const titleCase = value => String(value || "").split(/[-_\s]+/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+
+// Configure Chart.js Defaults for Light Minimal Theme
+if (typeof Chart !== "undefined") {
+  Chart.defaults.color = "#4b5563";
+  Chart.defaults.borderColor = "#e5e7eb";
+  Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, -apple-system, sans-serif';
+  Chart.defaults.font.size = 11;
+  Chart.defaults.plugins.tooltip.backgroundColor = "#111827";
+  Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
+  Chart.defaults.plugins.tooltip.bodyColor = "#f9fafb";
+  Chart.defaults.plugins.tooltip.borderColor = "#374151";
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 8;
+  Chart.defaults.plugins.tooltip.cornerRadius = 4;
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.boxWidth = 8;
+}
+
+// Chart instances for cleanup & re-creation
+let perfChartInstance = null;
+let costChartInstance = null;
+let relChartInstance = null;
+let corrChartInstance = null;
+
+// Populate Model Dropdown (NO "All Models", only individual models)
+const modelLabels = {
+  "glm-5-3-flash": "GLM 5.3 Flash (glm-5-3-flash)",
+  "kimi-k3": "Kimi K3 (kimi-k3)",
+  "deepseek-v4-pro": "DeepSeek V4 Pro (deepseek-v4-pro)"
+};
+const uniqueModels = [...new Set(records.map(r => r.model?.id).filter(Boolean))].sort();
+
+modelSelect.innerHTML = uniqueModels.map(m => {
+  const label = modelLabels[m] || m;
+  return `<option value="${esc(m)}">${esc(label)}</option>`;
+}).join("");
+
+function getFilteredRows() {
+  const m = modelSelect.value || uniqueModels[0] || "";
+  return m ? records.filter(r => r.model?.id === m) : records;
+}
+
+function computeStats(rows) {
+  const providers = [...new Set(rows.map(r => r.provider?.id).filter(Boolean))].sort();
+  return providers.map(pId => {
+    const pRows = rows.filter(r => r.provider?.id === pId);
+
+    // Performance
+    const perfRuns = pRows.filter(r => r.phase === "performance" && r.status === "completed" && r.performance);
+    const tokTput = average(perfRuns.map(r => r.performance.output_token_throughput?.mean));
+    const reqTput = average(perfRuns.map(r => r.performance.request_throughput?.mean));
+    const ttftMean = average(perfRuns.map(r => r.performance.ttft?.mean));
+    const ttftP50 = average(perfRuns.map(r => r.performance.ttft?.p50));
+    const ttftP90 = average(perfRuns.map(r => r.performance.ttft?.p90));
+    const ttftP95 = average(perfRuns.map(r => r.performance.ttft?.p95));
+    const ttftP99 = average(perfRuns.map(r => r.performance.ttft?.p99));
+    const ttftMin = average(perfRuns.map(r => r.performance.ttft?.minimum));
+    const ttftMax = average(perfRuns.map(r => r.performance.ttft?.maximum));
+    const itlMean = average(perfRuns.map(r => r.performance.itl?.mean));
+    const itlP50 = average(perfRuns.map(r => r.performance.itl?.p50));
+    const itlP95 = average(perfRuns.map(r => r.performance.itl?.p95));
+    const e2eMean = average(perfRuns.map(r => r.performance.e2e_latency?.mean));
+    const e2eP50 = average(perfRuns.map(r => r.performance.e2e_latency?.p50));
+    const e2eP95 = average(perfRuns.map(r => r.performance.e2e_latency?.p95));
+    const userTputMean = average(perfRuns.map(r => r.performance.output_token_throughput_per_user?.mean));
+    const userTputP95 = average(perfRuns.map(r => r.performance.output_token_throughput_per_user?.p95));
+    const islMean = average(perfRuns.map(r => r.performance.input_sequence_length?.mean));
+    const oslMean = average(perfRuns.map(r => r.performance.output_sequence_length?.mean));
+    const concurrencies = [...new Set(perfRuns.map(r => r.workload?.concurrency).filter(v => v != null))].sort((a, b) => a - b);
+    const durations = [...new Set(perfRuns.map(r => r.workload?.duration_seconds).filter(v => v != null))].sort((a, b) => a - b);
+    const workloadNames = [...new Set(perfRuns.map(r => r.workload?.name).filter(Boolean))];
+
+    // Cost
+    const costRuns = perfRuns.filter(r => r.pricing?.estimated_cost_usd != null);
+    const costUsd = total(costRuns.map(r => r.pricing.estimated_cost_usd));
+    const costPerRequest = average(costRuns.map(r => r.pricing?.cost_per_request_usd));
+    const inPrice = average(costRuns.map(r => r.pricing?.input_usd_per_million));
+    const outPrice = average(costRuns.map(r => r.pricing?.output_usd_per_million));
+    const cachedPrice = average(costRuns.map(r => r.pricing?.cached_input_usd_per_million));
+    const inTokens = total(costRuns.map(r => r.pricing?.token_usage?.input_tokens));
+    const outTokens = total(costRuns.map(r => r.pricing?.token_usage?.output_tokens));
+    const cachedTokens = total(costRuns.map(r => r.pricing?.token_usage?.cached_input_tokens));
+    const totalTokens = (inTokens || 0) + (outTokens || 0);
+    const pricingMethods = [...new Set(costRuns.map(r => r.pricing?.method).filter(Boolean))];
+
+    // Reliability
+    const relRuns = perfRuns.filter(r => r.reliability);
+    const totalRequests = relRuns.reduce((a, r) => a + (r.reliability.total_requests || 0), 0);
+    const succRequests = relRuns.reduce((a, r) => a + (r.reliability.successful_requests || 0), 0);
+    const failRequests = relRuns.reduce((a, r) => a + (r.reliability.failed_requests || 0), 0);
+    const relRate = totalRequests > 0 ? (succRequests / totalRequests) * 100 : null;
+    const errorRate = totalRequests > 0 ? (failRequests / totalRequests) * 100 : null;
+    const sloPassed = perfRuns.length > 0 && relRuns.length === perfRuns.length && relRuns.every(r => r.reliability.slo?.passed === true);
+    const successSloTargets = validNumbers(relRuns.map(r => r.reliability.slo?.checks?.success_rate?.target));
+    const ttftSloTargets = validNumbers(relRuns.map(r => r.reliability.slo?.checks?.p95_ttft_ms?.target));
+    const successSloTarget = successSloTargets.length ? Math.max(...successSloTargets) : null;
+    const ttftSloTarget = ttftSloTargets.length ? Math.min(...ttftSloTargets) : null;
+    const errorMap = {};
+    relRuns.forEach(r => {
+      Object.entries(r.reliability.errors || {}).forEach(([k, v]) => {
+        errorMap[k] = (errorMap[k] || 0) + v;
+      });
+    });
+    const http429s = errorMap["http_429"] || 0;
+    const costPer1kAttempts = costUsd != null && totalRequests > 0 ? (costUsd / totalRequests) * 1000 : null;
+    const costPer1kSuccessful = costUsd != null && succRequests > 0 ? (costUsd / succRequests) * 1000 : null;
+
+    // Correctness
+    const corrRuns = pRows.filter(r => r.phase === "correctness" && r.status === "completed" && r.correctness?.score != null);
+    const corrWeights = corrRuns.map(r => r.correctness.sample_count || 1);
+    const corrWeightTotal = corrWeights.reduce((a, v) => a + v, 0);
+    const corrScoreRaw = corrRuns.length ? corrRuns.reduce((a, r, i) => a + r.correctness.score * corrWeights[i], 0) / corrWeightTotal : null;
+    const corrScore = corrScoreRaw != null ? corrScoreRaw * 100 : null;
+    const corrTask = corrRuns[0]?.correctness?.task || "gsm8k";
+    const corrMetric = corrRuns[0]?.correctness?.primary_metric || "exact_match";
+    const corrSamples = corrRuns.length ? total(corrRuns.map(r => r.correctness?.sample_count)) : null;
+    const corrStderrTerms = corrRuns.map((r, i) => typeof r.correctness?.stderr === "number" ? Math.pow(corrWeights[i] * r.correctness.stderr, 2) : null);
+    const corrStderrValid = validNumbers(corrStderrTerms);
+    const corrStderr = corrStderrValid.length === corrRuns.length && corrRuns.length ? Math.sqrt(corrStderrValid.reduce((a, v) => a + v, 0)) / corrWeightTotal : null;
+    const corrCost = total(corrRuns.map(r => r.pricing?.estimated_cost_usd));
+    const valueRaw = tokTput != null && costPer1kSuccessful > 0 ? tokTput / costPer1kSuccessful : null;
+
+    return {
+      id: pId,
+      name: titleCase(pId),
+      tokTput, reqTput, ttftMean, ttftP50, ttftP90, ttftP95, ttftP99, ttftMin, ttftMax,
+      itlMean, itlP50, itlP95, e2eMean, e2eP50, e2eP95, userTputMean, userTputP95, islMean, oslMean,
+      perfRunCount: perfRuns.length, concurrencies, durations, workloadNames,
+      costUsd, costPerRequest, costPer1kAttempts, costPer1kSuccessful, inPrice, outPrice, cachedPrice, inTokens, outTokens, cachedTokens, totalTokens, pricingMethods,
+      totalRequests, succRequests, failRequests, http429s, relRate, errorRate, sloPassed, successSloTarget, ttftSloTarget, errorMap,
+      corrScore, corrTask, corrMetric, corrSamples, corrStderr, corrCost, corrRunCount: corrRuns.length,
+      valueRaw, valueScore: null
+    };
+  });
+}
+
+function render() {
+  const rows = getFilteredRows();
+  const currentModel = modelSelect.value || uniqueModels[0] || "";
+  document.getElementById("matrix-model-label").textContent = modelLabels[currentModel] || currentModel || "—";
+
+  const stats = computeStats(rows);
+
+  // Determine winners
+  const perfWinner = [...stats].filter(s => s.tokTput != null).sort((a, b) => b.tokTput - a.tokTput)[0];
+  const costWinner = [...stats].filter(s => s.costPer1kSuccessful != null).sort((a, b) => a.costPer1kSuccessful - b.costPer1kSuccessful)[0];
+  const relWinner = [...stats].filter(s => s.relRate != null).sort((a, b) => (b.relRate - a.relRate) || (a.failRequests - b.failRequests))[0];
+  const corrWinner = [...stats].filter(s => s.corrScore != null).sort((a, b) => b.corrScore - a.corrScore)[0];
+  const sloEligible = stats.filter(s => s.sloPassed && s.valueRaw != null);
+  const valuePool = sloEligible.length ? sloEligible : stats.filter(s => s.valueRaw != null);
+  const valueCeiling = valuePool.length ? Math.max(...valuePool.map(s => s.valueRaw)) : null;
+  stats.forEach(s => {
+    s.valueScore = valueCeiling && (!sloEligible.length || s.sloPassed) && s.valueRaw != null
+      ? (s.valueRaw / valueCeiling) * 100
+      : null;
+  });
+  const valueRanking = [...valuePool].sort((a, b) => b.valueRaw - a.valueRaw);
+  const valueWinner = valueRanking[0];
+  const valueRunnerUp = valueRanking[1];
+  const valueLead = valueWinner && valueRunnerUp?.valueRaw > 0 ? ((valueWinner.valueRaw / valueRunnerUp.valueRaw) - 1) * 100 : null;
+
+  currentStatsMap = Object.fromEntries(stats.map(s => [s.id, s]));
+
+  // Update Section Tags
+  document.getElementById("perf-winner-tag").innerHTML = perfWinner
+    ? `<span class="cursor-help" data-tip-provider="${perfWinner.id}" data-tip-type="perf">Leader: ${perfWinner.name} (${num(perfWinner.tokTput, 1)} TPS · ${num(perfWinner.ttftP95, 0)}ms TTFT)</span>`
+    : "No data";
+  document.getElementById("cost-winner-tag").innerHTML = costWinner
+    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest effective cost: ${costWinner.name} (${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k successful)</span>`
+    : "No data";
+  document.getElementById("rel-winner-tag").innerHTML = relWinner
+    ? `<span class="cursor-help" data-tip-provider="${relWinner.id}" data-tip-type="rel">Highest: ${relWinner.name} (${fmtPct(relWinner.relRate)} success · ${relWinner.http429s} 429s)</span>`
+    : "No data";
+  document.getElementById("corr-winner-tag").innerHTML = corrWinner
+    ? `<span class="cursor-help" data-tip-provider="${corrWinner.id}" data-tip-type="corr">Top: ${corrWinner.name} (${fmtPct(corrWinner.corrScore)} ${corrWinner.corrTask})</span>`
+    : "No data";
+
+  // Render Matrix Table
+  const rankedStats = [...stats].sort((a, b) => {
+    if (a.id === valueWinner?.id) return -1;
+    if (b.id === valueWinner?.id) return 1;
+    return (b.valueScore ?? -1) - (a.valueScore ?? -1) || a.name.localeCompare(b.name);
+  });
+  document.getElementById("matrix-tbody").innerHTML = rankedStats.map(s => {
+    const isPerf = s.id === perfWinner?.id;
+    const isCost = s.id === costWinner?.id;
+    const isRel = s.id === relWinner?.id;
+    const isCorr = s.id === corrWinner?.id;
+    const isValue = s.id === valueWinner?.id;
+    let badge = '<span class="text-slate-400">—</span>';
+    if (isValue) badge = '<span class="font-semibold text-slate-900">Recommended</span>';
+    else if (!s.sloPassed) badge = '<span class="text-rose-600">Below SLO</span>';
+    else if (isCorr) badge = '<span class="font-semibold text-purple-700">Top Accuracy</span>';
+    else if (isPerf) badge = '<span class="font-semibold text-blue-700">Highest TPS</span>';
+    else if (isCost) badge = '<span class="font-semibold text-emerald-700">Lowest Cost</span>';
+    else if (isRel) badge = '<span class="font-semibold text-teal-700">Most Reliable</span>';
+
+    return `
+    <tr class="hover:bg-slate-50 transition-colors ${isValue ? 'bg-slate-50/70' : ''}">
+      <td class="py-2.5 px-3.5 font-sans font-semibold text-slate-900 cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${esc(s.name)}</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help ${isPerf ? 'font-bold text-blue-700' : ''}" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.tokTput, 1)}</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.ttftP95, 0)} ms</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help ${isCost ? 'font-bold text-emerald-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costPer1kSuccessful, 3)}</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help ${isRel ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="rel">${fmtPct(s.relRate)}</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help ${isCorr ? 'font-bold text-purple-700' : ''}" data-tip-provider="${s.id}" data-tip-type="corr">${fmtPct(s.corrScore)}</td>
+      <td class="py-2.5 px-3.5 text-right cursor-help ${isValue ? 'font-bold text-slate-900' : 'text-slate-600'}" data-tip-provider="${s.id}" data-tip-type="value">${s.valueScore != null ? num(s.valueScore, 0) : "—"}</td>
+      <td class="py-2.5 px-3.5 text-center text-[11px] cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${badge}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("value-summary").innerHTML = valueWinner ? `
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+      <div class="text-xs text-slate-700">
+        <span class="font-semibold text-slate-900">Best measured value: ${esc(valueWinner.name)}</span>
+        <span class="text-slate-500"> · ${num(valueWinner.tokTput, 1)} TPS · ${fmtUsd(valueWinner.costPer1kSuccessful, 3)}/1k successful · ${fmtPct(valueWinner.relRate)} success${valueWinner.corrScore != null ? ` · ${fmtPct(valueWinner.corrScore)} accuracy` : ""}</span>
+      </div>
+      <span class="font-mono text-[11px] text-slate-600">${num(valueWinner.valueScore, 0)} value index${valueLead != null ? ` · ${num(valueLead, 0)}% ahead` : ""}</span>
+    </div>
+    <p class="mt-1 text-[11px] text-slate-500">Highest observed output TPS per effective dollar${sloEligible.length ? " among providers passing all configured SLOs" : "; no provider passed every configured SLO"}. Use this as a workload-specific recommendation, not a universal provider ranking.</p>
+  ` : '<p class="text-xs text-slate-500">Insufficient completed performance, pricing, or reliability data to calculate provider value.</p>';
+
+  // RENDER CHARTS USING CHART.JS
+  renderChartJs(stats, perfWinner?.id, costWinner?.id, relWinner?.id, corrWinner?.id);
+
+  // RENDER TABLES
+  renderSectionTables(stats, rows);
+}
+
+function providerTooltip(stats, detailLines) {
+  return {
+    displayColors: false,
+    bodySpacing: 3,
+    filter: item => item.datasetIndex === 0,
+    callbacks: {
+      title: items => {
+        const stat = stats[items[0]?.dataIndex];
+        const model = modelSelect.value || uniqueModels[0] || "";
+        return stat ? `${stat.name} · ${model}` : model;
+      },
+      label: context => detailLines(stats[context.dataIndex])
+    }
+  };
+}
+
+function runContextLines(s) {
+  const concurrency = s.concurrencies.length ? s.concurrencies.join(", ") : "—";
+  const duration = s.durations.length ? s.durations.map(v => `${num(v / 60, v % 60 ? 1 : 0)} min`).join(", ") : "—";
+  return [`Performance jobs: ${s.perfRunCount}`, `Concurrency tested: ${concurrency}`, `Duration/job: ${duration}`];
+}
+
+function perfDetailLines(s) {
+  return [
+    `Output TPS: ${num(s.tokTput, 1)} (user avg: ${num(s.userTputMean, 1)} · p95: ${num(s.userTputP95, 1)})`,
+    `Request Throughput: ${num(s.reqTput, 2)} req/s`,
+    `TTFT p50 / p90 / p95: ${num(s.ttftP50, 0)} / ${num(s.ttftP90, 0)} / ${num(s.ttftP95, 0)} ms`,
+    `TTFT mean / range: ${num(s.ttftMean, 0)} ms (${num(s.ttftMin, 0)}–${num(s.ttftMax, 0)} ms)`,
+    `ITL mean / p95: ${num(s.itlMean, 1)} / ${num(s.itlP95, 1)} ms`,
+    `E2E latency mean / p95: ${num(s.e2eMean, 0)} / ${num(s.e2eP95, 0)} ms`,
+    `Sequence (avg): ISL ${num(s.islMean, 0)} tok · OSL ${num(s.oslMean, 0)} tok`,
+    ...runContextLines(s)
+  ];
+}
+
+function costDetailLines(s) {
+  return [
+    `Workload Spend: ${fmtUsd(s.costUsd, 4)}`,
+    `Cost / 1k Successful: ${fmtUsd(s.costPer1kSuccessful, 3)}`,
+    `Cost / 1k Attempts: ${fmtUsd(s.costPer1kAttempts, 3)}`,
+    `Cost / Request: ${fmtUsd(s.costPerRequest, 4)}`,
+    `Prompt Rate: ${fmtUsd(s.inPrice, 2)} / 1M tokens`,
+    `Completion Rate: ${fmtUsd(s.outPrice, 2)} / 1M tokens`,
+    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 2)} / 1M tokens` : null,
+    `Token Volume: ${s.inTokens?.toLocaleString() ?? 0} in · ${s.outTokens?.toLocaleString() ?? 0} out (${s.totalTokens?.toLocaleString() ?? 0} total)`,
+    `Pricing Basis: ${s.pricingMethods.map(titleCase).join(", ") || "Standard"}`
+  ].filter(Boolean);
+}
+
+function relDetailLines(s) {
+  const otherErrors = Object.entries(s.errorMap || {})
+    .filter(([k, v]) => k !== "http_429" && v > 0)
+    .map(([k, v]) => `${titleCase(k)}: ${v}`)
+    .join(", ");
+  return [
+    `Success Rate: ${fmtPct(s.relRate)} (${s.succRequests.toLocaleString()} / ${s.totalRequests.toLocaleString()})`,
+    `Failed Requests: ${s.failRequests.toLocaleString()} (${fmtPct(s.errorRate)} error rate)`,
+    `HTTP 429 Rate Limits: ${s.http429s.toLocaleString()}`,
+    otherErrors ? `Other Errors: ${otherErrors}` : `Other Errors: None`,
+    `SLO Success Target: >= ${fmtPct(s.successSloTarget)} (${s.successSloTarget != null && s.relRate != null && s.relRate >= s.successSloTarget * 100 ? "PASS" : "FAIL"})`,
+    `SLO TTFT p95 Target: <= ${s.ttftSloTarget != null ? num(s.ttftSloTarget, 0) + " ms" : "—"} (${s.ttftSloTarget != null && s.ttftP95 != null && s.ttftP95 <= s.ttftSloTarget ? "PASS" : "FAIL"})`,
+    `SLO Decision: ${s.sloPassed ? "PASSED all configured targets" : "FAILED one or more SLO checks"}`
+  ];
+}
+
+function corrDetailLines(s) {
+  return [
+    `Benchmark Accuracy: ${fmtPct(s.corrScore, 2)}`,
+    s.corrStderr != null ? `Standard Error: ±${fmtPp(s.corrStderr)}` : null,
+    `Task / Metric: ${s.corrTask} (${s.corrMetric})`,
+    `Evaluated Samples: ${s.corrSamples?.toLocaleString() ?? "—"}`,
+    `Evaluation Cost: ${fmtUsd(s.corrCost, 4)}`,
+    `Completed Eval Jobs: ${s.corrRunCount}`
+  ].filter(Boolean);
+}
+
+function providerSummaryLines(s) {
+  return [
+    `Output TPS: ${num(s.tokTput, 1)} · TTFT p95: ${num(s.ttftP95, 0)} ms`,
+    `Cost / 1k Successful: ${fmtUsd(s.costPer1kSuccessful, 3)} (spend: ${fmtUsd(s.costUsd, 3)})`,
+    `Reliability: ${fmtPct(s.relRate)} success (${s.http429s} 429s)`,
+    s.corrScore != null ? `Accuracy: ${fmtPct(s.corrScore)} (${s.corrTask})` : null,
+    `SLO: ${s.sloPassed ? "Passed" : "Below SLO"} · Value Index: ${s.valueScore != null ? num(s.valueScore, 0) : "—"}`
+  ].filter(Boolean);
+}
+
+// Render All Four Charts Using Chart.js
+function renderChartJs(stats, perfWinId, costWinId, relWinId, corrWinId) {
+  if (typeof Chart === "undefined") return;
+
+  const labels = stats.map(s => s.name);
+
+  // 1. Performance Chart (Dual Axis: Output TPS vs TTFT p95)
+  if (perfChartInstance) perfChartInstance.destroy();
+  const perfCtx = document.getElementById("perf-chart").getContext("2d");
+  perfChartInstance = new Chart(perfCtx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Output TPS ↑",
+          data: stats.map(s => s.tokTput != null ? Number(s.tokTput.toFixed(1)) : null),
+          backgroundColor: stats.map(s => s.id === perfWinId ? "#0284c7" : "#94a3b8"),
+          borderRadius: 4,
+          yAxisID: "y"
+        },
+        {
+          label: "TTFT p95 (ms) ↓",
+          data: stats.map(s => s.ttftP95 != null ? Number(s.ttftP95.toFixed(1)) : null),
+          backgroundColor: "#6366f1",
+          borderRadius: 4,
+          yAxisID: "y1"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        tooltip: providerTooltip(stats, perfDetailLines)
+      },
+      scales: {
+        y: {
+          type: "linear",
+          position: "left",
+          title: { display: true, text: "Output TPS", color: "#0284c7", font: { weight: '600' } },
+          grid: { color: "#f3f4f6" }
+        },
+        y1: {
+          type: "linear",
+          position: "right",
+          title: { display: true, text: "TTFT p95 (ms)", color: "#6366f1", font: { weight: '600' } },
+          grid: { drawOnChartArea: false }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 2. Cost Chart (Workload Cost vs Effective Cost per 1k Successful Requests)
+  if (costChartInstance) costChartInstance.destroy();
+  const costCtx = document.getElementById("cost-chart").getContext("2d");
+  costChartInstance = new Chart(costCtx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Workload Cost ($) ↓",
+          data: stats.map(s => s.costUsd != null ? Number(s.costUsd.toFixed(3)) : null),
+          backgroundColor: stats.map(s => s.id === costWinId ? "#10b981" : "#94a3b8"),
+          borderRadius: 4,
+          yAxisID: "y"
+        },
+        {
+          label: "$ / 1k Successful ↓",
+          data: stats.map(s => s.costPer1kSuccessful != null ? Number(s.costPer1kSuccessful.toFixed(3)) : null),
+          backgroundColor: "#14b8a6",
+          borderRadius: 4,
+          yAxisID: "y1"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        tooltip: providerTooltip(stats, costDetailLines)
+      },
+      scales: {
+        y: {
+          type: "linear",
+          position: "left",
+          title: { display: true, text: "Workload Cost ($)", color: "#10b981", font: { weight: '600' } },
+          grid: { color: "#f3f4f6" },
+          ticks: { callback: v => "$" + Number(v).toFixed(2) }
+        },
+        y1: {
+          type: "linear",
+          position: "right",
+          title: { display: true, text: "$ / 1k Successful", color: "#14b8a6", font: { weight: '600' } },
+          grid: { drawOnChartArea: false },
+          ticks: { callback: v => "$" + Number(v).toFixed(2) }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 3. Reliability Chart (Success Rate % vs Failed Requests Count)
+  if (relChartInstance) relChartInstance.destroy();
+  const relCtx = document.getElementById("rel-chart").getContext("2d");
+  relChartInstance = new Chart(relCtx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Success Rate (%) ↑",
+          data: stats.map(s => s.relRate != null ? Number(s.relRate.toFixed(1)) : null),
+          backgroundColor: "#0d9488",
+          borderRadius: 4,
+          yAxisID: "y"
+        },
+        {
+          label: "HTTP 429 Errors (count) ↓",
+          data: stats.map(s => s.http429s || 0),
+          backgroundColor: stats.map(s => s.http429s ? "#f43f5e" : "#e2e8f0"),
+          borderRadius: 4,
+          yAxisID: "y1"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        tooltip: providerTooltip(stats, relDetailLines)
+      },
+      scales: {
+        y: {
+          type: "linear",
+          position: "left",
+          min: 0,
+          max: 100,
+          title: { display: true, text: "Success Rate (%)", color: "#0d9488", font: { weight: '600' } },
+          grid: { color: "#f3f4f6" },
+          ticks: { callback: v => v + "%" }
+        },
+        y1: {
+          type: "linear",
+          position: "right",
+          title: { display: true, text: "429 Rate Limits", color: "#f43f5e", font: { weight: '600' } },
+          grid: { drawOnChartArea: false }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 4. Correctness Chart (Benchmark Accuracy %)
+  if (corrChartInstance) corrChartInstance.destroy();
+  const corrCtx = document.getElementById("corr-chart").getContext("2d");
+  corrChartInstance = new Chart(corrCtx, {
+    type: "bar",
+    data: {
+      labels: stats.map(s => `${s.name} (${s.corrTask})`),
+      datasets: [
+        {
+          label: "Benchmark Accuracy (%) ↑",
+          data: stats.map(s => s.corrScore != null ? Number(s.corrScore.toFixed(2)) : null),
+          backgroundColor: stats.map(s => s.id === corrWinId ? "#8b5cf6" : "#cbd5e1"),
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        tooltip: providerTooltip(stats, corrDetailLines)
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 100,
+          title: { display: true, text: "Accuracy (%)", color: "#8b5cf6", font: { weight: '600' } },
+          grid: { color: "#f3f4f6" },
+          ticks: { callback: v => v + "%" }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderSectionTables(stats, rows) {
+  // Performance table
+  document.getElementById("perf-table-body").innerHTML = stats.map(s => `
+    <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">
+      <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+      <td class="py-2 px-3 text-right font-medium text-slate-800">${num(s.tokTput, 1)}</td>
+      <td class="py-2 px-3 text-right">${num(s.reqTput, 1)}</td>
+      <td class="py-2 px-3 text-right">${num(s.ttftMean, 1)} ms</td>
+      <td class="py-2 px-3 text-right font-medium text-slate-800">${num(s.ttftP95, 1)} ms</td>
+      <td class="py-2 px-3 text-right">${num(s.itlP95, 1)} ms</td>
+      <td class="py-2 px-3 text-right">${num(s.e2eP95, 1)} ms</td>
+    </tr>
+  `).join("");
+
+  // Cost table
+  document.getElementById("cost-table-body").innerHTML = stats.map(s => `
+    <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cost">
+      <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+      <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costUsd, 3)}</td>
+      <td class="py-2 px-3 text-right">${fmtUsd(s.costPer1kAttempts, 3)}</td>
+      <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costPer1kSuccessful, 3)}</td>
+      <td class="py-2 px-3 text-right">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
+      <td class="py-2 px-3 text-right">${s.outPrice != null ? "$" + num(s.outPrice, 2) : "—"}</td>
+      <td class="py-2 px-3 text-right">${s.inTokens != null ? s.inTokens.toLocaleString() : "—"}</td>
+      <td class="py-2 px-3 text-right">${s.outTokens != null ? s.outTokens.toLocaleString() : "—"}</td>
+    </tr>
+  `).join("");
+
+  // Reliability table
+  document.getElementById("rel-table-body").innerHTML = stats.map(s => {
+    const errList = Object.entries(s.errorMap || {}).map(([k, v]) => `${k}:${v}`).join(", ") || "None";
+    const sloBadge = s.sloPassed
+      ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Passed</span>'
+      : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Failed</span>';
+    return `
+    <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="rel">
+      <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+      <td class="py-2 px-3 text-right font-bold text-teal-700">${fmtPct(s.relRate)}</td>
+      <td class="py-2 px-3 text-right">${s.totalRequests != null ? s.totalRequests.toLocaleString() : "—"}</td>
+      <td class="py-2 px-3 text-right">${s.succRequests != null ? s.succRequests.toLocaleString() : "—"}</td>
+      <td class="py-2 px-3 text-right ${s.failRequests ? 'text-rose-600 font-bold' : 'text-slate-400'}">${s.failRequests || 0}</td>
+      <td class="py-2 px-3 text-right ${s.http429s ? 'text-rose-600 font-bold' : 'text-slate-400'}">${s.http429s || 0}</td>
+      <td class="py-2 px-3 text-slate-500 font-mono text-[11px]">${esc(errList)}</td>
+      <td class="py-2 px-3 text-center">${sloBadge}</td>
+    </tr>`;
+  }).join("");
+
+  // Correctness table
+  document.getElementById("corr-table-body").innerHTML = stats.map(s => `
+    <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="corr">
+      <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+      <td class="py-2 px-3 font-mono">${esc(s.corrTask)}</td>
+      <td class="py-2 px-3 text-slate-500 font-mono text-[11px]">${esc(s.corrMetric)}</td>
+      <td class="py-2 px-3 text-right font-bold text-purple-700">${fmtPct(s.corrScore)}</td>
+      <td class="py-2 px-3 text-right">${s.corrSamples != null ? s.corrSamples.toLocaleString() : "—"}</td>
+      <td class="py-2 px-3 text-right text-slate-500">${s.corrStderr != null ? "±" + fmtPp(s.corrStderr) : "—"}</td>
+      <td class="py-2 px-3 text-right">${s.corrCost != null ? fmtUsd(s.corrCost, 3) : "—"}</td>
+    </tr>
+  `).join("");
+
+  // Audit Tables
+  function auditTable(headers, dataRows) {
+    if (!dataRows.length) return '<div class="p-3 text-slate-400 font-mono text-xs">No records</div>';
+    return `<table class="w-full text-xs text-left font-mono">
+      <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold"><tr>${headers.map(h => `<th class="py-2 px-3">${esc(h)}</th>`).join("")}</tr></thead>
+      <tbody class="divide-y divide-slate-100 bg-white">${dataRows.map(r => `<tr class="hover:bg-slate-50">${r.map(c => `<td class="py-2 px-3">${c}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table>`;
+  }
+
+  document.getElementById("table-metadata").innerHTML = auditTable(
+    ["Run ID", "Model", "OpenRouter ID", "Provider", "Slug", "Status"],
+    rows.map(r => [esc(r.run_id), esc(r.model.id), esc(r.model.openrouter_id), esc(r.provider.id), esc(r.provider.openrouter_slug), `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${esc(r.status)}</span>`])
+  );
+
+  document.getElementById("table-performance").innerHTML = auditTable(
+    ["Model", "Provider", "Concurrency", "TTFT p95", "Tokens/s", "Req/s", "AgentX Valid"],
+    rows.filter(r => r.performance).map(r => [
+      esc(r.model.id),
+      esc(r.provider.id),
+      String(r.workload.concurrency ?? "—"),
+      num(r.performance.ttft?.p95, 1) + " ms",
+      num(r.performance.output_token_throughput?.mean, 1),
+      num(r.performance.request_throughput?.mean, 1),
+      r.agentx ? (r.agentx.submission_valid ? '<span class="text-emerald-700 font-semibold">Valid</span>' : '<span class="text-rose-700 font-semibold">Invalid</span>') : "N/A"
+    ])
+  );
+
+  document.getElementById("table-failures").innerHTML = auditTable(
+    ["Model", "Provider", "Status", "Reason"],
+    rows.filter(r => r.status !== "completed" || (r.agentx && !r.agentx.submission_valid)).map(r => [
+      esc(r.model.id),
+      esc(r.provider.id),
+      `<span class="text-rose-600 font-semibold">${esc(r.status)}</span>`,
+      esc(r.reason || r.agentx?.submission_invalid_reasons?.join(", ") || "Validation failure")
+    ])
+  );
+
+  document.getElementById("raw-records").textContent = rows.map(r => JSON.stringify(r)).join("\n");
+}
+
+// Floating Minimal Tooltip Implementation
+const tooltipEl = document.getElementById("hover-tooltip");
+
+function showTooltip(e, title, lines) {
+  if (!tooltipEl || !lines || !lines.length) return;
+  const headerHtml = title ? `<div class="font-sans font-semibold text-white border-b border-slate-700/80 pb-1 mb-1.5 text-xs">${esc(title)}</div>` : "";
+  const bodyHtml = lines.map(line => `<div class="text-slate-300 text-[11px] leading-tight py-0.5">${esc(line)}</div>`).join("");
+  tooltipEl.innerHTML = headerHtml + bodyHtml;
+  tooltipEl.classList.remove("hidden");
+  positionTooltip(e);
+}
+
+function positionTooltip(e) {
+  if (!tooltipEl || tooltipEl.classList.contains("hidden")) return;
+  const pad = 12;
+  let x = e.clientX + pad;
+  let y = e.clientY + pad;
+  const rect = tooltipEl.getBoundingClientRect();
+  if (x + rect.width > window.innerWidth - pad) {
+    x = Math.max(pad, e.clientX - rect.width - pad);
+  }
+  if (y + rect.height > window.innerHeight - pad) {
+    y = Math.max(pad, e.clientY - rect.height - pad);
+  }
+  tooltipEl.style.left = `${x}px`;
+  tooltipEl.style.top = `${y}px`;
+}
+
+function hideTooltip() {
+  if (tooltipEl) tooltipEl.classList.add("hidden");
+}
+
+document.addEventListener("mousemove", positionTooltip);
+
+document.addEventListener("mouseover", e => {
+  const target = e.target.closest("[data-tip-type]");
+  if (!target) return;
+  const pId = target.getAttribute("data-tip-provider");
+  const tipType = target.getAttribute("data-tip-type");
+  const stat = pId ? currentStatsMap[pId] : null;
+  const model = modelSelect.value || uniqueModels[0] || "";
+
+  if (tipType === "perf" && stat) {
+    showTooltip(e, `${stat.name} · Performance & Latency`, perfDetailLines(stat));
+  } else if (tipType === "cost" && stat) {
+    showTooltip(e, `${stat.name} · Cost Economics`, costDetailLines(stat));
+  } else if (tipType === "rel" && stat) {
+    showTooltip(e, `${stat.name} · Reliability & Rate Limits`, relDetailLines(stat));
+  } else if (tipType === "corr" && stat) {
+    showTooltip(e, `${stat.name} · Correctness & Accuracy`, corrDetailLines(stat));
+  } else if (tipType === "value" && stat) {
+    showTooltip(e, `${stat.name} · Value Index`, [
+      `Value Index: ${stat.valueScore != null ? num(stat.valueScore, 0) : "—"}`,
+      `Formula: Output TPS (${num(stat.tokTput, 1)}) ÷ Cost/1k Successful (${fmtUsd(stat.costPer1kSuccessful, 3)})`,
+      `Raw efficiency: ${stat.valueRaw ? num(stat.valueRaw, 1) + " tokens / $" : "—"}`,
+      `Normalized to 100 among SLO-passing providers.`
+    ]);
+  } else if (tipType === "summary" && stat) {
+    showTooltip(e, `${stat.name} · ${model}`, providerSummaryLines(stat));
+  } else if (tipType === "sec-perf") {
+    showTooltip(e, `Performance Methodology`, [
+      `Output TPS: Total generated tokens ÷ duration.`,
+      `TTFT: Time-To-First-Token p50/p90/p95 latency in milliseconds.`,
+      `ITL: Inter-token streaming interval latency in milliseconds.`
+    ]);
+  } else if (tipType === "sec-cost") {
+    showTooltip(e, `Cost Economics Methodology`, [
+      `Measured Workload Cost: Real spend for test run.`,
+      `$/1k Successful: Spend per 1,000 requests delivering output.`,
+      `Derived from OpenRouter snapshot token rates per 1M tokens.`
+    ]);
+  } else if (tipType === "sec-rel") {
+    showTooltip(e, `Reliability Methodology`, [
+      `Success Rate: Successful requests ÷ total attempts × 100.`,
+      `HTTP 429: Rate-limit rejections under concurrency load.`,
+      `SLO Status: Evaluates success rate & TTFT against targets.`
+    ]);
+  } else if (tipType === "sec-corr") {
+    showTooltip(e, `Correctness Methodology`, [
+      `Measures evaluation benchmark accuracy against task dataset.`,
+      `Reported with sample-weighted mean and standard error.`
+    ]);
+  }
+});
+
+document.addEventListener("mouseout", e => {
+  const target = e.target.closest("[data-tip-type]");
+  if (target) hideTooltip();
+});
+
+modelSelect.addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
