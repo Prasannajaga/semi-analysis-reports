@@ -10,182 +10,91 @@ The objective of this project is to benchmark public, serverless inference endpo
 
 By evaluating real-world workloads, this analysis answers the fundamental question: **Why should a customer choose one provider over another based on their specific technical, economic, and operational priorities?**
 
-## Development setup
-
-This project uses [uv](https://docs.astral.sh/uv/) with Python 3.12. The lockfile is
-the source of truth for reproducible installs.
+## Development Setup
 
 ```bash
 uv sync --locked
-cp .env.example .env
+cp .env.example .env  # set OPENROUTER_API_KEY
 ```
 
-Set `OPENROUTER_API_KEY` in `.env` before running live OpenRouter requests. The
-default environment includes AIPerf and the development tools. Correctness runners
-are optional because they add large dependency trees:
+> Optional correctness runners: `uv sync --locked --extra lm-eval --extra bfcl`
 
-```bash
-# Install one runner:
-uv sync --locked --extra lm-eval
-uv sync --locked --extra bfcl
-
-# Or install both runners:
-uv sync --locked --all-extras
-```
-
-The current BFCL distribution pulls PyTorch and CUDA runtime packages, so its
-optional environment requires several gigabytes of download and disk space.
-
-Run project commands inside the managed environment:
-
-```bash
-uv run aiperf --version
-uv run pytest
-uv run ruff check .
-uv run mypy
-```
-
-## OpenRouter benchmark workflow
-
-The implementation deliberately keeps execution, normalization, and presentation
-separate:
+## Benchmark Workflow
 
 ```text
-configs/provider-benchmark.example.yaml
-  -> benchmark.py  -> immutable raw run directory
-  -> analysis.py   -> canonical results.jsonl
-  -> view.py       -> self-contained report.html
+         benchmark.yaml
+               │
+               ▼
+        ┌──────────────┐
+        │ benchmark.py │
+        └──────┬───────┘
+               │
+ ┌─────────────┴─────────────┐
+ │                           │
+ ▼                           ▼
+Performance             Correctness
+  AIPerf                Eval Runner
+ │                           │
+ ▼                           ▼
+raw artifacts           eval artifacts
+ │                           │
+ └─────────────┬─────────────┘
+               ▼
+        ┌─────────────┐
+        │ analysis.py │
+        └──────┬──────┘
+               │
+ ┌─────────────┼────────────────┐
+ │             │                │
+ ▼             ▼                ▼
+Performance  Reliability     Pricing
+ │           Correctness        │
+ │             │                │
+ └─────────────┬────────────────┘
+               ▼
+         results.jsonl
+               │
+               ▼
+            view.py
+               │
+               ▼
+          report.html
 ```
 
-- Performance is measured by AIPerf 0.12. The full example uses its
-  `inferencex-agentx-mvp` scenario; the focused routing check uses a short
-  synthetic workload.
-- Reliability and SLO checks are derived from those same AIPerf profiling
-  request records; there is no reliability workload.
-- Pricing is derived from measured token usage and the OpenRouter endpoint price
-  snapshot captured before execution; there is no pricing workload.
-- Correctness is executed independently by lm-eval or BFCL.
+## Quick Start
 
-Every request body contains one top-level OpenRouter routing object with exactly
-one provider, `allow_fallbacks: false`, and `require_parameters: true`. A live run
-preflights each model/provider pair first. An endpoint that cannot preserve the
-selected workload semantics is recorded as `unsupported` and is not benchmarked.
-
-### Configure
-
-Copy the example if you want to change models, providers, tasks, or concurrency:
+### 1. Dry Run & Preflight
 
 ```bash
-cp configs/provider-benchmark.example.yaml configs/provider-benchmark.yaml
-```
-
-Tokenizer IDs are explicit because AIPerf needs accurate token accounting. The
-example uses the current date-pinned AIPerf dataset
-`semianalysis_cc_traces_weka_062126`; AIPerf remains the final authority and
-validates every generated native configuration. Export the key or set it in the
-local `.env` file (which is ignored by Git):
-
-```bash
-export OPENROUTER_API_KEY=...
-```
-
-For a Hugging Face tokenizer that requires repository-defined Python code,
-review that repository first and opt in explicitly on that model:
-
-```yaml
-tokenizer: moonshotai/Kimi-K3
-tokenizerTrustRemoteCode: true
-```
-
-This becomes AIPerf's native `tokenizer.trustRemoteCode` setting. It is `false`
-by default.
-
-The secret is passed only through the child-process environment. Generated
-runner configs, manifests, logs, canonical JSONL, and HTML never contain it.
-
-### Dry run
-
-A dry run validates the user YAML, expands all jobs, writes the complete raw
-directory structure and runner configs, and runs AIPerf's native config validator.
-It makes no OpenRouter requests:
-
-```bash
+# Offline check: validate YAML, generate configs & runner files without network
 uv run python benchmark.py configs/provider-benchmark.example.yaml --dry-run
-```
 
-To make only the minimal live compatibility checks, explicitly use:
-
-```bash
+# Live check: probe endpoint compatibility & features with minimal 1-token requests
 uv run python benchmark.py configs/provider-benchmark.example.yaml --preflight
 ```
 
-For a focused one-model/one-provider routing check, use the smaller test
-configuration. It pins DeepInfra, disables fallback, requires all request
-parameters, checks streaming with a simple synthetic performance workload,
-and does not use AgentX or execute the benchmark workload:
+### 2. Execute Benchmark
 
 ```bash
-uv run python benchmark.py configs/openrouter-routing-test.yaml --preflight
-```
-
-Inspect the printed run directory's
-`models/qwen3-32b/providers/deepinfra/endpoint/preflight.json`. A successful
-check records `status: supported`; `routingVerified: true` means OpenRouter
-also exposed provider metadata that matched `deepinfra`.
-
-### Execute
-
-Install the correctness extras selected by the YAML, then execute the matrix:
-
-```bash
-uv sync --locked --extra lm-eval --extra bfcl
 uv run python benchmark.py configs/provider-benchmark.example.yaml --output-dir results/
 ```
 
-AgentX runs for at least 900 seconds and may download its public trace corpus and
-tokenizer on first use. BFCL is intentionally optional because its dependency
-set is several gigabytes.
-
-### Analyze, combine, and view
-
-Normalization reads structured runner artifacts, never terminal tables:
+### 3. Normalize & View Report
 
 ```bash
+# Normalize raw artifacts into canonical results.jsonl
 uv run python analysis.py results/<run-id>
+
+# Generate standalone HTML visualization report
+uv run python view.py results/<run-id>/results.jsonl --output report.html
 ```
 
-This creates `results/<run-id>/results.jsonl`, including explicit failed,
-unsupported, and planned jobs. Combining validates and orders records without
-averaging, ranking, or changing any metric:
-
-```bash
-uv run python analysis.py \
-  --combine \
-  results/run-a/results.jsonl \
-  results/run-b/results.jsonl \
-  --output combined-results.jsonl
-```
-
-Render a standalone report from canonical JSONL only:
-
-```bash
-uv run python view.py combined-results.jsonl --output report.html
-```
-
-### Tests
-
-The suite uses fixture artifacts and mocked HTTP responses. It does not require
-paid API calls:
+### 4. Tests
 
 ```bash
 uv run pytest -m "not integration"
 ```
 
-The one-token live check requires both the key and explicit authorization:
-
-```bash
-RUN_OPENROUTER_INTEGRATION=1 uv run pytest -m integration tests/test_live_openrouter.py
-```
 
 ## Evaluation Criteria
 

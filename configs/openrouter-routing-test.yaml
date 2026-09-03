@@ -23,9 +23,7 @@ providers:
 models:
   - id: kimi-k3
     openrouterModel: moonshotai/kimi-k3
-    tokenizer: moonshotai/Kimi-K3
-    # Kimi's Hugging Face tokenizer contains required custom tokenizer code.
-    # Keep this explicit because enabling it executes code from that repository.
+    tokenizer: moonshotai/Kimi-K3 
     tokenizerTrustRemoteCode: true
     contextLength: 1048576
 
