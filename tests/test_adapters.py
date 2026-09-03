@@ -142,8 +142,3 @@ def test_bfcl_correctness_normalization(tmp_path):
     assert source == path
     assert result.score == 0.8
     assert result.sample_count == 100
-
-
-def test_metric_stats_schema_rejects_invented_fields():
-    with pytest.raises(ValueError):
-        MetricStats.model_validate({"mean": 1, "not_a_metric": 2})

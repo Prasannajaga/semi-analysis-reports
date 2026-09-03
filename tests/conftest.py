@@ -27,15 +27,6 @@ def config_dict() -> dict[str, Any]:
                 "tokenizer": "builtin",
             }
         ],
-        "pricing": {"enabled": True},
-        "reliability": {
-            "enabled": True,
-            "slo": {
-                "requestTimeoutSeconds": 300,
-                "maxP95TtftMs": 5000,
-                "minSuccessRate": 0.5,
-            },
-        },
         "phases": {
             "performance": {
                 "enabled": True,
@@ -59,6 +50,15 @@ def config_dict() -> dict[str, Any]:
                     {"name": "gsm8k", "runner": "lm-eval"},
                     {"name": "bfcl", "runner": "bfcl", "runnerTask": "simple_python"},
                 ],
+            },
+            "pricing": {"enabled": True},
+            "reliability": {
+                "enabled": True,
+                "slo": {
+                    "requestTimeoutSeconds": 300,
+                    "maxP95TtftMs": 5000,
+                    "minSuccessRate": 0.5,
+                },
             },
         },
     }

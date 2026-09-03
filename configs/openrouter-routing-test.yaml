@@ -27,22 +27,6 @@ models:
     tokenizerTrustRemoteCode: true
     contextLength: 1048576
 
-pricing:
-  enabled: true
-
-reliability:
-  enabled: true
-  collect:
-    httpErrors: true
-    timeouts: true
-    connectionErrors: true
-    parseErrors: true
-    contextOverflow: true
-  slo:
-    requestTimeoutSeconds: 60
-    maxP95TtftMs: 5000
-    minSuccessRate: 0.99
-
 phases:
   performance:
     enabled: true
@@ -59,3 +43,19 @@ phases:
     warmup:
       requestCount: 0
     useServerTokenCount: true
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 60
+      maxP95TtftMs: 5000
+      minSuccessRate: 0.99

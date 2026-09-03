@@ -31,7 +31,7 @@ class RunManifest(StrictModel):
     status: RunStatus = "running"
     reason: str | None = None
     dry_run: bool
-    api_key_env: str
+    api_key_env: str | None = None
     versions: dict[str, str | None]
     matrix: dict[str, int]
     jobs: list[ManifestJob] = Field(default_factory=list)

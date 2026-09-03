@@ -1,0 +1,42 @@
+# Small, inexpensive end-to-end check for the correctness evaluation pipeline.
+# This creates one lm-eval job and evaluates only five GSM8K examples.
+schemaVersion: "1.0"
+DEBUG: true
+
+benchmark:
+  name: correctness-smoke-test
+  description: Verify that the correctness evaluation pipeline works end to end
+  seed: 42
+
+gateway:
+  type: directProviders
+  providers:
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: moonshotai/Kimi-K3
+
+models:
+  - id: kimi-k3
+    openrouterModel: moonshotai/kimi-k3
+
+phases:
+  correctness:
+    enabled: true
+    generation:
+      temperature: 0
+      maxTokens: 512
+    tasks:
+      - name: gsm8k
+        runner: lm-eval
+        limit: 5
+
+  # These phases are intentionally disabled for this smoke test.
+  pricing:
+    enabled: false
+
+  reliability:
+    enabled: false
+    slo:
+      requestTimeoutSeconds: 120

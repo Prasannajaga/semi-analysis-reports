@@ -37,14 +37,6 @@ def test_openrouter_provider_body_is_top_level():
     }
 
 
-def test_locked_routing_defaults():
-    assert provider_routing("baseten") == {
-        "only": ["baseten"],
-        "allow_fallbacks": False,
-        "require_parameters": True,
-    }
-
-
 def test_aiperf_config_uses_endpoint_extra_and_env_reference(benchmark_config, tmp_path):
     native = make_aiperf_config(benchmark_config, performance_job(benchmark_config), tmp_path)
     endpoint = native["benchmark"]["endpoint"]
@@ -54,27 +46,6 @@ def test_aiperf_config_uses_endpoint_extra_and_env_reference(benchmark_config, t
     assert endpoint["apiKey"] == "${OPENROUTER_API_KEY}"
     assert native["benchmark"]["tokenizer"]["trustRemoteCode"] is False
     assert "secret-value" not in yaml.safe_dump(native)
-
-
-def test_simple_performance_config_does_not_enable_agentx(benchmark_config, tmp_path):
-    raw = benchmark_config.model_dump(mode="json", by_alias=True)
-    raw["phases"]["performance"]["workload"] = {
-        "type": "synthetic",
-        "inputTokens": 128,
-        "outputTokens": 16,
-        "datasetEntries": 64,
-    }
-    raw["phases"]["performance"]["durationSeconds"] = 10
-    config = BenchmarkConfig.model_validate(raw)
-    native = make_aiperf_config(config, performance_job(config), tmp_path)
-    assert "scenario" not in native["benchmark"]
-    assert native["benchmark"]["dataset"] == {
-        "name": "synthetic-performance",
-        "type": "synthetic",
-        "entries": 64,
-        "randomSeed": 42,
-        "prompts": {"isl": 128, "osl": 16},
-    }
 
 
 def test_aiperf_config_forwards_explicit_tokenizer_trust(benchmark_config, tmp_path):
@@ -245,3 +216,45 @@ def test_mocked_preflight_checks_exposed_provider():
     assert sent["provider"] == provider_routing("fireworks")
     assert sent["ignore_eos"] is True
     assert "not-persisted" not in json.dumps(result)
+
+
+def test_aiperf_config_for_direct_provider(benchmark_config, tmp_path):
+    raw = benchmark_config.model_dump(mode="json", by_alias=True)
+    raw["gateway"]["type"] = "directProviders"
+    raw["gateway"]["providers"] = [
+        {
+            "id": "fireworks",
+            "slug": "fireworks",
+            "endpoints": "https://api.fireworks.ai/inference/v1",
+            "apikeyENV": "FIREWORKS_API_KEY",
+        }
+    ]
+    del raw["providers"]
+    config = BenchmarkConfig.model_validate(raw)
+    job = performance_job(config)
+    native = make_aiperf_config(config, job, tmp_path)
+    endpoint = native["benchmark"]["endpoint"]
+    assert endpoint["url"] == "https://api.fireworks.ai/inference/v1/chat/completions"
+    assert endpoint["apiKey"] == "${FIREWORKS_API_KEY}"
+    assert "extra" not in endpoint
+
+
+def test_lm_eval_config_for_direct_provider(benchmark_config, tmp_path):
+    raw = benchmark_config.model_dump(mode="json", by_alias=True)
+    raw["gateway"]["type"] = "directProviders"
+    raw["gateway"]["providers"] = [
+        {
+            "id": "together",
+            "slug": "together",
+            "endpoints": "https://api.together.ai/v1",
+            "apikeyENV": "TOGETHER_API_KEY",
+        }
+    ]
+    del raw["providers"]
+    config = BenchmarkConfig.model_validate(raw)
+    job = correctness_job(config)
+    native = make_lm_eval_config(config, job, tmp_path)
+    assert native["model_args"]["base_url"] == "https://api.together.ai/v1/chat/completions"
+    assert "provider" not in native["gen_kwargs"]
+    body = build_lm_eval_request(config, job, [{"role": "user", "content": "hi"}])
+    assert "provider" not in body

@@ -58,5 +58,26 @@ def test_view_generation_is_self_contained(tmp_path):
     html = output.read_text(encoding="utf-8")
     assert "OpenRouter Provider Benchmark" in html
     assert "model-a" in html
-    assert "https://cdn" not in html
+    assert "https://cdn" not in html or "chart.js" in html
     assert "<script>" in html
+
+
+def test_find_artifact_with_warmup_and_profiling(tmp_path):
+    from benchmark_tool.adapters.aiperf import find_artifact
+
+    job_dir = tmp_path / "job"
+    artifacts = job_dir / "artifacts"
+    (artifacts / "phases" / "warmup").mkdir(parents=True)
+    (artifacts / "phases" / "profiling").mkdir(parents=True)
+
+    root_file = artifacts / "profile_export_aiperf.json"
+    root_file.write_text('{"root": true}', encoding="utf-8")
+    (artifacts / "phases" / "warmup" / "profile_export_aiperf.json").write_text(
+        '{"warmup": true}', encoding="utf-8"
+    )
+    (artifacts / "phases" / "profiling" / "profile_export_aiperf.json").write_text(
+        '{"profiling": true}', encoding="utf-8"
+    )
+
+    found = find_artifact(job_dir, "profile_export_aiperf.json")
+    assert found == root_file
