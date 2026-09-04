@@ -16,6 +16,7 @@ htmlcov/
 # Benchmark output
 artifacts/
 results/
+dumps/
 
 # Editors and operating systems
 .DS_Store
