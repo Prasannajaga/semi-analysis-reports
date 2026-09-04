@@ -1,7 +1,7 @@
 schemaVersion: "1.0"
 DEBUG: true
 benchmark:
-  name: glm-5-3-flash-agentx-130k
+  name: glm-5-3-flash-agentx-1m
   description: AgentX benchmark for GLM 5.3 Flash across Direct Providers (Fireworks, Together, Baseten)
   seed: 42
 

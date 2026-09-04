@@ -1,7 +1,7 @@
 schemaVersion: "1.0"
 DEBUG: true
 benchmark:
-  name: deepseek-v4-pro-agentx-130k
+  name: deepseek-v4-pro-agentx-1m
   description: AgentX benchmark for DeepSeek V4 Pro across Direct Providers (Fireworks, Together, Baseten)
   seed: 42
 

@@ -1,7 +1,7 @@
 schemaVersion: "1.0"
 DEBUG: true
 benchmark:
-  name: kimi-k3-agentx-130k
+  name: kimi-k3-agentx-1m
   description: AgentX benchmark for Kimi-K3 across Direct Providers (Fireworks, Together, Baseten)
   seed: 42
 
