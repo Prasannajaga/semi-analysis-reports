@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -154,7 +155,15 @@ def execute(
             "--export-http-trace",
         ],
         job_dir,
-        {env_name: api_key},
+        {
+            env_name: api_key,
+            "AIPERF_DATASET_CONFIGURATION_TIMEOUT": os.environ.get(
+                "AIPERF_DATASET_CONFIGURATION_TIMEOUT", "1800"
+            ),
+            "AIPERF_DATASET_WEKA_NUM_WORKERS": os.environ.get(
+                "AIPERF_DATASET_WEKA_NUM_WORKERS", "2"
+            ),
+        },
         log_prefix="aiperf",
         redact_values=(api_key,),
     )
