@@ -1,0 +1,88 @@
+schemaVersion: "1.0"
+DEBUG: true
+benchmark:
+  name: kimi-k3-isl8k-osl1k
+  description: ISL 8k / OSL 1k benchmark for Kimi-K3 across Fireworks, Together, and Baseten with 1M context
+  seed: 42
+
+gateway:
+  type: directProviders
+  providers:
+    - id: fireworks
+      slug: fireworks
+      endpoints: https://api.fireworks.ai/inference/v1
+      apikeyENV: FIREWORKS_API_KEY
+      model: accounts/fireworks/models/kimi-k3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: moonshotai/Kimi-K3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+    - id: baseten
+      slug: baseten
+      endpoints: https://inference.baseten.co/v1
+      apikeyENV: BASETEN_API_KEY
+      model: moonshotai/Kimi-K3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+
+# aiperf tokenizer args 
+models:
+  - id: kimi-k3
+    openrouterModel: moonshotai/kimi-k3
+    tokenizer: moonshotai/Kimi-K3
+    tokenizerTrustRemoteCode: true
+    contextLength: 1048576
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: synthetic
+      inputTokens: 8192
+      outputTokens: 1024
+      datasetEntries: 12
+    load:
+      mode: concurrency
+      values: [1]
+    durationSeconds: 300
+    warmup:
+      requestCount: 1
+    useServerTokenCount: true
+
+  correctness:
+    enabled: true
+    generation:
+      temperature: 0
+      maxTokens: 1024
+    tasks:
+      - name: gsm8k
+        runner: lm-eval
+        limit: 100
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 90
+      maxP95TtftMs: 5000
+      minSuccessRate: 0.90

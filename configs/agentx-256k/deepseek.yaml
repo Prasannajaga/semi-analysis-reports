@@ -1,0 +1,79 @@
+schemaVersion: "1.0"
+DEBUG: true
+benchmark:
+  name: deepseek-v4-pro-agentx-256k
+  description: AgentX (256k context) benchmark for DeepSeek V4 Pro across Direct Providers (Fireworks, Together, Baseten)
+  seed: 42
+
+gateway:
+  type: directProviders
+  providers:
+    - id: fireworks
+      slug: fireworks
+      endpoints: https://api.fireworks.ai/inference/v1
+      apikeyENV: FIREWORKS_API_KEY
+      model: accounts/fireworks/models/deepseek-v4-pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.044
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.13
+    - id: baseten
+      slug: baseten
+      endpoints: https://inference.baseten.co/v1
+      apikeyENV: BASETEN_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.132
+
+# AIPerf model and tokenizer parameters
+models:
+  - id: deepseek-v4-pro
+    openrouterModel: deepseek/deepseek-v4-pro-0813
+    tokenizer: deepseek-ai/DeepSeek-V3
+    tokenizerTrustRemoteCode: true
+    contextLength: 262144
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: agentx
+      dataset:
+        name: semianalysis_cc_traces_weka_062126-256k
+        maxContextLength: 262144
+    load:
+      mode: concurrency
+      values: [4]
+    durationSeconds: 3600 
+    warmup:
+      requestCount: 1
+    useServerTokenCount: true
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 180
+      maxP95TtftMs: 20000
+      minSuccessRate: 0.90
+

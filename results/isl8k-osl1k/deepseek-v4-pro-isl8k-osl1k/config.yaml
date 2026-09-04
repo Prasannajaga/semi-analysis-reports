@@ -1,0 +1,87 @@
+schemaVersion: "1.0"
+DEBUG: true
+benchmark:
+  name: deepseek-v4-pro-isl8k-osl1k
+  description: Benchmark DeepSeek V4 Pro across Fireworks, Together, and Baseten with 1M context
+  seed: 42
+
+gateway:
+  type: directProviders
+  providers:
+    - id: fireworks
+      slug: fireworks
+      endpoints: https://api.fireworks.ai/inference/v1
+      apikeyENV: FIREWORKS_API_KEY
+      model: accounts/fireworks/models/deepseek-v4-pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.044
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro-0813
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.13
+    - id: baseten
+      slug: baseten
+      endpoints: https://inference.baseten.co/v1
+      apikeyENV: BASETEN_API_KEY
+      model: deepseek-ai/DeepSeek-V4-Pro
+      pricing:
+        inputUsdPerMillion: 1.32
+        outputUsdPerMillion: 3.96
+        cachedInputUsdPerMillion: 0.132
+
+models:
+  - id: deepseek-v4-pro
+    openrouterModel: deepseek/deepseek-v4-pro-0813
+    tokenizer: deepseek-ai/DeepSeek-V3
+    tokenizerTrustRemoteCode: true
+    contextLength: 1048576
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: synthetic
+      inputTokens: 8192
+      outputTokens: 1024
+      datasetEntries: 12
+    load:
+      mode: concurrency
+      values: [1]
+    durationSeconds: 300
+    warmup:
+      requestCount: 1
+    useServerTokenCount: true
+
+  correctness:
+    enabled: true
+    generation:
+      temperature: 0
+      maxTokens: 1024
+    tasks:
+      - name: gsm8k
+        runner: lm-eval
+        limit: 100
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 300
+      maxP95TtftMs: 5000
+      minSuccessRate: 0.99

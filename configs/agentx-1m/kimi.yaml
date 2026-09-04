@@ -1,0 +1,82 @@
+schemaVersion: "1.0"
+DEBUG: true
+benchmark:
+  name: kimi-k3-agentx
+  description: AgentX benchmark for Kimi-K3 across Direct Providers (Fireworks, Together, Baseten)
+  seed: 42
+
+gateway:
+  type: directProviders
+  providers:
+    - id: fireworks
+      slug: fireworks
+      endpoints: https://api.fireworks.ai/inference/v1
+      apikeyENV: FIREWORKS_API_KEY
+      model: accounts/fireworks/models/kimi-k3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+    - id: together
+      slug: together
+      endpoints: https://api.together.ai/v1
+      apikeyENV: TOGETHER_API_KEY
+      model: moonshotai/Kimi-K3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+    - id: baseten
+      slug: baseten
+      endpoints: https://inference.baseten.co/v1
+      apikeyENV: BASETEN_API_KEY
+      model: moonshotai/Kimi-K3
+      pricing:
+        inputUsdPerMillion: 3.00
+        outputUsdPerMillion: 15.00
+        cachedInputUsdPerMillion: 0.30
+
+# AIPerf model and tokenizer parameters
+models:
+  - id: kimi-k3
+    openrouterModel: moonshotai/kimi-k3
+    tokenizer: moonshotai/Kimi-K3
+    tokenizerTrustRemoteCode: true
+    contextLength: 1048576
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: agentx
+      dataset:
+        name: semianalysis_cc_traces_weka_062126
+        maxContextLength: 1048576
+        # For 256k context traces:
+        # name: semianalysis_cc_traces_weka_062126-256k
+        # maxContextLength: 262144
+    load:
+      mode: concurrency
+      values: [1]
+    durationSeconds: 900
+    warmup:
+      requestCount: 1
+    useServerTokenCount: true
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 180
+      maxP95TtftMs: 5000
+      minSuccessRate: 0.90
+

@@ -1,0 +1,97 @@
+2026-09-04:03:10:56 WARNING  [config.evaluate_config:337] --limit SHOULD ONLY BE USED FOR TESTING. REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2026-09-04:03:10:56 INFO     [config.evaluate_config:357] Using default fewshot_as_multiturn=True.
+2026-09-04:03:11:01 INFO     [_cli.run:392] Selected Tasks: ['gsm8k']
+2026-09-04:03:11:01 INFO     [evaluator:214] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-09-04:03:11:01 WARNING  [evaluator:226] generation_kwargs: {'temperature': 0.0, 'max_tokens': 1024} specified through cli, these settings will update set parameters in yaml tasks. Ensure 'do_sample=True' for non-greedy decoding!
+2026-09-04:03:11:01 INFO     [evaluator:239] Initializing local-chat-completions model, with arguments: {'model': 'deepseek-ai/DeepSeek-V4-Pro-0813', 'base_url': 'https://api.together.ai/v1/chat/completions', 'tokenizer_backend': 'none', 'tokenized_requests': False, 'max_gen_toks': 1024, 'seed': 42, 'timeout': 300.0}
+2026-09-04:03:11:01 INFO     [models.api_models:176] Using max length 2048 - 1
+2026-09-04:03:11:01 INFO     [models.api_models:179] Concurrent requests are disabled. To enable concurrent requests, set `num_concurrent` > 1.
+2026-09-04:03:11:01 INFO     [models.api_models:197] Using tokenizer None
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04:03:11:03 INFO     [evaluator_utils:472] Selected tasks:
+2026-09-04:03:11:03 INFO     [evaluator_utils:506] Task: gsm8k (gsm8k/gsm8k.yaml)
+2026-09-04:03:11:03 INFO     [evaluator:314] gsm8k: Using gen_kwargs: {'until': ['Question:', '</s>', '<|im_end|>'], 'do_sample': False, 'temperature': 0.0, 'max_tokens': 1024}
+2026-09-04:03:11:03 INFO     [api.task:312] Building contexts for gsm8k on rank 0...
+
+  0%|          | 0/100 [00:00<?, ?it/s]
+ 36%|███▌      | 36/100 [00:00<00:00, 352.61it/s]
+ 72%|███████▏  | 72/100 [00:00<00:00, 354.16it/s]
+100%|██████████| 100/100 [00:00<00:00, 352.72it/s]
+2026-09-04:03:11:04 INFO     [evaluator:589] Running generate_until requests
+2026-09-04:03:11:04 INFO     [models.api_models:752] Tokenized requests are disabled. Context + generation length is not checked.
+
+Requesting API:   0%|          | 0/100 [00:00<?, ?it/s]2026-09-04:03:11:04 WARNING  [models.api_models:375] Cannot determine EOS string to pass to stop sequence. Manually set by passing `eos_string` to model_args.
+2026-09-04:03:11:07 WARNING  [models.api_models:479] API request failed with error message: {"id":"609470ae-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+2026-09-04:03:11:11 WARNING  [models.api_models:479] API request failed with error message: {"id":"573ba629-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+
+Requesting API:   1%|          | 1/100 [00:12<20:42, 12.55s/it]
+Requesting API:   2%|▏         | 2/100 [00:15<11:40,  7.15s/it]
+Requesting API:   3%|▎         | 3/100 [00:21<10:46,  6.66s/it]
+Requesting API:   4%|▍         | 4/100 [00:26<09:20,  5.84s/it]
+Requesting API:   5%|▌         | 5/100 [00:29<07:20,  4.64s/it]
+Requesting API:   6%|▌         | 6/100 [00:31<06:04,  3.87s/it]2026-09-04:03:11:38 WARNING  [models.api_models:479] API request failed with error message: {"id":"916b679e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+
+Requesting API:   7%|▋         | 7/100 [00:36<06:35,  4.26s/it]
+Requesting API:   8%|▊         | 8/100 [00:41<07:06,  4.64s/it]2026-09-04:03:11:49 WARNING  [models.api_models:479] API request failed with error message: {"id":"4dd284a2-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+
+Requesting API:   9%|▉         | 9/100 [00:51<09:06,  6.01s/it]
+Requesting API:  10%|█         | 10/100 [00:54<07:43,  5.15s/it]2026-09-04:03:12:01 WARNING  [models.api_models:479] API request failed with error message: {"id":"360b4045-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+2026-09-04:03:12:05 WARNING  [models.api_models:479] API request failed with error message: {"id":"a9345114-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+2026-09-04:03:12:09 WARNING  [models.api_models:479] API request failed with error message: {"id":"499c434c-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are dynamic - they shift with live model capacity and your traffic shape, so steady traffic and exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits often, consider a dedicated endpoint or batch inference. See https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}. Retrying...
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/__main__.py", line 14, in <module>
+    cli_evaluate()
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/_cli/run.py", line 395, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/utils.py", line 580, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/evaluator.py", line 363, in simple_evaluate
+    results = evaluate(
+              ^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/utils.py", line 580, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/evaluator.py", line 600, in evaluate
+    resps = getattr(lm, reqtype)(cloned_reqs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/models/api_models.py", line 775, in generate_until
+    outputs = retry(
+              ^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 331, in wrapped_f
+    return copy(f, *args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/lm_eval/models/api_models.py", line 482, in model_call
+    response.raise_for_status()
+  File "/data/semi-analysis-report/.venv/lib/python3.12/site-packages/requests/models.py", line 1167, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.together.ai/v1/chat/completions
+
+Requesting API:  10%|█         | 10/100 [01:05<09:48,  6.53s/it]

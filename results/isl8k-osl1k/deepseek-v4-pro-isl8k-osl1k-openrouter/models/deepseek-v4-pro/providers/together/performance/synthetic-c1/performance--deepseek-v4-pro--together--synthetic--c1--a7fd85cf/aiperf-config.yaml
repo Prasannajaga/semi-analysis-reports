@@ -1,0 +1,43 @@
+schemaVersion: '2.0'
+randomSeed: 20260903
+benchmark:
+  model: deepseek/deepseek-v4-pro-0813
+  endpoint:
+    url: https://openrouter.ai/api/v1/chat/completions
+    type: chat
+    apiKey: ${OPENROUTER_API_KEY}
+    streaming: true
+    timeout: 300.0
+    useLegacyMaxTokens: true
+    useServerTokenCount: true
+    extra:
+      provider:
+        only:
+        - together
+        allow_fallbacks: false
+        require_parameters: true
+  tokenizer:
+    name: deepseek-ai/DeepSeek-V3
+    trustRemoteCode: true
+  profiling:
+    type: concurrency
+    concurrency: 1
+    duration: 300
+  artifacts:
+    dir: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T141349Z-1eb8f965/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf/artifacts
+    summary:
+    - json
+    records:
+    - jsonl
+  dataset:
+    name: synthetic-performance
+    type: synthetic
+    entries: 64
+    randomSeed: 20260903
+    prompts:
+      isl: 8192
+      osl: 1024
+  warmup:
+    type: concurrency
+    requests: 1
+    concurrency: 1

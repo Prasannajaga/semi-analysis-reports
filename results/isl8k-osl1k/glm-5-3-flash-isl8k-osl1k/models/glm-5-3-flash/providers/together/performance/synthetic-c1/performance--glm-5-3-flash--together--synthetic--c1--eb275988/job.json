@@ -1,0 +1,45 @@
+{
+  "concurrency": 1,
+  "config_hash": "eb275988de005492",
+  "finishedAt": "2026-09-03T21:56:07.629108Z",
+  "job_id": "performance--glm-5-3-flash--together--synthetic--c1--eb275988",
+  "model_id": "glm-5-3-flash",
+  "openrouter_model": "z-ai/glm-5.3-flash",
+  "phase": "performance",
+  "process": {
+    "command": [
+      "aiperf",
+      "profile",
+      "--config",
+      "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988/aiperf-config.yaml",
+      "--export-level",
+      "raw",
+      "--export-http-trace"
+    ],
+    "durationSeconds": 314.228779,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "together",
+  "provider_slug": "together",
+  "runner": "aiperf",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T21:50:52.672017Z",
+  "status": "completed",
+  "tokenizer": "THUDM/glm-4-9b-chat",
+  "tokenizer_trust_remote_code": true,
+  "validation": {
+    "command": [
+      "aiperf",
+      "config",
+      "validate",
+      "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988/aiperf-config.yaml"
+    ],
+    "durationSeconds": 0.726752,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "workload_type": "synthetic"
+}

@@ -54,10 +54,11 @@ Performance  Reliability     Pricing
 
 ## Quick Start
 
-Set the top-level `DEBUG` flag in the benchmark YAML to control terminal detail:
+Set the top-level `DEBUG` and `normalize` flags in the benchmark YAML:
 
 ```yaml
-DEBUG: true  # detailed [state] : message execution logs and live runner output
+DEBUG: true      # detailed [state] : message execution logs and live runner output
+normalize: true  # automatically generate canonical results.jsonl upon run completion
 ```
 
 Use `DEBUG: false` (the default when omitted) to show only the final job summary and
@@ -78,11 +79,12 @@ uv run python benchmark.py configs/provider-benchmark.example.yaml --preflight
 ```bash
 uv run python benchmark.py configs/provider-benchmark.example.yaml --output-dir results/
 ```
+If `normalize: true` is configured in the YAML, canonical `results.jsonl` is generated automatically in `results/<run-id>/results.jsonl`.
 
 ### 3. Normalize & View Report
 
 ```bash
-# Normalize raw artifacts into canonical results.jsonl
+# Normalize raw artifacts into canonical results.jsonl (if not using normalize: true)
 uv run python analysis.py results/<run-id>
 
 # Generate standalone HTML visualization report

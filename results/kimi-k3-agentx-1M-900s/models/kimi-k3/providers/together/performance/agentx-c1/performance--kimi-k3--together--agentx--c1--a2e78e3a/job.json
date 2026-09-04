@@ -1,0 +1,45 @@
+{
+  "concurrency": 1,
+  "config_hash": "a2e78e3a87aaad56",
+  "finishedAt": "2026-09-04T13:00:09.943103Z",
+  "job_id": "performance--kimi-k3--together--agentx--c1--a2e78e3a",
+  "model_id": "kimi-k3",
+  "openrouter_model": "moonshotai/kimi-k3",
+  "phase": "performance",
+  "process": {
+    "command": [
+      "aiperf",
+      "profile",
+      "--config",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/aiperf-config.yaml",
+      "--export-level",
+      "raw",
+      "--export-http-trace"
+    ],
+    "durationSeconds": 908.91638,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "together",
+  "provider_slug": "together",
+  "runner": "aiperf",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-04T12:45:00.299093Z",
+  "status": "completed",
+  "tokenizer": "moonshotai/Kimi-K3",
+  "tokenizer_trust_remote_code": true,
+  "validation": {
+    "command": [
+      "aiperf",
+      "config",
+      "validate",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/aiperf-config.yaml"
+    ],
+    "durationSeconds": 0.72614,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "workload_type": "agentx"
+}

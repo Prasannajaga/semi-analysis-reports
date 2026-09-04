@@ -1,0 +1,143 @@
+2026-09-04 17:41:55.953 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': setting profiling-phase timing_mode=agentic_replay.
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': injecting extra_inputs.ignore_eos=true (was absent).
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --cache-bust=first_turn_prefix (was at default none).
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --trajectory-start-min-ratio=0.0 (was at default 0.25).
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --trajectory-start-max-ratio=1.0 (was at default 0.75).
+2026-09-04 17:41:55.965 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --system-idle-gap-cap-seconds=10.0 (was unset).
+2026-09-04 17:41:56.345 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 17:41:56.359 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://inference.baseten.co/v1/chat/completions/metrics']
+2026-09-04 17:41:56.373 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 17:41:56.376 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 17:41:56.434 - GPUTelemetryJSONLWriter_c7e8c788 - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 17:41:56.435 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 17:41:56.445 - OTelMetricsResultsProcessor_aa0271b0 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 17:41:56.447 - RecordExportJSONLWriter_5c67a11f - INFO - Record metrics export enabled: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/profile_export.jsonl
+2026-09-04 17:41:56.448 - RecordExportJSONLWriter_5c67a11f - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 17:41:56.471 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 17:41:56.480 - RawRecordWriterProcessor_ebb11eec - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/raw_records/raw_records_record_processor_1929901e.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 17:41:56.487 - system_controller - INFO - Registered Record Processor (id: 'record_processor_1929901e')
+2026-09-04 17:41:56.516 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 17:41:56.710 - system_controller - INFO - Registered Worker (id: 'worker_9de8f56e')
+2026-09-04 17:41:56.832 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 17:41:56.832 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 17:41:56.835 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 17:41:56.835 - InferenceResultParser_ebaa849e - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 17:41:56.840 - dataset_manager - INFO - Configuring tokenizer(s) for dataset manager
+2026-09-04 17:41:56.867 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 17:41:56.868 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 17:41:56.869 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 17:41:56.869 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 17:41:57.496 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 17:41:57.496 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 17:41:58.135 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/agent-harnesses "HTTP/1.1 200 OK"
+2026-09-04 17:41:58.382 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:41:58.384 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 17:41:58.413 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/config.json "HTTP/1.1 200 OK"
+2026-09-04 17:41:58.678 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/configuration_kimi_k3.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:41:58.707 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/configuration_kimi_k3.py "HTTP/1.1 200 OK"
+2026-09-04 17:41:58.947 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:41:58.961 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/config.json "HTTP/1.1 200 OK"
+2026-09-04 17:41:59.215 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:41:59.235 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 17:41:59.471 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/tokenization_kimi.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:41:59.483 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/tokenization_kimi.py "HTTP/1.1 200 OK"
+2026-09-04 17:41:59.758 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/moonshotai/Kimi-K3/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 17:42:00.029 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/moonshotai/Kimi-K3/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 17:42:00.188 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - INFO - Reloaded tiktoken model from /home/prasanna/.cache/huggingface/hub/models--moonshotai--Kimi-K3/snapshots/f831ab66814297da540d832a5235f8e904f29d06/tiktoken.model
+2026-09-04 17:42:00.188 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - INFO - #words: 163840 - BOS ID: 163584 - EOS ID: 163585
+2026-09-04 17:42:00.344 - dataset_manager - INFO - Tokenizer(s) configured in 3.50 seconds
+2026-09-04 17:42:00.344 - dataset_manager - INFO - Configuring dataset for dataset_manager
+2026-09-04 17:42:00.838 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 17:42:00.838 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 17:42:00.838 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 17:42:00.838 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 17:42:01.002 - SemiAnalysisCCTracesWekaLoader - INFO - Loading HuggingFace dataset 'semianalysisai/cc-traces-weka-062126' (split=train)
+2026-09-04 17:42:02.151 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 17:42:02.181 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/semianalysisai/cc-traces-weka-062126/23f152f6f0f9399a85901b89a6458def0ef16729/README.md "HTTP/1.1 200 OK"
+2026-09-04 17:42:02.194 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/resolve-cache/datasets/semianalysisai/cc-traces-weka-062126/23f152f6f0f9399a85901b89a6458def0ef16729/README.md "HTTP/1.1 200 OK"
+2026-09-04 17:42:02.428 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126/resolve/23f152f6f0f9399a85901b89a6458def0ef16729/cc-traces-weka-062126.py "HTTP/1.1 404 Not Found"
+2026-09-04 17:42:03.108 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/semianalysisai/cc-traces-weka-062126/semianalysisai/cc-traces-weka-062126.py "HTTP/1.1 404 Not Found"
+2026-09-04 17:42:03.430 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/semianalysisai/cc-traces-weka-062126/revision/23f152f6f0f9399a85901b89a6458def0ef16729 "HTTP/1.1 200 OK"
+2026-09-04 17:42:03.786 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126/resolve/23f152f6f0f9399a85901b89a6458def0ef16729/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-09-04 17:42:04.078 - httpx - INFO - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=semianalysisai/cc-traces-weka-062126 "HTTP/1.1 200 OK"
+2026-09-04 17:42:04.396 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/semianalysisai/cc-traces-weka-062126/tree/23f152f6f0f9399a85901b89a6458def0ef16729?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-09-04 17:42:04.653 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126/resolve/23f152f6f0f9399a85901b89a6458def0ef16729/dataset_infos.json "HTTP/1.1 404 Not Found"
+2026-09-04 17:42:05.101 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126/resolve/23f152f6f0f9399a85901b89a6458def0ef16729/traces.jsonl "HTTP/1.1 302 Found"
+2026-09-04 17:42:05.870 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/semianalysisai/cc-traces-weka-062126/xet-read-token/23f152f6f0f9399a85901b89a6458def0ef16729 "HTTP/1.1 200 OK"
+2026-09-04 17:43:55.502 - aiperf.dataset.loader.selection - INFO - weka trace selection [semianalysisai/cc-traces-weka-062126]: scanned 393, rejected_by_maxctx 311 (--max-context-length=131072), eligible 82, loaded 82 (--num-dataset-entries=None), largest_observed_peak_context 996,579
+2026-09-04 17:43:55.506 - SemiAnalysisCCTracesWekaLoader - INFO - Loaded 82/393 eligible traces (filter-then-cap; --num-dataset-entries=None, --max-context-length=131072)
+2026-09-04 17:43:55.933 - aiperf.dataset.loader.weka_trace - INFO - WekaTraceLoader: spawning 11 worker process(es) for parallel reconstruction of 82 trace(s)
+2026-09-04 17:44:03.875 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 8/82 (10%) in 1.6s (5.1 traces/s)
+2026-09-04 17:44:03.876 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 16/82 (20%) in 1.6s (10.1 traces/s)
+2026-09-04 17:44:03.888 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 24/82 (29%) in 1.6s (15.0 traces/s)
+2026-09-04 17:44:03.901 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 32/82 (39%) in 1.6s (19.9 traces/s)
+2026-09-04 17:44:03.943 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 40/82 (49%) in 1.7s (24.2 traces/s)
+2026-09-04 17:44:04.019 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 48/82 (59%) in 1.7s (27.8 traces/s)
+2026-09-04 17:44:04.019 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 56/82 (68%) in 1.7s (32.4 traces/s)
+2026-09-04 17:44:04.189 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 64/82 (78%) in 1.9s (33.7 traces/s)
+2026-09-04 17:44:04.207 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 72/82 (88%) in 1.9s (37.6 traces/s)
+2026-09-04 17:44:04.207 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 80/82 (98%) in 1.9s (41.8 traces/s)
+2026-09-04 17:44:04.293 - aiperf.dataset.loader.weka_parallel_convert - INFO - WekaTraceLoader: reconstructed 82/82 (100%) in 2.0s (41.0 traces/s)
+2026-09-04 17:44:04.322 - aiperf.dataset.loader.weka_trace - INFO - WekaTraceLoader: workers finished in 8.5s; assembling Conversation objects
+2026-09-04 17:44:04.521 - aiperf.dataset.loader.weka_trace - INFO - WekaTraceLoader: flattened-agent detection split 45 trace(s) into 127 extra agent chain(s) (96 aux sidecars [9 reductions], 0 worker-group members, 125 seams merged, 0 empty-hash requests kept on main)
+2026-09-04 17:44:04.521 - aiperf.dataset.loader.weka_trace - INFO - WekaTraceLoader: reconstructed 281 conversation(s) in 8.7s (total load+synth+reconstruct: 8.7s)
+2026-09-04 17:44:04.565 - MemoryMapDatasetBackingStore_c045b80b - INFO - Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_673745434881/dataset.dat)
+2026-09-04 17:44:04.925 - MemoryMapDatasetBackingStore_c045b80b - INFO - Data file finalized: 281 conversations, 113.84 MB
+2026-09-04 17:44:04.925 - MemoryMapDatasetBackingStore_c045b80b - INFO - Index file created: /tmp/aiperf_mmap_673745434881/index.dat
+2026-09-04 17:44:04.925 - dataset_manager - INFO - Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_673745434881/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_673745434881/index.dat') conversation_count=281 total_size_bytes=119367157 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0
+2026-09-04 17:44:04.947 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 281, unique turn count: 3132
+2026-09-04 17:44:04.957 - dataset_manager - INFO - Skipping inputs.json generation
+2026-09-04 17:44:05.106 - dataset_manager - INFO - Dataset client initialized and freed 281 conversations from memory
+2026-09-04 17:44:05.150 - aiperf.dataset.mmap_cache - INFO - Populated mmap cache entry /home/prasanna/.cache/aiperf/dataset_mmap/461388492092e099072de07135949345
+2026-09-04 17:44:05.150 - dataset_manager - INFO - Dataset configured in 124.81 seconds
+2026-09-04 17:44:06.224 - aiperf.timing.trajectory_source - INFO - TrajectorySource: built 1 trajectories from 82 traces
+2026-09-04 17:44:06.229 - aiperf.timing.trajectory_source - INFO -   range cfg=[0.00, 1.00]  observed sample pct: min= 26% median= 26% max= 26%
+2026-09-04 17:44:06.229 - aiperf.timing.trajectory_source - INFO -     lane=00  sample_time= 26%  root_next=  5/33  ( 15% turns)  live=1 ready=1  trace_id=006c98de37d819e95b0840e25426bb7ca99d
+2026-09-04 17:44:06.235 - PhaseOrchestrator_4542d784 - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 17:44:06.241 - system_controller - INFO - All services configured in 129.41 seconds
+2026-09-04 17:44:06.246 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 17:44:06.263 - system_controller - INFO - All services started profiling successfully
+2026-09-04 17:44:06.264 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 17:44:06.300 - PhaseRunner - NOTICE - Phase warmup (warmup) started | target: 1 requests
+2026-09-04 17:44:06.302 - AgenticReplayTiming - INFO - WARMUP execute: dispatching 1 trajectory credits
+2026-09-04 17:44:06.305 - AgenticReplayTiming - INFO - WARMUP spread: 0.0s ramp aligning 1 request(s) on t* (earliest fires at 0, last at 0.0s)
+2026-09-04 17:44:06.310 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 17:44:06.307 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 17:44:11.002 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=0, cancelled=0 | elapsed=4.70s
+2026-09-04 17:44:11.004 - AgenticReplayTiming - INFO - Global system-idle cap summary: limit=10s, jumps=0, skipped=0.000s
+2026-09-04 17:44:11.004 - aiperf.timing.branch_orchestrator - INFO - BranchOrchestrator stats: spawned=0 completed=0 errored=0 suspended=0 resumed=0 parents_failed_due_to_child_error=0 joins_suppressed=0 delayed=0
+2026-09-04 17:44:11.005 - PhaseRunner - INFO - Session-tree slots for phase warmup: peak_open=0 (target concurrency 1); released 0 still-open at teardown; late_events=0
+2026-09-04 17:44:11.014 - aiperf.timing.replay_dependencies - INFO - Replay interval barriers active: 3132 requests, 1065 gated turns, join-widths={1: 844, 2: 179, 3: 13, 4: 18, 5: 11}
+2026-09-04 17:44:11.014 - AgenticReplayTiming - INFO - PROFILING setup: 1 trajectory lanes; recycle draws roots from the dataset sampler
+2026-09-04 17:44:11.014 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 900.0s duration
+2026-09-04 17:44:11.016 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 899.998480978s
+2026-09-04 17:44:11.016 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 17:44:11.017 - AgenticReplayTiming - INFO - PROFILING execute: resuming 1 trajectory sessions (spread; first-request spread 0.0s)
+2026-09-04 17:59:11.016 - PhaseRunner - INFO - Timeout of 899.998480978s elapsed for event 'profiling phase sending'
+2026-09-04 17:59:11.017 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=74, completed=73, in_flight=1 | sessions: sent=3, completed=2 | timeout_triggered=True
+2026-09-04 17:59:11.017 - PhaseRunner - INFO - Timeout of 0.0s elapsed for event 'profiling phase credits returned'
+2026-09-04 17:59:11.018 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=74, completed=73, cancelled=0, in_flight=1
+2026-09-04 17:59:11.018 - records_manager - INFO - Sent 74 requests. Waiting for all to complete...
+2026-09-04 17:59:11.019 - StickyCreditRouter_bfe151a2 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 17:59:11.019 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 17:59:11.021 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 17:59:11.021 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=73, cancelled=1, errors=0 | sessions: completed=2, cancelled=0 | elapsed=900.01s | grace_period_timeout=True
+2026-09-04 17:59:11.022 - AgenticReplayTiming - INFO - Global system-idle cap summary: limit=10s, jumps=17, skipped=4840.133s
+2026-09-04 17:59:11.022 - aiperf.timing.branch_orchestrator - INFO - BranchOrchestrator stats: spawned=14 completed=14 errored=0 suspended=1 resumed=1 parents_failed_due_to_child_error=0 joins_suppressed=0 delayed=13
+2026-09-04 17:59:11.022 - PhaseRunner - INFO - Session-tree slots for phase profiling: peak_open=1 (target concurrency 1); released 1 still-open at teardown; late_events=0
+2026-09-04 17:59:11.022 - PhaseOrchestrator_4542d784 - NOTICE - All credits completed
+2026-09-04 17:59:11.023 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788524051014645951, sent_end_ns=1788524951017064930, requests_end_ns=1788524951021435220, baseline_start_ns=1788524051014572220, baseline_end_ns=1788524951021446519, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=73, final_requests_cancelled=1, final_request_errors=0, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=73, error_records=0)
+2026-09-04 17:59:11.024 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 17:59:11.024 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 73 of 73 records processed)...
+2026-09-04 17:59:11.024 - records_manager - INFO - Processed 73 valid requests and 0 errors (73 total).
+2026-09-04 17:59:11.024 - records_manager - INFO - Received all records, processing now...
+2026-09-04 17:59:11.027 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 17:59:11.029 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 17:59:13.024 - records_manager - INFO - Processing records results...
+2026-09-04 17:59:13.076 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 17:59:13.080 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 17:59:13.698 - ExporterManager - INFO - Exporting all records
+2026-09-04 17:59:13.760 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/raw_records to /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/profile_export_raw.jsonl
+2026-09-04 17:59:13.917 - RawRecordAggregator - INFO - Aggregated 74 raw records to /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts/profile_export_raw.jsonl
+2026-09-04 17:59:13.919 - ExporterManager - INFO - Exporting console data

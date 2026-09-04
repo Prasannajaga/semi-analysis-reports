@@ -1,0 +1,171 @@
+2026-09-04 03:10:06.373 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 03:10:06.808 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:07.030 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat "HTTP/1.1 200 OK"
+2026-09-04 03:10:07.032 - aiperf.config.resolution.resolvers - INFO - [OK] Tokenizer THUDM/glm-4-9b-chat detected
+2026-09-04 03:10:07.032 - aiperf.config.resolution.resolvers - INFO - 1 tokenizer validated | 0.6s
+2026-09-04 03:10:07.032 - aiperf.config.resolution.resolvers - INFO - Prefetching 1 tokenizer into HF cache...
+2026-09-04 03:10:07.935 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:08.158 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:08.370 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:08.619 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:08.835 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:09.062 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:09.062 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 03:10:09.274 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/configuration_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:09.486 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/configuration_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:09.782 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:09.999 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:10.005 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:10.223 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:10.442 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:10.656 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:10.883 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:11.159 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:11.393 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:11.606 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenization_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:11.818 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenization_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:12.043 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:12.362 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:12.581 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:12.813 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 03:10:13.036 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenizer.model "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:13.264 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenizer.model "HTTP/1.1 302 Found"
+2026-09-04 03:10:13.492 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/xet-read-token/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73 "HTTP/1.1 200 OK"
+2026-09-04 03:10:15.353 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/added_tokens.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:15.577 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/added_tokens.json "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:15.801 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:16.022 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/special_tokens_map.json "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:16.239 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenizer.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:16.462 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenizer.json "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:16.688 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/chat_template.jinja "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:16.910 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:17.127 - aiperf.config.resolution.resolvers - INFO -   Cached THUDM/glm-4-9b-chat (10.09s)
+2026-09-04 03:10:17.138 - aiperf.config.resolution.resolvers - INFO - 1 tokenizer cached • 10.1s
+2026-09-04 03:10:17.307 - aiperf - WARNING - Using --osl without ignore_eos or min_tokens in --extra-inputs. Output sequence length cannot be guaranteed unless the server honors these parameters. Consider: --extra-inputs ignore_eos:true (generate until max_tokens) or --extra-inputs min_tokens:<value> (set minimum output length).
+2026-09-04 03:10:17.437 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 03:10:17.449 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://inference.baseten.co/v1/chat/completions/metrics']
+2026-09-04 03:10:17.453 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 03:10:17.459 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 03:10:17.474 - GPUTelemetryJSONLWriter_5581f623 - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 03:10:17.477 - RawRecordWriterProcessor_40444f6a - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/raw_records/raw_records_record_processor_7f50aefe.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 03:10:17.480 - OTelMetricsResultsProcessor_3681a488 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 03:10:17.481 - RecordExportJSONLWriter_8ef61279 - INFO - Record metrics export enabled: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/profile_export.jsonl
+2026-09-04 03:10:17.481 - RecordExportJSONLWriter_8ef61279 - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 03:10:17.497 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 03:10:17.547 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 03:10:17.584 - system_controller - INFO - Registered Record Processor (id: 'record_processor_7f50aefe')
+2026-09-04 03:10:17.618 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 03:10:17.724 - system_controller - INFO - Registered Worker (id: 'worker_5ddd853d')
+2026-09-04 03:10:17.929 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 03:10:17.929 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 03:10:17.930 - InferenceResultParser_176e131b - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 03:10:17.931 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 03:10:17.932 - dataset_manager - INFO - Configuring tokenizer(s) for dataset manager
+2026-09-04 03:10:17.946 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 03:10:17.947 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 03:10:17.948 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 03:10:17.948 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 03:10:18.562 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 03:10:18.562 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 03:10:18.822 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.043 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.049 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:19.269 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.492 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.498 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/configuration_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:19.743 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.971 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:19.972 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 03:10:19.979 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:20.202 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:20.424 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:20.430 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:10:20.653 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:20.872 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:20.879 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenization_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:10:21.104 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:21.324 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 03:10:21.545 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:10:21.774 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 03:10:21.968 - dataset_manager - INFO - Tokenizer(s) configured in 4.04 seconds
+2026-09-04 03:10:21.968 - dataset_manager - INFO - Configuring dataset for dataset_manager
+2026-09-04 03:10:23.438 - MemoryMapDatasetBackingStore_dd8ef572 - INFO - Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_fc092a17eb8e/dataset.dat)
+2026-09-04 03:10:23.439 - MemoryMapDatasetBackingStore_dd8ef572 - INFO - Data file finalized: 12 conversations, 0.42 MB
+2026-09-04 03:10:23.440 - MemoryMapDatasetBackingStore_dd8ef572 - INFO - Index file created: /tmp/aiperf_mmap_fc092a17eb8e/index.dat
+2026-09-04 03:10:23.440 - dataset_manager - INFO - Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_fc092a17eb8e/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_fc092a17eb8e/index.dat') conversation_count=12 total_size_bytes=435531 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0
+2026-09-04 03:10:23.440 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 12, unique turn count: 12
+2026-09-04 03:10:23.441 - dataset_manager - INFO - Generating inputs.json file at /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/inputs.json
+2026-09-04 03:10:23.443 - PhaseOrchestrator_b4a50f2e - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 03:10:23.444 - dataset_manager - INFO - inputs.json file generated in 0.00 seconds
+2026-09-04 03:10:23.532 - dataset_manager - INFO - Dataset client initialized and freed 12 conversations from memory
+2026-09-04 03:10:23.532 - dataset_manager - INFO - Dataset configured in 1.56 seconds
+2026-09-04 03:10:23.533 - system_controller - INFO - All services configured in 5.60 seconds
+2026-09-04 03:10:23.533 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 03:10:23.536 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:10:23.537 - PhaseRunner - NOTICE - Phase warmup (warmup) started | phase_index=0 | target: 1 requests
+2026-09-04 03:10:23.537 - system_controller - INFO - All services started profiling successfully
+2026-09-04 03:10:23.537 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 03:10:23.537 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 03:10:23.538 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 03:10:29.973 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=1, cancelled=0 | elapsed=6.44s
+2026-09-04 03:10:29.974 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:10:29.974 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 300.0s duration
+2026-09-04 03:10:29.974 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 299.999717588s
+2026-09-04 03:10:29.975 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 03:10:29.978 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 698 tokens (requested 1024, diff -31.8%)
+2026-09-04 03:10:38.432 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 670 tokens (requested 1024, diff -34.6%)
+2026-09-04 03:10:43.719 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 594 tokens (requested 1024, diff -42.0%)
+2026-09-04 03:10:49.947 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 583 tokens (requested 1024, diff -43.1%)
+2026-09-04 03:10:59.479 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 816 tokens (requested 1024, diff -20.3%)
+2026-09-04 03:11:12.891 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 561 tokens (requested 1024, diff -45.2%)
+2026-09-04 03:11:17.547 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 664 tokens (requested 1024, diff -35.2%)
+2026-09-04 03:11:38.258 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 605 tokens (requested 1024, diff -40.9%)
+2026-09-04 03:11:44.359 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 616 tokens (requested 1024, diff -39.8%)
+2026-09-04 03:11:51.401 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 642 tokens (requested 1024, diff -37.3%)
+2026-09-04 03:11:57.002 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 491 tokens (requested 1024, diff -52.1%)
+2026-09-04 03:12:03.098 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 561 tokens (requested 1024, diff -45.2%)
+2026-09-04 03:12:08.632 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 631 tokens (requested 1024, diff -38.4%)
+2026-09-04 03:12:20.145 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 728 tokens (requested 1024, diff -28.9%)
+2026-09-04 03:12:39.147 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 713 tokens (requested 1024, diff -30.4%)
+2026-09-04 03:12:44.957 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 571 tokens (requested 1024, diff -44.2%)
+2026-09-04 03:12:52.675 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 553 tokens (requested 1024, diff -46.0%)
+2026-09-04 03:13:01.402 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 602 tokens (requested 1024, diff -41.2%)
+2026-09-04 03:13:23.077 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 547 tokens (requested 1024, diff -46.6%)
+2026-09-04 03:13:30.388 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 866 tokens (requested 1024, diff -15.4%)
+2026-09-04 03:13:42.127 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 382 tokens (requested 1024, diff -62.7%)
+2026-09-04 03:13:51.133 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 673 tokens (requested 1024, diff -34.3%)
+2026-09-04 03:13:56.839 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 619 tokens (requested 1024, diff -39.6%)
+2026-09-04 03:14:03.174 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 695 tokens (requested 1024, diff -32.1%)
+2026-09-04 03:14:10.233 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 761 tokens (requested 1024, diff -25.7%)
+2026-09-04 03:14:15.336 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 677 tokens (requested 1024, diff -33.9%)
+2026-09-04 03:14:37.156 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 658 tokens (requested 1024, diff -35.7%)
+2026-09-04 03:14:42.857 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 642 tokens (requested 1024, diff -37.3%)
+2026-09-04 03:14:51.533 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 699 tokens (requested 1024, diff -31.7%)
+2026-09-04 03:14:57.781 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 414 tokens (requested 1024, diff -59.6%)
+2026-09-04 03:15:12.268 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 847 tokens (requested 1024, diff -17.3%)
+2026-09-04 03:15:21.830 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 740 tokens (requested 1024, diff -27.7%)
+2026-09-04 03:15:25.936 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 394 tokens (requested 1024, diff -61.5%)
+2026-09-04 03:15:29.975 - PhaseRunner - INFO - Timeout of 299.999717588s elapsed for event 'profiling phase sending'
+2026-09-04 03:15:29.975 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=37, completed=36, in_flight=1 | sessions: sent=37, completed=36 | timeout_triggered=True
+2026-09-04 03:15:29.975 - PhaseRunner - INFO - Timeout of 0.0s elapsed for event 'profiling phase credits returned'
+2026-09-04 03:15:29.975 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=37, completed=36, cancelled=0, in_flight=1
+2026-09-04 03:15:29.976 - StickyCreditRouter_dd5bdc78 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 03:15:29.976 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 03:15:29.976 - records_manager - INFO - Sent 37 requests. Waiting for all to complete...
+2026-09-04 03:15:29.976 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 03:15:29.976 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=36, cancelled=1, errors=0 | sessions: completed=36, cancelled=1 | elapsed=300.00s | grace_period_timeout=True
+2026-09-04 03:15:29.976 - PhaseOrchestrator_b4a50f2e - NOTICE - All credits completed
+2026-09-04 03:15:29.977 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788471629974384782, sent_end_ns=1788471929975707754, requests_end_ns=1788471929976750139, baseline_start_ns=1788471629974369486, baseline_end_ns=1788471929976754555, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=36, final_requests_cancelled=1, final_request_errors=0, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=36, error_records=0)
+2026-09-04 03:15:29.977 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 03:15:29.977 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 36 of 36 records processed)...
+2026-09-04 03:15:29.977 - records_manager - INFO - Processed 36 valid requests and 0 errors (36 total).
+2026-09-04 03:15:29.977 - records_manager - INFO - Received all records, processing now...
+2026-09-04 03:15:29.978 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 03:15:29.978 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 03:15:31.977 - records_manager - INFO - Processing records results...
+2026-09-04 03:15:32.020 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 03:15:32.021 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 03:15:32.625 - ExporterManager - INFO - Exporting all records
+2026-09-04 03:15:32.655 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/raw_records to /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/profile_export_raw.jsonl
+2026-09-04 03:15:32.693 - RawRecordAggregator - INFO - Aggregated 37 raw records to /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/profile_export_raw.jsonl
+2026-09-04 03:15:32.706 - ExporterManager - INFO - Exporting console data

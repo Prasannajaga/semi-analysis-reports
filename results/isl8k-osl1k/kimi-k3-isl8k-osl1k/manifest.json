@@ -1,0 +1,57 @@
+{
+  "apiKeyEnv": "DIRECT_PROVIDERS",
+  "benchmarkConfigSha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7",
+  "completedAt": "2026-09-03T21:54:04.925627Z",
+  "dryRun": false,
+  "jobs": [
+    {
+      "jobId": "correctness--kimi-k3--baseten--gsm8k--711e7de1",
+      "path": "models/kimi-k3/providers/baseten/correctness/gsm8k/correctness--kimi-k3--baseten--gsm8k--711e7de1",
+      "status": "completed"
+    },
+    {
+      "jobId": "correctness--kimi-k3--fireworks--gsm8k--7189e021",
+      "path": "models/kimi-k3/providers/fireworks/correctness/gsm8k/correctness--kimi-k3--fireworks--gsm8k--7189e021",
+      "status": "completed"
+    },
+    {
+      "jobId": "correctness--kimi-k3--together--gsm8k--a1f01191",
+      "path": "models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--a1f01191",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--kimi-k3--baseten--synthetic--c1--cb76c295",
+      "path": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--kimi-k3--fireworks--synthetic--c1--8093151c",
+      "path": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--kimi-k3--together--synthetic--c1--a4146cff",
+      "path": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--a4146cff",
+      "status": "completed"
+    }
+  ],
+  "matrix": {
+    "endpointCombinations": 3,
+    "jobs": 6,
+    "models": 1,
+    "providers": 3
+  },
+  "runId": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c",
+  "runName": "kimi-k3-isl8k-osl1k",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T21:21:00.437869Z",
+  "status": "completed",
+  "updatedAt": "2026-09-03T21:54:04.925642Z",
+  "versions": {
+    "aiperf": "0.12.0",
+    "benchmarkTool": "0.1.0",
+    "bfcl": null,
+    "lmEval": "0.4.13",
+    "python": "3.12.3"
+  }
+}

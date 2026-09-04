@@ -147,20 +147,25 @@ def classify_error(error: Any, record: dict[str, Any]) -> str:
     metadata = record.get("metadata", {})
     if isinstance(metadata, dict) and metadata.get("was_cancelled"):
         return "cancelled_requests"
-    if code == 429:
+    if (
+        (isinstance(metadata, dict) and metadata.get("context_overflow_skip"))
+        or code == 413
+        or ("context" in text and any(word in text for word in ("length", "window", "overflow", "long", "exceeded", "limit")))
+        or "maximum context" in text
+    ):
+        return "context_overflow"
+    if code in (408, 504) or "timeout" in text or "timed out" in text:
+        return "timeouts"
+    if any(word in text for word in ("connect", "disconnect", "dns", "socket", "connection reset", "connection refused")):
+        return "connection_errors"
+    if any(word in text for word in ("parse", "json", "decode", "malformed", "invalid response", "invalid inference result")):
+        return "parse_errors"
+    if code == 429 or "rate limit" in text:
         return "http_429"
     if code is not None and 400 <= code < 500:
         return "http_4xx"
     if code is not None and 500 <= code < 600:
         return "http_5xx"
-    if "context" in text and any(word in text for word in ("length", "window", "overflow", "long")):
-        return "context_overflow"
-    if "timeout" in text or "timed out" in text:
-        return "timeouts"
-    if any(word in text for word in ("connect", "disconnect", "dns", "socket")):
-        return "connection_errors"
-    if any(word in text for word in ("parse", "json", "decode", "malformed")):
-        return "parse_errors"
     return "other"
 
 
@@ -234,31 +239,45 @@ def reliability(
     )
 
 
-def _record_metric(record: dict[str, Any], *names: str) -> float:
+def _record_metric(
+    record: dict[str, Any],
+    *names: str,
+    default: float | None = 0.0,
+) -> float | None:
     metrics = record.get("metrics", {})
     if not isinstance(metrics, dict):
-        return 0
+        return default
     for name in names:
         value = metrics.get(name)
         if isinstance(value, dict):
             value = value.get("value")
         if isinstance(value, (int, float)):
             return float(value)
-    return 0
+    return default
 
 
 def token_usage(records: list[dict[str, Any]]) -> TokenUsage:
     records = profiling_records(records)
+    missing_input = 0
+    input_total = 0.0
+    for item in records:
+        val = _record_metric(
+            item,
+            "input_sequence_length",
+            "input_token_count",
+            "error_isl",
+            default=None,
+        )
+        if val is None:
+            missing_input += 1
+        else:
+            input_total += val
+
     return TokenUsage(
-        input_tokens=round(
-            sum(
-                _record_metric(item, "input_sequence_length", "input_token_count")
-                for item in records
-            )
-        ),
+        input_tokens=round(input_total),
         output_tokens=round(
             sum(
-                _record_metric(item, "output_sequence_length", "output_token_count")
+                _record_metric(item, "output_sequence_length", "output_token_count") or 0.0
                 for item in records
             )
         ),
@@ -269,7 +288,7 @@ def token_usage(records: list[dict[str, Any]]) -> TokenUsage:
                     "usage_prompt_cache_read_tokens",
                     "cached_input_tokens",
                     "cache_read_input_tokens",
-                )
+                ) or 0.0
                 for item in records
             )
         ),
@@ -279,8 +298,9 @@ def token_usage(records: list[dict[str, Any]]) -> TokenUsage:
                     item,
                     "usage_prompt_cache_write_tokens",
                     "cache_write_tokens",
-                )
+                ) or 0.0
                 for item in records
             )
         ),
+        missing_input_records=missing_input,
     )

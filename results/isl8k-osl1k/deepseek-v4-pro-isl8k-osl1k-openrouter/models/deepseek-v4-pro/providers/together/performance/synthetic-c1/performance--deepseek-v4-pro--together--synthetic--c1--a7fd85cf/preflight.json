@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-09-03T14:13:51.356365Z",
+  "exposedProvider": "Together",
+  "httpStatus": 200,
+  "metadataDetails": {
+    "matchingEndpointCount": 1
+  },
+  "model": "deepseek/deepseek-v4-pro-0813",
+  "provider": "together",
+  "requestBody": {
+    "max_tokens": 1,
+    "messages": [
+      {
+        "content": "Reply with OK.",
+        "role": "user"
+      }
+    ],
+    "model": "deepseek/deepseek-v4-pro-0813",
+    "provider": {
+      "allow_fallbacks": false,
+      "only": [
+        "together"
+      ],
+      "require_parameters": true
+    },
+    "stream": true,
+    "temperature": 0
+  },
+  "responseId": "gen-1788444831-izDXPmL4q06Zpn82wusp",
+  "routingVerified": true,
+  "status": "supported"
+}

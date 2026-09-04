@@ -337,3 +337,16 @@ def test_glm_direct_yaml_file_loads_validly():
     assert [p.pricing.input_usd_per_million for p in config.providers] == [0.15, 0.15, 0.15]
     assert [p.pricing.output_usd_per_million for p in config.providers] == [0.50, 0.50, 0.50]
     assert [p.pricing.cached_input_usd_per_million for p in config.providers] == [0.03, 0.03, 0.03]
+
+
+def test_normalize_yaml_configuration(config_dict):
+    config_dict["normalize"] = True
+    config = BenchmarkConfig.model_validate(config_dict)
+    assert config.normalize is True
+
+
+def test_normalize_migrated_from_phases(config_dict):
+    config_dict["phases"]["normalize"] = True
+    config = BenchmarkConfig.model_validate(config_dict)
+    assert config.normalize is True
+

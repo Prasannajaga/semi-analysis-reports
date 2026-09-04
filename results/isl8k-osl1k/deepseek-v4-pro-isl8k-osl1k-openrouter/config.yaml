@@ -1,0 +1,75 @@
+schemaVersion: "1.0"
+DEBUG: true
+benchmark:
+  name: deepseek-v4-pro-isl8k-osl1k
+  description: Benchmark DeepSeek V4 Pro across Fireworks and Together with 1M context
+  seed: 20260903
+
+gateway:
+  type: openrouter
+  baseUrl: https://openrouter.ai/api/v1
+  apiKeyEnv: OPENROUTER_API_KEY
+  retries:
+    maxRetries: 3
+    retryDelaySeconds: 2.0
+    backoffFactor: 2.0
+  routing:
+    allowFallbacks: false
+    requireParameters: true
+
+providers:
+  - id: fireworks
+    openrouterSlug: fireworks
+  - id: together
+    openrouterSlug: together
+  - id: baseten
+    openrouterSlug: baseten
+
+models:
+  - id: deepseek-v4-pro
+    openrouterModel: deepseek/deepseek-v4-pro-0813
+    tokenizer: deepseek-ai/DeepSeek-V3
+    tokenizerTrustRemoteCode: true
+    contextLength: 1048576
+
+phases:
+  performance:
+    enabled: true
+    runner: aiperf
+    workload:
+      type: synthetic
+      inputTokens: 8192
+      outputTokens: 1024
+      datasetEntries: 64
+    load:
+      mode: concurrency
+      values: [1]
+    durationSeconds: 300
+    warmup:
+      requestCount: 1
+    useServerTokenCount: true
+
+  correctness:
+    enabled: false
+    generation:
+      temperature: 0
+      maxTokens: 8192
+    tasks:
+      - name: gsm8k
+        runner: lm-eval
+
+  pricing:
+    enabled: true
+
+  reliability:
+    enabled: true
+    collect:
+      httpErrors: true
+      timeouts: true
+      connectionErrors: true
+      parseErrors: true
+      contextOverflow: true
+    slo:
+      requestTimeoutSeconds: 300
+      maxP95TtftMs: 5000
+      minSuccessRate: 0.99

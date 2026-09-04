@@ -1,0 +1,264 @@
+
+
+                                                       NVIDIA AIPerf | Error Summary                                                        
+┏━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Code ┃              Type ┃ Message                                                                                               ┃ Count ┃
+┡━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│  429 │ Too Many Requests │ {"id":"285eb981-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"9e662886-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"fa5964ff-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"8c4bf5af-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"1395e249-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"147524cd-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"729987fe-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"b255d712-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"94b6ec79-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"cbaa7fb1-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"97b90f83-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"dfc09203-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"f03a1ab9-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"2cb5b005-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"18afc48e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"09593a23-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"ba9c2450-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"20804ab8-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"ba0b8598-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"5a1d918f-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"c66b827e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"01610cd6-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"4e7d07e6-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"34013664-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"e811b96c-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"646f7559-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"4f5140a0-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"236328c5-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"7a756c42-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"a28d223e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+└──────┴───────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────┴───────┘
+
+
+                                         NVIDIA AIPerf | LLM Metrics: Effective                                          
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                    Metric ┃      avg ┃  min ┃       max ┃       p99 ┃       p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│          Effective Concurrency (requests) │     0.69 │ 0.00 │      1.00 │      1.00 │      1.00 │     1.00 │     0.46 │
+│  Effective Decode Throughput (tokens/sec) │    43.79 │ 0.00 │ 40,278.82 │    130.91 │    100.47 │    10.35 │    57.85 │
+│ Effective Prefill Throughput (tokens/sec) │   437.12 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │     0.00 │ 1,399.11 │
+│   Effective Decode Concurrency (requests) │     0.57 │ 0.00 │      1.00 │      1.00 │      1.00 │     1.00 │     0.50 │
+│  Effective Prefill Concurrency (requests) │     0.13 │ 0.00 │      1.00 │      1.00 │      1.00 │     0.00 │     0.33 │
+│   Effective Total Throughput (tokens/sec) │   480.91 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │    72.49 │ 1,385.93 │
+│      Effective Decode Throughput Per User │    43.79 │ 0.00 │ 40,278.82 │    130.91 │    100.47 │    10.35 │    57.85 │
+│                         (tokens/sec/user) │          │      │           │           │           │          │          │
+│     Effective Prefill Throughput Per User │   437.12 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │     0.00 │ 1,399.11 │
+│                         (tokens/sec/user) │          │      │           │           │           │          │          │
+│                 Tokens In Flight (tokens) │ 5,927.50 │ 0.00 │  9,220.00 │  9,192.94 │  8,954.78 │ 8,293.50 │ 3,956.81 │
+│         Effective Latency (CO-aware) (ms) │ 4,518.24 │ 0.60 │ 20,505.97 │ 19,663.11 │ 14,800.16 │     1.04 │ 6,559.61 │
+└───────────────────────────────────────────┴──────────┴──────┴───────────┴───────────┴───────────┴──────────┴──────────┘
+                                           NVIDIA AIPerf | LLM Metrics: Active                                           
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                 Metric ┃      avg ┃      min ┃       max ┃       p99 ┃      p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│  Active Decode Throughput (tokens/sec) │    77.29 │     0.00 │ 40,278.82 │    141.11 │   114.15 │    87.67 │    57.59 │
+│ Active Prefill Throughput (tokens/sec) │ 3,465.59 │ 2,208.56 │ 12,539.91 │ 12,539.91 │ 3,893.06 │ 2,699.85 │ 2,241.47 │
+│      Active Decode Throughput Per User │    77.29 │     0.00 │ 40,278.82 │    141.11 │   114.15 │    87.67 │    57.59 │
+│                      (tokens/sec/user) │          │          │           │           │          │          │          │
+│     Active Prefill Throughput Per User │ 3,465.59 │ 2,208.56 │ 12,539.91 │ 12,539.91 │ 3,893.06 │ 2,699.85 │ 2,241.47 │
+│                      (tokens/sec/user) │          │          │           │           │          │          │          │
+│   Active Total Throughput (tokens/sec) │   694.30 │    47.79 │ 12,539.91 │ 10,487.39 │ 2,699.85 │    79.57 │ 1,620.18 │
+└────────────────────────────────────────┴──────────┴──────────┴───────────┴───────────┴──────────┴──────────┴──────────┘
+                                            NVIDIA AIPerf | LLM Metrics: Usage                                            
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                  Metric ┃        avg ┃      min ┃      max ┃      p99 ┃      p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│            Usage Prompt Tokens (tokens) │   8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │     0.00 │
+│ Usage Prompt Cache Read Tokens (tokens) │   2,560.94 │     0.00 │ 8,195.00 │ 8,195.00 │ 8,195.00 │     0.00 │ 3,798.48 │
+│        Usage Completion Tokens (tokens) │     822.00 │   274.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │   273.29 │
+│         Usage Reasoning Tokens (tokens) │     505.50 │   186.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │   301.00 │   352.57 │
+│             Usage Total Tokens (tokens) │   9,018.00 │ 8,470.00 │ 9,220.00 │ 9,220.00 │ 9,220.00 │ 9,220.00 │   273.29 │
+│      Total Usage Prompt Tokens (tokens) │ 131,136.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│    Total Usage Prompt Cache Read Tokens │  40,975.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│                                (tokens) │            │          │          │          │          │          │          │
+│       Overall Usage Prompt Cache Read % │      31.25 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│                                     (%) │            │          │          │          │          │          │          │
+│  Total Usage Completion Tokens (tokens) │  13,152.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│   Total Usage Reasoning Tokens (tokens) │   8,088.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│       Total Usage Total Tokens (tokens) │ 144,288.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+└─────────────────────────────────────────┴────────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
+                                                    NVIDIA AIPerf | LLM Metrics                                                    
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                        Metric ┃       avg ┃      min ┃       max ┃       p99 ┃       p90 ┃       p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
+│                      Time to First Token (ms) │  2,364.97 │   653.59 │  3,711.02 │  3,675.36 │  3,389.25 │  2,676.85 │ 1,015.06 │
+│                     Time to Second Token (ms) │     24.10 │     0.00 │    272.57 │    235.75 │     26.39 │      0.00 │    65.03 │
+│               Time to First Output Token (ms) │  5,860.24 │ 4,284.25 │ 11,029.12 │ 10,627.08 │  7,008.73 │  5,245.53 │ 1,816.92 │
+│                          Request Latency (ms) │ 12,982.45 │ 5,942.48 │ 20,498.77 │ 20,217.97 │ 17,387.59 │ 12,949.74 │ 3,700.98 │
+│                          Decode Duration (ms) │ 10,617.48 │ 3,344.09 │ 17,025.45 │ 16,851.47 │ 14,986.95 │ 11,084.85 │ 3,585.23 │
+│                      Inter Token Latency (ms) │     13.24 │     8.83 │     20.92 │     20.27 │     16.08 │     12.73 │     2.75 │
+│              Output Token Throughput Per User │     78.45 │    47.81 │    113.24 │    110.65 │     92.43 │     78.59 │    14.82 │
+│                             (tokens/sec/user) │           │          │           │           │           │           │          │
+│ E2E Output Token Throughput (tokens/sec/user) │     63.43 │    32.92 │    104.33 │    100.98 │     79.18 │     61.76 │    16.10 │
+│               Output Sequence Length (tokens) │    822.00 │   274.00 │  1,024.00 │  1,024.00 │  1,024.00 │  1,024.00 │   273.29 │
+│                Input Sequence Length (tokens) │  8,196.00 │ 8,196.00 │  8,196.00 │  8,196.00 │  8,196.00 │  8,196.00 │     0.00 │
+│          Output Token Throughput (tokens/sec) │     43.84 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│           Input Token Throughput (tokens/sec) │    437.12 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│             Request Throughput (requests/sec) │      0.05 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│          Completed Requests (Success + Error) │     46.00 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                    (requests) │           │          │           │           │           │           │          │
+│                        Request Error Rate (%) │     65.22 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                      Request Count (requests) │     16.00 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│          Time to First Token (error-adjusted) │       N/A │   653.59 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│              Request Latency (error-adjusted) │       N/A │ 5,942.48 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│              Decode Duration (error-adjusted) │       N/A │ 3,344.09 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│          Inter Token Latency (error-adjusted) │       N/A │     8.83 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+└───────────────────────────────────────────────┴───────────┴──────────┴───────────┴───────────┴───────────┴───────────┴──────────┘
+
+
+╭──────────────────────────────────────────── GPU Telemetry Platform ─────────────────────────────────────────────╮
+│  Platform: unknown                                                                                              │
+│  Metric semantics are platform-specific; cross-platform comparisons require workload and collector validation.  │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+No GPU telemetry data collected during the benchmarking run.
+
+╭───────────────────────────── Output Sequence Length Mismatch Warning ──────────────────────────────╮
+│  6 of 16 requests (37.5%) have output length differing from requested by more than the threshold.  │
+│  Threshold (tokens): min(requested x 5%, 50)                                                       │
+│  Average mismatch: -19.7%                                                                          │
+│                                                                                                    │
+│  Why: Server hit EOS token before reaching requested output length.                                │
+│                                                                                                    │
+│  Fix Options:                                                                                      │
+│    - --extra-inputs ignore_eos:true - Generate until max_tokens (vLLM, TensorRT-LLM)               │
+│    - --extra-inputs min_tokens:<N> - Set minimum output length (vLLM, TensorRT-LLM, SGLang)        │
+│    - --use-server-token-count - Use server-reported token counts if tokenizer mismatch suspected   │
+│                                                                                                    │
+│  Diagnostics:                                                                                      │
+│    - Review profile_export.jsonl -> osl_mismatch_diff_pct for per-request values                   │
+│    - Adjust: AIPERF_METRICS_OSL_MISMATCH_PCT_THRESHOLD=5                                           │
+│    - Adjust: AIPERF_METRICS_OSL_MISMATCH_MAX_TOKEN_THRESHOLD=50                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────╯

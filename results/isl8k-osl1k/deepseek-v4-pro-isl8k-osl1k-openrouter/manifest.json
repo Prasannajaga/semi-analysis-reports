@@ -1,0 +1,42 @@
+{
+  "apiKeyEnv": "OPENROUTER_API_KEY",
+  "benchmarkConfigSha256": "1eb8f9656ee0918302515bce4257f6720d4b15397fae909e6abbd0d11d3c61c5",
+  "completedAt": "2026-09-03T14:30:03.962381Z",
+  "dryRun": false,
+  "jobs": [
+    {
+      "jobId": "performance--deepseek-v4-pro--baseten--synthetic--c1--9bc3dd9f",
+      "path": "models/deepseek-v4-pro/providers/baseten/performance/synthetic-c1/performance--deepseek-v4-pro--baseten--synthetic--c1--9bc3dd9f",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--deepseek-v4-pro--fireworks--synthetic--c1--205a32c9",
+      "path": "models/deepseek-v4-pro/providers/fireworks/performance/synthetic-c1/performance--deepseek-v4-pro--fireworks--synthetic--c1--205a32c9",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf",
+      "path": "models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf",
+      "status": "completed"
+    }
+  ],
+  "matrix": {
+    "endpointCombinations": 3,
+    "jobs": 3,
+    "models": 1,
+    "providers": 3
+  },
+  "runId": "deepseek-v4-pro-isl8k-osl1k-20260903T141349Z-1eb8f965",
+  "runName": "deepseek-v4-pro-isl8k-osl1k",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T14:13:49.723221Z",
+  "status": "completed",
+  "updatedAt": "2026-09-03T14:30:03.962397Z",
+  "versions": {
+    "aiperf": "0.12.0",
+    "benchmarkTool": "0.1.0",
+    "bfcl": null,
+    "lmEval": "0.4.13",
+    "python": "3.12.3"
+  }
+}

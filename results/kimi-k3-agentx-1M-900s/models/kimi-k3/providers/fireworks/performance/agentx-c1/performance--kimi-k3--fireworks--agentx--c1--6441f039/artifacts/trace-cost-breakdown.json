@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "totalTraces": 2,
+  "totalRequests": 51,
+  "totalEstimatedCostUsd": 2.00005,
+  "avgCostPerTraceUsd": 1.000025,
+  "pricingRates": {
+    "inputUsdPerMillion": 3.0,
+    "outputUsdPerMillion": 15.0,
+    "cachedInputUsdPerMillion": 0.3,
+    "cacheWriteUsdPerMillion": null
+  },
+  "traces": [
+    {
+      "traceId": "006c98de37d819e95b0840e25426bb7ca99d",
+      "requestCount": 28,
+      "inputTokens": 2580246,
+      "cachedInputTokens": 2517868,
+      "uncachedInputTokens": 62378,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0.9758,
+      "outputTokens": 15483,
+      "reasoningTokens": 245,
+      "totalTokens": 2595729,
+      "estimatedCostUsd": 1.174739,
+      "costPerRequestUsd": 0.041955
+    },
+    {
+      "traceId": "04dba6fe621301a1d01fd63b8d02c9645c48",
+      "requestCount": 23,
+      "inputTokens": 343773,
+      "cachedInputTokens": 166677,
+      "uncachedInputTokens": 177096,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0.4848,
+      "outputTokens": 16268,
+      "reasoningTokens": 8138,
+      "totalTokens": 360041,
+      "estimatedCostUsd": 0.825311,
+      "costPerRequestUsd": 0.035883
+    }
+  ]
+}
+

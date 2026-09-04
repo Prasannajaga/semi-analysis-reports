@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "totalTraces": 3,
+  "totalRequests": 73,
+  "totalEstimatedCostUsd": 3.503625,
+  "avgCostPerTraceUsd": 1.167875,
+  "pricingRates": {
+    "inputUsdPerMillion": 3.0,
+    "outputUsdPerMillion": 15.0,
+    "cachedInputUsdPerMillion": 0.3,
+    "cacheWriteUsdPerMillion": null
+  },
+  "traces": [
+    {
+      "traceId": "006c98de37d819e95b0840e25426bb7ca99d",
+      "requestCount": 28,
+      "inputTokens": 2580246,
+      "cachedInputTokens": 2517868,
+      "uncachedInputTokens": 62378,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0.9758,
+      "outputTokens": 15483,
+      "reasoningTokens": 245,
+      "totalTokens": 2595729,
+      "estimatedCostUsd": 1.174739,
+      "costPerRequestUsd": 0.041955
+    },
+    {
+      "traceId": "04dba6fe621301a1d01fd63b8d02c9645c48",
+      "requestCount": 25,
+      "inputTokens": 724963,
+      "cachedInputTokens": 550116,
+      "uncachedInputTokens": 174847,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0.7588,
+      "outputTokens": 40211,
+      "reasoningTokens": 10315,
+      "totalTokens": 765174,
+      "estimatedCostUsd": 1.292741,
+      "costPerRequestUsd": 0.05171
+    },
+    {
+      "traceId": "05f72f78a037cfa5cd4e4541960a574701d9",
+      "requestCount": 20,
+      "inputTokens": 1212988,
+      "cachedInputTokens": 1071796,
+      "uncachedInputTokens": 141192,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0.8836,
+      "outputTokens": 19402,
+      "reasoningTokens": 1644,
+      "totalTokens": 1232390,
+      "estimatedCostUsd": 1.036145,
+      "costPerRequestUsd": 0.051807
+    }
+  ]
+}
+

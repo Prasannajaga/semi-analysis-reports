@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenRouter Provider Benchmark</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+body {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+table { border-collapse: collapse; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-white text-slate-800 min-h-screen antialiased selection:bg-slate-200">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+  <!-- Minimal Header -->
+  <header class="border-b border-slate-200 pb-5 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">OpenRouter Provider Benchmark</h1>
+          <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium border border-slate-200">Executive Report</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Empirical comparison of output throughput, latency, delivered cost, reliability, and correctness.</p>
+      </div>
+
+      <!-- Specific Model Dropdown (No All Models) -->
+      <div class="flex items-center gap-2.5 self-start sm:self-auto">
+        <label for="model-select" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Model:</label>
+        <select id="model-select" class="bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm rounded px-3 py-1.5 focus:outline-none focus:border-slate-500 font-medium cursor-pointer shadow-xs">
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Provider Matrix Table (Executive Summary) -->
+  <section class="mb-8">
+    <div class="flex items-center justify-between mb-2.5">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Provider Comparison Matrix</h2>
+      <span id="matrix-model-label" class="text-xs font-mono text-slate-500"></span>
+    </div>
+    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-mono text-[11px] uppercase">
+          <tr>
+            <th class="py-2.5 px-3.5">Provider</th>
+            <th class="py-2.5 px-3.5 text-right">Output TPS</th>
+            <th class="py-2.5 px-3.5 text-right">TTFT p95</th>
+            <th class="py-2.5 px-3.5 text-right">Workload Cost</th>
+            <th class="py-2.5 px-3.5 text-right">Success Rate</th>
+            <th class="py-2.5 px-3.5 text-right">Cache Hit Rate</th>
+            <th class="py-2.5 px-3.5 text-right">Accuracy</th>
+            <th class="py-2.5 px-3.5 text-center">Decision</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody" class="divide-y divide-slate-100 font-mono text-slate-800">
+        </tbody>
+      </table>
+      <div id="value-summary" class="border-t border-slate-200 bg-slate-50 px-3.5 py-3"></div>
+    </div>
+
+    <!-- Separated Calculation Lines for Matrix -->
+    <div class="mt-3 bg-slate-50/70 border border-slate-200/80 rounded-lg p-3 text-xs text-slate-600">
+      <div class="font-semibold text-slate-800 mb-1.5">Formulas:</div>
+      <ul class="space-y-1 text-[11px] font-mono text-slate-700">
+        <li>• <span class="font-sans font-semibold text-slate-800">Workload Cost</span> = Total spend across input, cached, and output tokens</li>
+        <li>• <span class="font-sans font-semibold text-slate-800">SLO Gate</span> = Success Rate ≥ Min Target AND TTFT p95 ≤ Max Target</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CORE DATA SECTIONS -->
+  <div class="space-y-8">
+
+    <!-- 1. PERFORMANCE SECTION -->
+    <section id="sec-performance" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-perf">
+            <span>1. Performance & Latency</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Output TPS (Y-axis ↑, higher is better) vs TTFT p95 Latency (X-axis ↓, lower is better). Top-left indicates optimal performance.</p>
+        </div>
+        <div id="perf-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Performance Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-72 sm:h-80 w-full">
+          <canvas id="perf-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Performance Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Output TPS</th>
+              <th class="py-2 px-3 text-right">RPS</th>
+              <th class="py-2 px-3 text-right">TTFT Mean</th>
+              <th class="py-2 px-3 text-right">TTFT p95</th>
+              <th class="py-2 px-3 text-right">ITL p95</th>
+              <th class="py-2 px-3 text-right">E2E p95</th>
+            </tr>
+          </thead>
+          <tbody id="perf-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <!-- Calculation Methodology (Separated Lines) -->
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+        <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
+        <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Output TPS</span> = Total Generated Completion Tokens ÷ Workload Duration (s)</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Request Throughput (RPS)</span> = Total Completed Requests ÷ Workload Duration (s)</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">TTFT</span> = Timestamp of First Stream Token − Timestamp of Request Dispatch</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">ITL</span> = (E2E Latency − TTFT) ÷ (Total Generated Tokens − 1)</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">E2E Latency</span> = Timestamp of Final Response Token − Timestamp of Request Dispatch</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. COST SECTION -->
+    <section id="sec-cost" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-cost">
+            <span>2. Cost Economics</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Measured workload spend and effective cost normalized per 1,000 successful requests.</p>
+        </div>
+        <div id="cost-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Cost Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="cost-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Cost Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Workload Cost</th>
+              <th class="py-2 px-3 text-right">$ / 1k Attempts</th>
+              <th class="py-2 px-3 text-right">$ / 1k Successful</th>
+              <th class="py-2 px-3 text-right">Prompt ($/1M)</th>
+              <th class="py-2 px-3 text-right">Completion ($/1M)</th>
+              <th class="py-2 px-3 text-right">Input Tokens</th>
+              <th class="py-2 px-3 text-right">Output Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="cost-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Calculation Methodology (Separated Lines) -->
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+        <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
+        <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Workload Spend ($)</span> = (Uncached Tokens × Input Rate + Cached Tokens × Cached Rate + Output Tokens × Output Rate) ÷ 1,000,000</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cost / 1k Successful</span> = (Total Workload Spend ÷ Successful Requests) × 1,000</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cost / 1k Attempts</span> = (Total Workload Spend ÷ Total Requests) × 1,000</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cost / Request</span> = Total Workload Spend ÷ Total Requests</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. RELIABILITY SECTION -->
+    <section id="sec-reliability" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-rel">
+            <span>3. Service Reliability & Rate Limits</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Request success rate (%, higher is better), failure counts, and error breakdown (429 rate limits, 5xx server errors, timeouts, etc.).</p>
+        </div>
+        <div id="rel-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Reliability Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="rel-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Reliability Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Success Rate</th>
+              <th class="py-2 px-3 text-right">Total Requests</th>
+              <th class="py-2 px-3 text-right">Successful</th>
+              <th class="py-2 px-3 text-right">Failed</th>
+              <th class="py-2 px-3 text-right">HTTP 429s</th>
+              <th class="py-2 px-3">Error Breakdown</th>
+              <th class="py-2 px-3 text-center">SLO Status</th>
+            </tr>
+          </thead>
+          <tbody id="rel-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <!-- Calculation Methodology (Separated Lines) -->
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+        <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
+        <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Success Rate (%)</span> = (Successful Requests ÷ Total Requests) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Error Rate (%)</span> = (Failed Requests ÷ Total Requests) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">SLO Status</span> = (Success Rate ≥ Min Target) AND (TTFT p95 ≤ Max Target)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. CACHE HIT RATE SECTION -->
+    <section id="sec-cache" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-cache">
+            <span>4. Cache Hit Rate & Prefix Caching</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Cache Hit Rate (Y-axis ↑, higher is better) vs Cached Token Rate (X-axis ↓, lower is better). Top-left indicates optimal cache economics.</p>
+        </div>
+        <div id="cache-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Cache Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-72 sm:h-80 w-full">
+          <canvas id="cache-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Cache Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3 text-right">Cache Hit Rate</th>
+              <th class="py-2 px-3 text-right">Cached Tokens</th>
+              <th class="py-2 px-3 text-right">Total Input Tokens</th>
+              <th class="py-2 px-3 text-right">Standard Rate ($/1M)</th>
+              <th class="py-2 px-3 text-right">Cached Rate ($/1M)</th>
+              <th class="py-2 px-3 text-right">Cache Savings</th>
+            </tr>
+          </thead>
+          <tbody id="cache-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Calculation Methodology (Separated Lines) -->
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+        <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
+        <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Cache Hit Rate (%)</span> = (Cached Prompt Tokens ÷ Total Input Tokens) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cache Savings ($)</span> = (Cached Tokens × [Standard Input Rate − Cached Input Rate]) ÷ 1,000,000</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Uncached Tokens</span> = Total Input Tokens − Cached Prompt Tokens</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. CORRECTNESS SECTION -->
+    <section id="sec-correctness" class="border border-slate-200 rounded-lg p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-corr">
+            <span>5. Correctness</span>
+            <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Benchmark accuracy score (%, higher is better), evaluation task, and standard error.</p>
+        </div>
+        <div id="corr-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Correctness Chart -->
+      <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="corr-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Correctness Table -->
+      <div class="overflow-x-auto border border-slate-200 rounded">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+            <tr>
+              <th class="py-2 px-3">Provider</th>
+              <th class="py-2 px-3">Benchmark Task</th>
+              <th class="py-2 px-3">Metric</th>
+              <th class="py-2 px-3 text-right">Accuracy Score</th>
+              <th class="py-2 px-3 text-right">Samples</th>
+              <th class="py-2 px-3 text-right">Stderr (± pp)</th>
+              <th class="py-2 px-3 text-right">Eval Cost</th>
+            </tr>
+          </thead>
+          <tbody id="corr-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Calculation Methodology (Separated Lines) -->
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+        <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
+        <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Accuracy Score (%)</span> = (Σ [Run Score × Sample Count] ÷ Total Evaluated Samples) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Standard Error (± pp)</span> = (√(Σ [(Sample Count × Stderr)²]) ÷ Total Samples) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Evaluation Cost ($)</span> = Σ [Run Workload Spend]</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Floating Minimal Hover Tooltip -->
+  <div id="hover-tooltip" class="fixed hidden pointer-events-none z-50 px-3 py-2 bg-slate-900/95 text-slate-100 text-[11px] font-mono rounded shadow-lg border border-slate-800 transition-opacity leading-relaxed max-w-sm"></div>
+
+</div>
+
+<script>
+const records = [{"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--deepseek-v4-pro--baseten--gsm8k--729e6b0a", "config_hash": "729e6b0ac63ad78b", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.87, "stderr": 0.03379976689896309, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.96, "exact_match,strict-match": 0.87, "exact_match_stderr,flexible-extract": 0.019694638556693237, "exact_match_stderr,strict-match": 0.03379976689896309, "sample_len": 100.0}}, "source": {"correctness": "models/deepseek-v4-pro/providers/baseten/correctness/gsm8k/correctness--deepseek-v4-pro--baseten--gsm8k--729e6b0a/artifacts/deepseek-ai__DeepSeek-V4-Pro/results_2026-09-04T03-03-53.943804.json", "job": "models/deepseek-v4-pro/providers/baseten/correctness/gsm8k/correctness--deepseek-v4-pro--baseten--gsm8k--729e6b0a/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/baseten/correctness/gsm8k/correctness--deepseek-v4-pro--baseten--gsm8k--729e6b0a", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e"}}, {"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--deepseek-v4-pro--baseten--synthetic--c1--27dbe85c", "config_hash": "27dbe85cac3c1eb1", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 7468.8668110749995, "p50": 6164.3774435, "p90": 11435.4160245, "p95": 12195.99107015, "p99": 16451.665509079994, "minimum": 3477.649173, "maximum": 19115.566292, "stddev": 3145.529218372823, "count": 40, "total": 298754.67244299996}, "input_sequence_length": {"unit": "tokens", "mean": 8197.0, "p50": 8197.0, "p90": 8197.0, "p95": 8197.0, "p99": 8197.0, "minimum": 8197.0, "maximum": 8197.0, "stddev": 0.0, "count": 40, "total": 327880.0}, "itl": {"unit": "ms", "mean": 10.21843700328236, "p50": 10.28171509565053, "p90": 12.610759959548073, "p95": 13.378222892251287, "p99": 16.66245679638185, "minimum": 7.292617076013514, "maximum": 17.07401287109375, "stddev": 2.1499676237779606, "count": 40, "total": 408.73748013129443}, "output_sequence_length": {"unit": "tokens", "mean": 638.225, "p50": 554.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 257.0, "maximum": 1024.0, "stddev": 277.36298306551294, "count": 40, "total": 25529.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 85.09598161621663}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 101.8178800377295, "p50": 97.29222489098528, "p90": 131.92355840916588, "p95": 133.33707767746083, "p99": 136.19281741973288, "minimum": 58.56853966023399, "maximum": 137.12498401830894, "stddev": 19.511927845023457, "count": 40, "total": 4072.7152015091797}, "request_count": {"unit": "requests", "mean": 40.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.1333322599650854}, "ttft": {"unit": "ms", "mean": 1131.5838606500001, "p50": 885.24761, "p90": 1731.427965200001, "p95": 2733.4817799999996, "p99": 3392.382437269999, "minimum": 759.484925, "maximum": 3751.847234, "stddev": 639.1402893577384, "count": 40, "total": 45263.354426}}, "reliability": {"successful_requests": 40, "failed_requests": 0, "total_requests": 40, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 2733.4817799999996, "target": 5000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.99, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 1.32, "output_usd_per_million": 3.9600000000000004, "cached_input_usd_per_million": 0.132, "token_usage": {"input_tokens": 327880, "output_tokens": 25529, "cached_input_tokens": 196680, "cache_write_tokens": 0}, "estimated_cost_usd": 0.3002406, "cost_per_request_usd": 0.007506015, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/deepseek-v4-pro/providers/baseten/performance/synthetic-c1/performance--deepseek-v4-pro--baseten--synthetic--c1--27dbe85c/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/baseten/performance/synthetic-c1/performance--deepseek-v4-pro--baseten--synthetic--c1--27dbe85c", "pricingSnapshot": "models/deepseek-v4-pro/providers/baseten/endpoint/pricing-snapshot.json", "records": "models/deepseek-v4-pro/providers/baseten/performance/synthetic-c1/performance--deepseek-v4-pro--baseten--synthetic--c1--27dbe85c/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "summary": "models/deepseek-v4-pro/providers/baseten/performance/synthetic-c1/performance--deepseek-v4-pro--baseten--synthetic--c1--27dbe85c/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--deepseek-v4-pro--fireworks--gsm8k--3cfe6af9", "config_hash": "3cfe6af9e189ea07", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.54, "stderr": 0.05009082659620333, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.86, "exact_match,strict-match": 0.54, "exact_match_stderr,flexible-extract": 0.03487350880197771, "exact_match_stderr,strict-match": 0.05009082659620333, "sample_len": 100.0}}, "source": {"correctness": "models/deepseek-v4-pro/providers/fireworks/correctness/gsm8k/correctness--deepseek-v4-pro--fireworks--gsm8k--3cfe6af9/artifacts/accounts__fireworks__models__deepseek-v4-pro-0813/results_2026-09-04T03-10-55.810207.json", "job": "models/deepseek-v4-pro/providers/fireworks/correctness/gsm8k/correctness--deepseek-v4-pro--fireworks--gsm8k--3cfe6af9/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/fireworks/correctness/gsm8k/correctness--deepseek-v4-pro--fireworks--gsm8k--3cfe6af9", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e"}}, {"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--deepseek-v4-pro--fireworks--synthetic--c1--e0d4b7fe", "config_hash": "e0d4b7fe43921f79", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 15123.453297, "p50": 15526.466994999999, "p90": 17309.8162092, "p95": 19498.279501199966, "p99": 30978.38766504, "minimum": 9137.893536, "maximum": 33848.414705999996, "stddev": 5229.639988840016, "count": 19, "total": 287345.612643}, "input_sequence_length": {"unit": "tokens", "mean": 8196.0, "p50": 8196.0, "p90": 8196.0, "p95": 8196.0, "p99": 8196.0, "minimum": 8196.0, "maximum": 8196.0, "stddev": 0.0, "count": 19, "total": 155724.0}, "itl": {"unit": "ms", "mean": 14.660670976085838, "p50": 14.413604866080155, "p90": 16.131273699659094, "p95": 16.214041265195544, "p99": 16.70529587543911, "minimum": 12.405012478005865, "maximum": 16.828109528, "stddev": 1.150956190498197, "count": 19, "total": 278.5527485456309}, "output_sequence_length": {"unit": "tokens", "mean": 847.5263157894736, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 376.0, "maximum": 1024.0, "stddev": 216.33705875713886, "count": 19, "total": 16103.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 53.67630457597773}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 68.63548504289498, "p50": 69.37889648642452, "p90": 75.21123653204036, "p95": 77.80194633526361, "p99": 80.05044934707304, "minimum": 59.4243814693574, "maximum": 80.6125751000254, "stddev": 5.447008065299206, "count": 19, "total": 1304.0742158150047}, "request_count": {"unit": "requests", "mean": 19.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.06333290610094869}, "ttft": {"unit": "ms", "mean": 2764.207610210526, "p50": 1420.8921759999998, "p90": 3683.212790199999, "p95": 6359.670832199969, "p99": 16659.303068040004, "minimum": 641.3056429999999, "maximum": 19234.211127, "stddev": 4008.552283506984, "count": 19, "total": 52519.944594}}, "reliability": {"successful_requests": 19, "failed_requests": 0, "total_requests": 19, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": false, "checks": {"p95_ttft_ms": {"value": 6359.670832199969, "target": 5000.0, "passed": false}, "success_rate": {"value": 1.0, "target": 0.99, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 1.32, "output_usd_per_million": 3.9600000000000004, "cached_input_usd_per_million": 0.044, "token_usage": {"input_tokens": 155724, "output_tokens": 16103, "cached_input_tokens": 57365, "cache_write_tokens": 0}, "estimated_cost_usd": 0.19612582, "cost_per_request_usd": 0.01032241157894737, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/deepseek-v4-pro/providers/fireworks/performance/synthetic-c1/performance--deepseek-v4-pro--fireworks--synthetic--c1--e0d4b7fe/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/fireworks/performance/synthetic-c1/performance--deepseek-v4-pro--fireworks--synthetic--c1--e0d4b7fe", "pricingSnapshot": "models/deepseek-v4-pro/providers/fireworks/endpoint/pricing-snapshot.json", "records": "models/deepseek-v4-pro/providers/fireworks/performance/synthetic-c1/performance--deepseek-v4-pro--fireworks--synthetic--c1--e0d4b7fe/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "summary": "models/deepseek-v4-pro/providers/fireworks/performance/synthetic-c1/performance--deepseek-v4-pro--fireworks--synthetic--c1--e0d4b7fe/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--deepseek-v4-pro--together--gsm8k--217631b8", "config_hash": "217631b8e01fb65b", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "correctness", "status": "failed", "reason": "lm-eval exited with code 1: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.together.ai/v1/chat/completions", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "source": {"job": "models/deepseek-v4-pro/providers/together/correctness/gsm8k/correctness--deepseek-v4-pro--together--gsm8k--217631b8/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/together/correctness/gsm8k/correctness--deepseek-v4-pro--together--gsm8k--217631b8", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e"}}, {"schema_version": "1.0", "run_id": "deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "run_metadata": {"name": "deepseek-v4-pro-isl8k-osl1k", "started_at": "2026-09-03T21:25:45.076168Z", "completed_at": "2026-09-03T21:58:20.164572Z", "benchmark_config_sha256": "a2b2ba3e08b6882db1fe37f67fe08e3c32e0297b6d383c6840192b38d65b1bbc", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--deepseek-v4-pro--together--synthetic--c1--5457fd28", "config_hash": "5457fd28cfe5837d", "model": {"id": "deepseek-v4-pro", "openrouter_id": "deepseek/deepseek-v4-pro-0813"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 12982.446949187499, "p50": 12949.742796499999, "p90": 17387.590917499998, "p95": 19094.78453275, "p99": 20217.97292095, "minimum": 5942.479353, "maximum": 20498.770018, "stddev": 3700.982444073999, "count": 16, "total": 207719.15118699998}, "input_sequence_length": {"unit": "tokens", "mean": 8196.0, "p50": 8196.0, "p90": 8196.0, "p95": 8196.0, "p99": 8196.0, "minimum": 8196.0, "maximum": 8196.0, "stddev": 0.0, "count": 16, "total": 131136.0}, "itl": {"unit": "ms", "mean": 13.243415173766756, "p50": 12.726131267350928, "p90": 16.075775888563047, "p95": 17.710842850647197, "p99": 20.274467332083166, "minimum": 8.830779311827957, "maximum": 20.915373452442157, "stddev": 2.746246851130688, "count": 16, "total": 211.8946427802681}, "output_sequence_length": {"unit": "tokens", "mean": 822.0, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 274.0, "maximum": 1024.0, "stddev": 273.2917397214925, "count": 16, "total": 13152.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 43.83985605548596}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 78.45108346104868, "p50": 78.59277623707621, "p90": 92.42562538154559, "p95": 100.30279625926572, "p99": 110.65279032804806, "minimum": 47.811720994311784, "maximum": 113.24028884524365, "stddev": 14.817446028397166, "count": 16, "total": 1255.217335376779}, "request_count": {"unit": "requests", "mean": 16.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.053333158218352744}, "ttft": {"unit": "ms", "mean": 2364.9669464999997, "p50": 2676.848442, "p90": 3389.2471605, "p95": 3532.74624125, "p99": 3675.3626994499996, "minimum": 653.5930629999999, "maximum": 3711.0168139999996, "stddev": 1015.0621586220974, "count": 16, "total": 37839.471143999996}}, "reliability": {"successful_requests": 16, "failed_requests": 30, "total_requests": 46, "success_rate": 0.34782608695652173, "error_rate": 0.6521739130434783, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 30, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": false, "checks": {"p95_ttft_ms": {"value": 3532.74624125, "target": 5000.0, "passed": true}, "success_rate": {"value": 0.34782608695652173, "target": 0.99, "passed": false}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 1.32, "output_usd_per_million": 3.9600000000000004, "cached_input_usd_per_million": 0.13, "token_usage": {"input_tokens": 131136, "output_tokens": 13152, "cached_input_tokens": 40975, "cache_write_tokens": 0}, "estimated_cost_usd": 0.17642119, "cost_per_request_usd": 0.0038352432608695654, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/job.json", "jobDirectory": "models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28", "pricingSnapshot": "models/deepseek-v4-pro/providers/together/endpoint/pricing-snapshot.json", "records": "models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e", "summary": "models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--glm-5-3-flash--baseten--gsm8k--818283d5", "config_hash": "818283d5d8b4f13d", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.99, "stderr": 0.009999999999999995, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.99, "exact_match,strict-match": 0.99, "exact_match_stderr,flexible-extract": 0.009999999999999995, "exact_match_stderr,strict-match": 0.009999999999999995, "sample_len": 100.0}}, "source": {"correctness": "models/glm-5-3-flash/providers/baseten/correctness/gsm8k/correctness--glm-5-3-flash--baseten--gsm8k--818283d5/artifacts/zai-org__GLM-5.3-Flash/results_2026-09-04T03-01-18.209406.json", "job": "models/glm-5-3-flash/providers/baseten/correctness/gsm8k/correctness--glm-5-3-flash--baseten--gsm8k--818283d5/job.json", "jobDirectory": "models/glm-5-3-flash/providers/baseten/correctness/gsm8k/correctness--glm-5-3-flash--baseten--gsm8k--818283d5", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--glm-5-3-flash--baseten--synthetic--c1--aae05011", "config_hash": "aae05011fae4b718", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 8207.942674111111, "p50": 6681.1071955, "p90": 13620.368018, "p95": 14822.819555, "p99": 19644.73124619999, "minimum": 4103.53781, "maximum": 21813.762371999997, "stddev": 3712.5518929051896, "count": 36, "total": 295485.936268}, "input_sequence_length": {"unit": "tokens", "mean": 8205.0, "p50": 8205.0, "p90": 8205.0, "p95": 8205.0, "p99": 8205.0, "minimum": 8205.0, "maximum": 8205.0, "stddev": 0.0, "count": 36, "total": 295380.0}, "itl": {"unit": "ms", "mean": 10.811415876151791, "p50": 9.139417994230769, "p90": 14.495069284937497, "p95": 18.91186059324566, "p99": 30.508626308713545, "minimum": 5.788858152337858, "maximum": 31.818894721461188, "stddev": 5.28699075494972, "count": 36, "total": 389.2109715414645}, "output_sequence_length": {"unit": "tokens", "mean": 675.3055555555555, "p50": 650.0, "p90": 945.0, "p95": 1024.0, "p99": 1024.0, "minimum": 382.0, "maximum": 1024.0, "stddev": 163.40879539847373, "count": 36, "total": 24311.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 81.03602773621513}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 105.92545534911393, "p50": 109.41886535074876, "p90": 136.48079386898837, "p95": 145.28370251847386, "p99": 169.07572225682475, "minimum": 31.427867270497003, "maximum": 172.74563889532257, "stddev": 31.674242342900847, "count": 36, "total": 3813.3163925681015}, "request_count": {"unit": "requests", "mean": 36.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.11999905386465981}, "ttft": {"unit": "ms", "mean": 964.4639491111111, "p50": 931.5899314999999, "p90": 1034.7006569999999, "p95": 1114.5460464999999, "p99": 2018.2589873499978, "minimum": 802.6368289999999, "maximum": 2475.396052, "stddev": 270.57349600582654, "count": 36, "total": 34720.702167999996}}, "reliability": {"successful_requests": 36, "failed_requests": 0, "total_requests": 36, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 1114.5460464999999, "target": 5000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.99, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 0.15, "output_usd_per_million": 0.5, "cached_input_usd_per_million": 0.03, "token_usage": {"input_tokens": 295380, "output_tokens": 24311, "cached_input_tokens": 0, "cache_write_tokens": 0}, "estimated_cost_usd": 0.0564625, "cost_per_request_usd": 0.0015684027777777777, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/job.json", "jobDirectory": "models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011", "pricingSnapshot": "models/glm-5-3-flash/providers/baseten/endpoint/pricing-snapshot.json", "records": "models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "summary": "models/glm-5-3-flash/providers/baseten/performance/synthetic-c1/performance--glm-5-3-flash--baseten--synthetic--c1--aae05011/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--glm-5-3-flash--fireworks--gsm8k--8fbf7814", "config_hash": "8fbf7814e10369d9", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.99, "stderr": 0.009999999999999995, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.99, "exact_match,strict-match": 0.99, "exact_match_stderr,flexible-extract": 0.009999999999999995, "exact_match_stderr,strict-match": 0.009999999999999995, "sample_len": 100.0}}, "source": {"correctness": "models/glm-5-3-flash/providers/fireworks/correctness/gsm8k/correctness--glm-5-3-flash--fireworks--gsm8k--8fbf7814/artifacts/accounts__fireworks__models__glm-5p3-flash/results_2026-09-04T03-07-06.107145.json", "job": "models/glm-5-3-flash/providers/fireworks/correctness/gsm8k/correctness--glm-5-3-flash--fireworks--gsm8k--8fbf7814/job.json", "jobDirectory": "models/glm-5-3-flash/providers/fireworks/correctness/gsm8k/correctness--glm-5-3-flash--fireworks--gsm8k--8fbf7814", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7", "config_hash": "3df4ecb77a26b32e", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 13505.197634545453, "p50": 12768.755492, "p90": 18232.268320500007, "p95": 18600.89514495, "p99": 20947.428242129998, "minimum": 8140.081842, "maximum": 21569.850191999998, "stddev": 3091.8996932899895, "count": 22, "total": 297114.34796}, "input_sequence_length": {"unit": "tokens", "mean": 8204.0, "p50": 8204.0, "p90": 8204.0, "p95": 8204.0, "p99": 8204.0, "minimum": 8204.0, "maximum": 8204.0, "stddev": 0.0, "count": 22, "total": 180488.0}, "itl": {"unit": "ms", "mean": 11.106546448900772, "p50": 10.953153860215053, "p90": 12.847562259824048, "p95": 13.333444848044964, "p99": 14.035376892169285, "minimum": 8.9258126640625, "maximum": 14.215817792604502, "stddev": 1.2519713879210013, "count": 22, "total": 244.34402187581696}, "output_sequence_length": {"unit": "tokens", "mean": 990.5454545454545, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.79, "minimum": 623.0, "maximum": 1025.0, "stddev": 106.40306184620786, "count": 22, "total": 21792.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 72.63883523797186}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 91.13238563910483, "p50": 91.29795289984071, "p90": 101.07268573041354, "p95": 105.08308841452235, "p99": 110.61825614277367, "minimum": 70.3441767887761, "maximum": 112.03461663790502, "stddev": 9.817389220598061, "count": 22, "total": 2004.912484060306}, "request_count": {"unit": "requests", "mean": 22.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.07333215745389964}, "ttft": {"unit": "ms", "mean": 2554.0773737727272, "p50": 1347.3816895, "p90": 5331.8379281000025, "p95": 6685.997986649999, "p99": 9915.871685599996, "minimum": 626.919491, "maximum": 10756.669337, "stddev": 2461.972229249497, "count": 22, "total": 56189.702223}}, "reliability": {"successful_requests": 22, "failed_requests": 0, "total_requests": 22, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": false, "checks": {"p95_ttft_ms": {"value": 6685.997986649999, "target": 5000.0, "passed": false}, "success_rate": {"value": 1.0, "target": 0.99, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 0.15, "output_usd_per_million": 0.5, "cached_input_usd_per_million": 0.03, "token_usage": {"input_tokens": 180488, "output_tokens": 21792, "cached_input_tokens": 81920, "cache_write_tokens": 0}, "estimated_cost_usd": 0.0281388, "cost_per_request_usd": 0.0012790363636363635, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/job.json", "jobDirectory": "models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7", "pricingSnapshot": "models/glm-5-3-flash/providers/fireworks/endpoint/pricing-snapshot.json", "records": "models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "summary": "models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--glm-5-3-flash--together--gsm8k--dac6d539", "config_hash": "dac6d5396bdd0601", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.97, "stderr": 0.017144660799776515, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.97, "exact_match,strict-match": 0.97, "exact_match_stderr,flexible-extract": 0.017144660799776515, "exact_match_stderr,strict-match": 0.017144660799776515, "sample_len": 100.0}}, "source": {"correctness": "models/glm-5-3-flash/providers/together/correctness/gsm8k/correctness--glm-5-3-flash--together--gsm8k--dac6d539/artifacts/zai-org__GLM-5.3-Flash/results_2026-09-04T03-10-04.624533.json", "job": "models/glm-5-3-flash/providers/together/correctness/gsm8k/correctness--glm-5-3-flash--together--gsm8k--dac6d539/job.json", "jobDirectory": "models/glm-5-3-flash/providers/together/correctness/gsm8k/correctness--glm-5-3-flash--together--gsm8k--dac6d539", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810"}}, {"schema_version": "1.0", "run_id": "glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "run_metadata": {"name": "glm-5-3-flash-isl8k-osl1k", "started_at": "2026-09-03T21:28:29.051588Z", "completed_at": "2026-09-03T21:56:07.630632Z", "benchmark_config_sha256": "d65c381091aaee700b1062b4a5efa045306deabceb653fd8fc1b8ab164e4f7e0", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--glm-5-3-flash--together--synthetic--c1--eb275988", "config_hash": "eb275988de005492", "model": {"id": "glm-5-3-flash", "openrouter_id": "z-ai/glm-5.3-flash"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 6974.220658487804, "p50": 6088.428712999999, "p90": 9609.803537, "p95": 16746.84273, "p99": 19189.189965, "minimum": 3880.547471, "maximum": 19766.178321, "stddev": 3662.420322919143, "count": 41, "total": 285943.046998}, "input_sequence_length": {"unit": "tokens", "mean": 8204.0, "p50": 8204.0, "p90": 8204.0, "p95": 8204.0, "p99": 8204.0, "minimum": 8204.0, "maximum": 8204.0, "stddev": 0.0, "count": 41, "total": 336364.0}, "itl": {"unit": "ms", "mean": 6.106258962131912, "p50": 5.201232491691104, "p90": 8.615976839687194, "p95": 14.659228188660801, "p99": 16.50510029892473, "minimum": 3.316488771260997, "maximum": 17.122302614858256, "stddev": 3.197726245154585, "count": 41, "total": 250.3566174474084}, "output_sequence_length": {"unit": "tokens", "mean": 1009.609756097561, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 665.0, "maximum": 1024.0, "stddev": 65.09875351876262, "count": 41, "total": 41394.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 137.9783242877461}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 192.4987096127044, "p50": 192.26212279445033, "p90": 261.9317229675245, "p95": 266.044941777803, "p99": 288.45508152940806, "minimum": 58.40335978714847, "maximum": 301.5237104571228, "stddev": 61.37712617519789, "count": 41, "total": 7892.44709412088}, "request_count": {"unit": "requests", "mean": 41.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.13666500690432407}, "ttft": {"unit": "ms", "mean": 814.9671239512195, "p50": 806.688458, "p90": 876.386298, "p95": 916.679445, "p99": 3250.1250324000052, "minimum": 343.508384, "maximum": 4769.787883999999, "stddev": 654.3540594141915, "count": 41, "total": 33413.652082}}, "reliability": {"successful_requests": 41, "failed_requests": 40, "total_requests": 81, "success_rate": 0.5061728395061729, "error_rate": 0.49382716049382713, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 40, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": false, "checks": {"p95_ttft_ms": {"value": 916.679445, "target": 5000.0, "passed": true}, "success_rate": {"value": 0.5061728395061729, "target": 0.99, "passed": false}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 0.15, "output_usd_per_million": 0.5, "cached_input_usd_per_million": 0.03, "token_usage": {"input_tokens": 336364, "output_tokens": 41394, "cached_input_tokens": 73152, "cache_write_tokens": 0}, "estimated_cost_usd": 0.062373359999999996, "cost_per_request_usd": 0.0007700414814814814, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988/job.json", "jobDirectory": "models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988", "pricingSnapshot": "models/glm-5-3-flash/providers/together/endpoint/pricing-snapshot.json", "records": "models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810", "summary": "models/glm-5-3-flash/providers/together/performance/synthetic-c1/performance--glm-5-3-flash--together--synthetic--c1--eb275988/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--kimi-k3--baseten--gsm8k--711e7de1", "config_hash": "711e7de130b0d68f", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 1.0, "stderr": 0.0, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 1.0, "exact_match,strict-match": 1.0, "exact_match_stderr,flexible-extract": 0.0, "exact_match_stderr,strict-match": 0.0, "sample_len": 100.0}}, "source": {"correctness": "models/kimi-k3/providers/baseten/correctness/gsm8k/correctness--kimi-k3--baseten--gsm8k--711e7de1/artifacts/moonshotai__Kimi-K3/results_2026-09-04T02-55-34.758613.json", "job": "models/kimi-k3/providers/baseten/correctness/gsm8k/correctness--kimi-k3--baseten--gsm8k--711e7de1/job.json", "jobDirectory": "models/kimi-k3/providers/baseten/correctness/gsm8k/correctness--kimi-k3--baseten--gsm8k--711e7de1", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--baseten--synthetic--c1--cb76c295", "config_hash": "cb76c295432d4276", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "baseten", "openrouter_slug": "baseten"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 16024.863285666665, "p50": 16350.776914499998, "p90": 17286.7442676, "p95": 17344.98809215, "p99": 17400.90083443, "minimum": 14215.280401999999, "maximum": 17414.87902, "stddev": 1111.332948441801, "count": 18, "total": 288447.53914199997}, "input_sequence_length": {"unit": "tokens", "mean": 8277.0, "p50": 8277.0, "p90": 8277.0, "p95": 8277.0, "p99": 8277.0, "minimum": 8277.0, "maximum": 8277.0, "stddev": 0.0, "count": 18, "total": 148986.0}, "itl": {"unit": "ms", "mean": 14.495368473226893, "p50": 14.645614412512218, "p90": 15.686365778103617, "p95": 15.786629957526882, "p99": 15.881330836862169, "minimum": 12.850830646138807, "maximum": 15.905006056695992, "stddev": 0.9820772094932007, "count": 18, "total": 260.91663251808404}, "output_sequence_length": {"unit": "tokens", "mean": 1024.0, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 1024.0, "maximum": 1024.0, "stddev": 0.0, "count": 18, "total": 18432.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 61.43943755717444}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 69.31180077781555, "p50": 68.28261278571516, "p90": 76.3666060263062, "p95": 77.4714403321023, "p99": 77.7470732776527, "minimum": 62.873286337354195, "maximum": 77.8159815140403, "stddev": 4.793882062778432, "count": 18, "total": 1247.6124140006798}, "request_count": {"unit": "requests", "mean": 18.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.05999945073942817}, "ttft": {"unit": "ms", "mean": 1196.1013375555556, "p50": 1038.237907, "p90": 1598.9847421000004, "p95": 2004.4311585999992, "p99": 2362.806542919999, "minimum": 854.2572809999999, "maximum": 2452.400389, "stddev": 407.0145068517103, "count": 18, "total": 21529.824076}}, "reliability": {"successful_requests": 18, "failed_requests": 0, "total_requests": 18, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 2004.4311585999992, "target": 5000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cached_input_usd_per_million": 0.3, "token_usage": {"input_tokens": 148986, "output_tokens": 18432, "cached_input_tokens": 25656, "cache_write_tokens": 0}, "estimated_cost_usd": 0.6541667999999999, "cost_per_request_usd": 0.036342599999999996, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295/job.json", "jobDirectory": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295", "pricingSnapshot": "models/kimi-k3/providers/baseten/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "summary": "models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--kimi-k3--fireworks--gsm8k--7189e021", "config_hash": "7189e0210c127954", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 1.0, "stderr": 0.0, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 1.0, "exact_match,strict-match": 1.0, "exact_match_stderr,flexible-extract": 0.0, "exact_match_stderr,strict-match": 0.0, "sample_len": 100.0}}, "source": {"correctness": "models/kimi-k3/providers/fireworks/correctness/gsm8k/correctness--kimi-k3--fireworks--gsm8k--7189e021/artifacts/accounts__fireworks__models__kimi-k3/results_2026-09-04T03-01-22.103058.json", "job": "models/kimi-k3/providers/fireworks/correctness/gsm8k/correctness--kimi-k3--fireworks--gsm8k--7189e021/job.json", "jobDirectory": "models/kimi-k3/providers/fireworks/correctness/gsm8k/correctness--kimi-k3--fireworks--gsm8k--7189e021", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--fireworks--synthetic--c1--8093151c", "config_hash": "8093151c13fa2140", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "fireworks", "openrouter_slug": "fireworks"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 20480.449769857143, "p50": 20669.2714675, "p90": 22552.5470882, "p95": 23251.1323429, "p99": 23461.24670138, "minimum": 18089.110985, "maximum": 23513.775290999998, "stddev": 1535.2997243604343, "count": 14, "total": 286726.29677799996}, "input_sequence_length": {"unit": "tokens", "mean": 8280.0, "p50": 8280.0, "p90": 8280.0, "p95": 8280.0, "p99": 8280.0, "minimum": 8280.0, "maximum": 8280.0, "stddev": 0.0, "count": 14, "total": 115920.0}, "itl": {"unit": "ms", "mean": 18.42888739093702, "p50": 18.285245704301072, "p90": 19.518891475757577, "p95": 20.165000708602147, "p99": 20.970199570068427, "minimum": 16.653795450635386, "maximum": 21.171499285434994, "stddev": 1.1656190738194978, "count": 14, "total": 258.00442347311827}, "output_sequence_length": {"unit": "tokens", "mean": 1024.0, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 1024.0, "maximum": 1024.0, "stddev": 0.0, "count": 14, "total": 14336.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 47.78650004406116}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 54.47394832562889, "p50": 54.71039486042951, "p90": 58.03573278474064, "p95": 58.79256816410443, "p99": 59.7956113845816, "minimum": 47.23331052364125, "maximum": 60.04637218970089, "stddev": 3.3505724920676947, "count": 14, "total": 762.6352765588044}, "request_count": {"unit": "requests", "mean": 14.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.04666650394927847}, "ttft": {"unit": "ms", "mean": 1627.6979689285713, "p50": 1411.379066, "p90": 2986.5117046000014, "p95": 3430.3685113499996, "p99": 3530.36972227, "minimum": 477.228231, "maximum": 3555.3700249999997, "stddev": 836.1253003827388, "count": 14, "total": 22787.771565}}, "reliability": {"successful_requests": 14, "failed_requests": 0, "total_requests": 14, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": true, "checks": {"p95_ttft_ms": {"value": 3430.3685113499996, "target": 5000.0, "passed": true}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cached_input_usd_per_million": 0.3, "token_usage": {"input_tokens": 115920, "output_tokens": 14336, "cached_input_tokens": 16558, "cache_write_tokens": 0}, "estimated_cost_usd": 0.5180933999999999, "cost_per_request_usd": 0.037006671428571426, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/job.json", "jobDirectory": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c", "pricingSnapshot": "models/kimi-k3/providers/fireworks/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "summary": "models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/profile_export_aiperf.json"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "correctness--kimi-k3--together--gsm8k--a1f01191", "config_hash": "a1f01191f1748324", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "correctness", "status": "completed", "workload": {"name": "gsm8k", "runner": "lm-eval", "runner_task": "gsm8k"}, "correctness": {"task": "gsm8k", "runner_task": "gsm8k", "primary_metric": "exact_match,strict-match", "score": 0.99, "stderr": 0.009999999999999998, "sample_count": 100, "metrics": {"exact_match,flexible-extract": 0.99, "exact_match,strict-match": 0.99, "exact_match_stderr,flexible-extract": 0.009999999999999998, "exact_match_stderr,strict-match": 0.009999999999999998, "sample_len": 100.0}}, "source": {"correctness": "models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--a1f01191/artifacts/moonshotai__Kimi-K3/results_2026-09-04T03-07-53.959083.json", "job": "models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--a1f01191/job.json", "jobDirectory": "models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--a1f01191", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c"}}, {"schema_version": "1.0", "run_id": "kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "run_metadata": {"name": "kimi-k3-isl8k-osl1k", "started_at": "2026-09-03T21:21:00.437869Z", "completed_at": "2026-09-03T21:54:04.925627Z", "benchmark_config_sha256": "705bc03c9828653264e56cc9fd9eba8175643833756a2a9bda78d5bacd087ad7", "versions": {"aiperf": "0.12.0", "benchmarkTool": "0.1.0", "bfcl": null, "lmEval": "0.4.13", "python": "3.12.3"}}, "job_id": "performance--kimi-k3--together--synthetic--c1--a4146cff", "config_hash": "a4146cffe056a30c", "model": {"id": "kimi-k3", "openrouter_id": "moonshotai/kimi-k3"}, "provider": {"id": "together", "openrouter_slug": "together"}, "phase": "performance", "status": "completed", "workload": {"name": "synthetic", "runner": "aiperf", "concurrency": 1, "duration_seconds": 300}, "performance": {"e2e_latency": {"unit": "ms", "mean": 17902.9467596875, "p50": 18635.126252, "p90": 23721.552606999998, "p95": 25597.42051225, "p99": 27337.932629649997, "minimum": 9647.057997, "maximum": 27773.060659, "stddev": 4781.2802073764715, "count": 16, "total": 286447.148155}, "input_sequence_length": {"unit": "tokens", "mean": 8277.0, "p50": 8277.0, "p90": 8277.0, "p95": 8277.0, "p99": 8277.0, "minimum": 8277.0, "maximum": 8277.0, "stddev": 0.0, "count": 16, "total": 132432.0}, "itl": {"unit": "ms", "mean": 15.53380216954911, "p50": 14.95168450684262, "p90": 20.918171138895325, "p95": 22.879484301808404, "p99": 23.170569830840666, "minimum": 9.972698405669599, "maximum": 23.24334121309873, "stddev": 4.1581164488650755, "count": 16, "total": 248.54083471278577}, "output_sequence_length": {"unit": "tokens", "mean": 983.0, "p50": 1024.0, "p90": 1024.0, "p95": 1024.0, "p99": 1024.0, "minimum": 368.0, "maximum": 1024.0, "stddev": 158.79231719450408, "count": 16, "total": 15728.0}, "output_token_throughput": {"unit": "tokens/sec", "mean": 52.425931657376616}, "output_token_throughput_per_user": {"unit": "tokens/sec/user", "mean": 69.16741364485713, "p50": 66.94257316711023, "p90": 94.81811849228367, "p95": 98.86659218069877, "p99": 99.99232912488075, "minimum": 43.02307447246234, "maximum": 100.27376336092625, "stddev": 18.38792052343674, "count": 16, "total": 1106.6786183177142}, "request_count": {"unit": "requests", "mean": 16.0}, "request_throughput": {"unit": "requests/sec", "mean": 0.053332585612794116}, "ttft": {"unit": "ms", "mean": 2794.071028375, "p50": 2482.5569225, "p90": 5004.9895815, "p95": 6482.57449475, "p99": 7605.097526149999, "minimum": 1099.581342, "maximum": 7885.728284, "stddev": 1841.2591509805818, "count": 16, "total": 44705.136454}}, "reliability": {"successful_requests": 16, "failed_requests": 0, "total_requests": 16, "success_rate": 1.0, "error_rate": 0.0, "errors": {"cancelled_requests": 0, "connection_errors": 0, "context_overflow": 0, "http_429": 0, "http_4xx": 0, "http_5xx": 0, "other": 0, "parse_errors": 0, "timeouts": 0}, "slo": {"passed": false, "checks": {"p95_ttft_ms": {"value": 6482.57449475, "target": 5000.0, "passed": false}, "success_rate": {"value": 1.0, "target": 0.9, "passed": true}}}}, "pricing": {"enabled": true, "available": true, "method": "derived_from_pricing_snapshot", "currency": "USD", "input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cached_input_usd_per_million": 0.3, "token_usage": {"input_tokens": 132432, "output_tokens": 15728, "cached_input_tokens": 33876, "cache_write_tokens": 0}, "estimated_cost_usd": 0.5417508, "cost_per_request_usd": 0.033859425, "notes": ["Price is derived, not a separate benchmark workload."]}, "source": {"job": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--a4146cff/job.json", "jobDirectory": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--a4146cff", "pricingSnapshot": "models/kimi-k3/providers/together/endpoint/pricing-snapshot.json", "records": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--a4146cff/artifacts/profile_export.jsonl", "runDirectory": "/data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c", "summary": "models/kimi-k3/providers/together/performance/synthetic-c1/performance--kimi-k3--together--synthetic--c1--a4146cff/artifacts/profile_export_aiperf.json"}}];
+
+const modelSelect = document.getElementById("model-select");
+
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = (v, d = 1) => typeof v === "number" ? v.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "—";
+const fmtUsd = (v, d = 4) => typeof v === "number" ? "$" + v.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "—";
+const fmtPct = (v, d = 1) => typeof v === "number" ? (v > 1 ? v : v * 100).toFixed(d) + "%" : "—";
+const fmtPp = (v, d = 2) => typeof v === "number" ? (v * 100).toFixed(d) + " pp" : "—";
+const validNumbers = values => values.filter(v => typeof v === "number" && Number.isFinite(v));
+const average = values => {
+  const valid = validNumbers(values);
+  return valid.length ? valid.reduce((a, v) => a + v, 0) / valid.length : null;
+};
+const total = values => {
+  const valid = validNumbers(values);
+  return valid.length ? valid.reduce((a, v) => a + v, 0) : null;
+};
+const titleCase = value => String(value || "").split(/[-_\s]+/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+
+// Configure Chart.js Defaults for Light Minimal Theme
+if (typeof Chart !== "undefined") {
+  Chart.defaults.color = "#4b5563";
+  Chart.defaults.borderColor = "#e5e7eb";
+  Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, -apple-system, sans-serif';
+  Chart.defaults.font.size = 11;
+  Chart.defaults.plugins.tooltip.backgroundColor = "#111827";
+  Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
+  Chart.defaults.plugins.tooltip.bodyColor = "#f9fafb";
+  Chart.defaults.plugins.tooltip.borderColor = "#374151";
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 8;
+  Chart.defaults.plugins.tooltip.cornerRadius = 4;
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.boxWidth = 8;
+}
+
+// Chart instances for cleanup & re-creation
+let perfChartInstance = null;
+let costChartInstance = null;
+let relChartInstance = null;
+let cacheChartInstance = null;
+let corrChartInstance = null;
+let currentStatsMap = {};
+
+// Populate Model Dropdown (NO "All Models", only individual models)
+const modelLabels = {
+  "glm-5-3-flash": "GLM 5.3 Flash (glm-5-3-flash)",
+  "kimi-k3": "Kimi K3 (kimi-k3)",
+  "deepseek-v4-pro": "DeepSeek V4 Pro (deepseek-v4-pro)"
+};
+const uniqueModels = [...new Set(records.map(r => r.model?.id).filter(Boolean))].sort();
+
+modelSelect.innerHTML = uniqueModels.map(m => {
+  const label = modelLabels[m] || m;
+  return `<option value="${esc(m)}">${esc(label)}</option>`;
+}).join("");
+
+function getFilteredRows() {
+  const m = modelSelect.value || uniqueModels[0] || "";
+  return m ? records.filter(r => r.model?.id === m) : records;
+}
+
+function computeStats(rows) {
+  const providers = [...new Set(rows.map(r => r.provider?.id).filter(Boolean))].sort();
+  return providers.map(pId => {
+    const pRows = rows.filter(r => r.provider?.id === pId);
+
+    // Performance
+    const perfRuns = pRows.filter(r => r.phase === "performance" && r.status === "completed" && r.performance);
+    const tokTput = average(perfRuns.map(r => r.performance.output_token_throughput?.mean));
+    const reqTput = average(perfRuns.map(r => r.performance.request_throughput?.mean));
+    const ttftMean = average(perfRuns.map(r => r.performance.ttft?.mean));
+    const ttftP50 = average(perfRuns.map(r => r.performance.ttft?.p50));
+    const ttftP90 = average(perfRuns.map(r => r.performance.ttft?.p90));
+    const ttftP95 = average(perfRuns.map(r => r.performance.ttft?.p95));
+    const ttftP99 = average(perfRuns.map(r => r.performance.ttft?.p99));
+    const ttftMin = average(perfRuns.map(r => r.performance.ttft?.minimum));
+    const ttftMax = average(perfRuns.map(r => r.performance.ttft?.maximum));
+    const itlMean = average(perfRuns.map(r => r.performance.itl?.mean));
+    const itlP50 = average(perfRuns.map(r => r.performance.itl?.p50));
+    const itlP95 = average(perfRuns.map(r => r.performance.itl?.p95));
+    const e2eMean = average(perfRuns.map(r => r.performance.e2e_latency?.mean));
+    const e2eP50 = average(perfRuns.map(r => r.performance.e2e_latency?.p50));
+    const e2eP95 = average(perfRuns.map(r => r.performance.e2e_latency?.p95));
+    const userTputMean = average(perfRuns.map(r => r.performance.output_token_throughput_per_user?.mean));
+    const userTputP95 = average(perfRuns.map(r => r.performance.output_token_throughput_per_user?.p95));
+    const islMean = average(perfRuns.map(r => r.performance.input_sequence_length?.mean));
+    const oslMean = average(perfRuns.map(r => r.performance.output_sequence_length?.mean));
+    const concurrencies = [...new Set(perfRuns.map(r => r.workload?.concurrency).filter(v => v != null))];
+    const durations = [...new Set(perfRuns.map(r => r.workload?.duration_seconds).filter(v => v != null))];
+    const workloadNames = [...new Set(perfRuns.map(r => r.workload?.name).filter(Boolean))];
+
+    // Token Volume & Usage (measured across all runs with token_usage)
+    const tokenRuns = perfRuns.filter(r => r.pricing?.token_usage != null);
+    const inTokens = total(tokenRuns.map(r => r.pricing.token_usage?.input_tokens));
+    const outTokens = total(tokenRuns.map(r => r.pricing.token_usage?.output_tokens));
+    const cachedTokens = total(tokenRuns.map(r => r.pricing.token_usage?.cached_input_tokens));
+    const cacheWriteTokens = total(tokenRuns.map(r => r.pricing.token_usage?.cache_write_tokens));
+    const totalTokens = (inTokens || 0) + (outTokens || 0);
+
+    // Cost & Pricing
+    const costRuns = perfRuns.filter(r => r.pricing?.estimated_cost_usd != null);
+    const costUsd = total(costRuns.map(r => r.pricing.estimated_cost_usd));
+    const costPerRequest = average(costRuns.map(r => r.pricing.cost_per_request_usd));
+    const inPrice = average(costRuns.map(r => r.pricing.input_usd_per_million));
+    const outPrice = average(costRuns.map(r => r.pricing.output_usd_per_million));
+    const cachedPrice = average(costRuns.map(r => r.pricing.cached_input_usd_per_million));
+    const pricingMethods = [...new Set(costRuns.map(r => r.pricing.method).filter(Boolean))];
+
+    // Cache Hit Rate & Savings
+    const cacheHitRate = inTokens > 0 ? ((cachedTokens || 0) / inTokens) * 100 : 0;
+    const cacheSavings = (cachedTokens && inPrice != null && cachedPrice != null && inPrice > cachedPrice)
+      ? (cachedTokens * (inPrice - cachedPrice)) / 1000000
+      : 0;
+
+    // Reliability & SLO
+    const relRuns = pRows.filter(r => r.phase === "performance" && r.reliability);
+    const totalRequests = total(relRuns.map(r => r.reliability.total_requests));
+    const succRequests = total(relRuns.map(r => r.reliability.successful_requests));
+    const failRequests = total(relRuns.map(r => r.reliability.failed_requests));
+    const relRate = totalRequests > 0 ? (succRequests / totalRequests) * 100 : null;
+    const errorRate = totalRequests > 0 ? (failRequests / totalRequests) * 100 : null;
+    const sloPassed = relRuns.every(r => r.reliability.slo?.passed === true);
+    const successSloTargets = relRuns.map(r => r.reliability.slo?.checks?.success_rate?.target).filter(v => v != null);
+    const successSloTarget = successSloTargets.length ? Math.min(...successSloTargets) : null;
+    const ttftSloTargets = relRuns.map(r => r.reliability.slo?.checks?.p95_ttft_ms?.target).filter(v => v != null);
+    const ttftSloTarget = ttftSloTargets.length ? Math.min(...ttftSloTargets) : null;
+    const errorMap = {};
+    relRuns.forEach(r => {
+      Object.entries(r.reliability.errors || {}).forEach(([k, v]) => {
+        errorMap[k] = (errorMap[k] || 0) + v;
+      });
+    });
+    const http429s = errorMap["http_429"] || 0;
+    const costPer1kAttempts = costUsd != null && totalRequests > 0 ? (costUsd / totalRequests) * 1000 : null;
+    const costPer1kSuccessful = costUsd != null && succRequests > 0 ? (costUsd / succRequests) * 1000 : null;
+
+    // Correctness
+    const corrRuns = pRows.filter(r => r.phase === "correctness" && r.status === "completed" && r.correctness?.score != null);
+    const corrWeights = corrRuns.map(r => r.correctness.sample_count || 1);
+    const corrWeightTotal = corrWeights.reduce((a, v) => a + v, 0);
+    const corrScoreRaw = corrRuns.length ? corrRuns.reduce((a, r, i) => a + r.correctness.score * corrWeights[i], 0) / corrWeightTotal : null;
+    const corrScore = corrScoreRaw != null ? corrScoreRaw * 100 : null;
+    const corrTask = corrRuns[0]?.correctness?.task || "—";
+    const corrMetric = corrRuns[0]?.correctness?.primary_metric || "—";
+    const corrSamples = corrRuns.length ? total(corrRuns.map(r => r.correctness?.sample_count)) : null;
+    const corrStderrTerms = corrRuns.map((r, i) => typeof r.correctness?.stderr === "number" ? Math.pow(corrWeights[i] * r.correctness.stderr, 2) : null);
+    const corrStderrValid = validNumbers(corrStderrTerms);
+    const corrStderr = corrStderrValid.length === corrRuns.length && corrRuns.length ? Math.sqrt(corrStderrValid.reduce((a, v) => a + v, 0)) / corrWeightTotal : null;
+    const corrCost = total(corrRuns.map(r => r.pricing?.estimated_cost_usd));
+    const valueRaw = tokTput != null && costPer1kSuccessful > 0 ? tokTput / costPer1kSuccessful : null;
+
+    return {
+      id: pId,
+      name: titleCase(pId),
+      tokTput, reqTput, ttftMean, ttftP50, ttftP90, ttftP95, ttftP99, ttftMin, ttftMax,
+      itlMean, itlP50, itlP95, e2eMean, e2eP50, e2eP95, userTputMean, userTputP95, islMean, oslMean,
+      perfRunCount: perfRuns.length, concurrencies, durations, workloadNames,
+      costUsd, costPerRequest, costPer1kAttempts, costPer1kSuccessful, inPrice, outPrice, cachedPrice, inTokens, outTokens, cachedTokens, cacheWriteTokens, totalTokens, pricingMethods,
+      cacheHitRate, cacheSavings,
+      totalRequests, succRequests, failRequests, http429s, relRate, errorRate, sloPassed, successSloTarget, ttftSloTarget, errorMap,
+      corrScore, corrTask, corrMetric, corrSamples, corrStderr, corrCost, corrRunCount: corrRuns.length,
+      valueRaw, valueScore: null
+    };
+  });
+}
+
+function render() {
+  const rows = getFilteredRows();
+  const currentModel = modelSelect.value || uniqueModels[0] || "";
+  const labelEl = document.getElementById("matrix-model-label");
+  if (labelEl) labelEl.textContent = modelLabels[currentModel] || currentModel || "—";
+
+  const stats = computeStats(rows);
+
+  // Determine winners
+  const perfWinner = [...stats].filter(s => s.tokTput != null).sort((a, b) => b.tokTput - a.tokTput)[0];
+  const costWinner = [...stats].filter(s => s.costUsd != null).sort((a, b) => a.costUsd - b.costUsd)[0];
+  const relWinner = [...stats].filter(s => s.relRate != null).sort((a, b) => (b.relRate - a.relRate) || (a.failRequests - b.failRequests))[0];
+  const cacheWinner = [...stats].sort((a, b) => (b.cacheHitRate ?? 0) - (a.cacheHitRate ?? 0) || (a.cachedPrice ?? 999) - (b.cachedPrice ?? 999))[0];
+  const corrWinner = [...stats].filter(s => s.corrScore != null).sort((a, b) => b.corrScore - a.corrScore)[0];
+  const hasCacheHits = stats.some(s => (s.cachedTokens || 0) > 0);
+
+  const hasCostData = stats.some(s => s.costPer1kSuccessful != null);
+  const sloEligible = stats.filter(s => s.sloPassed && (hasCostData ? s.valueRaw != null : s.tokTput != null));
+  const valuePool = sloEligible.length ? sloEligible : stats.filter(s => (hasCostData ? s.valueRaw != null : s.tokTput != null));
+  const valueCeiling = valuePool.length ? Math.max(...valuePool.map(s => hasCostData ? s.valueRaw : s.tokTput)) : null;
+  stats.forEach(s => {
+    const metric = hasCostData ? s.valueRaw : s.tokTput;
+    s.valueScore = valueCeiling && (!sloEligible.length || s.sloPassed) && metric != null
+      ? (metric / valueCeiling) * 100
+      : null;
+  });
+  const valueRanking = [...valuePool].sort((a, b) => hasCostData ? b.valueRaw - a.valueRaw : (b.tokTput ?? 0) - (a.tokTput ?? 0));
+  const valueWinner = valueRanking[0];
+  const valueRunnerUp = valueRanking[1];
+  const leadMetric = s => hasCostData ? s?.valueRaw : s?.tokTput;
+  const valueLead = valueWinner && leadMetric(valueRunnerUp) > 0 ? ((leadMetric(valueWinner) / leadMetric(valueRunnerUp)) - 1) * 100 : null;
+
+  currentStatsMap = Object.fromEntries(stats.map(s => [s.id, s]));
+
+  // Update Section Tags
+  const perfTag = document.getElementById("perf-winner-tag");
+  if (perfTag) perfTag.innerHTML = perfWinner
+    ? `<span class="cursor-help" data-tip-provider="${perfWinner.id}" data-tip-type="perf">Leader: ${perfWinner.name} (${num(perfWinner.tokTput, 1)} TPS · ${num(perfWinner.ttftP95, 0)}ms TTFT)</span>`
+    : "No data";
+
+  const costTag = document.getElementById("cost-winner-tag");
+  if (costTag) costTag.innerHTML = costWinner
+    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest workload cost: ${costWinner.name} (${fmtUsd(costWinner.costUsd, 3)} spend · ${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k successful)</span>`
+    : "No data";
+
+  const relTag = document.getElementById("rel-winner-tag");
+  if (relTag) relTag.innerHTML = relWinner
+    ? `<span class="cursor-help" data-tip-provider="${relWinner.id}" data-tip-type="rel">Highest: ${relWinner.name} (${fmtPct(relWinner.relRate)} success · ${relWinner.http429s} 429s)</span>`
+    : "No data";
+
+  const cacheTag = document.getElementById("cache-winner-tag");
+  if (cacheTag) cacheTag.innerHTML = cacheWinner
+    ? `<span class="cursor-help" data-tip-provider="${cacheWinner.id}" data-tip-type="cache">${hasCacheHits ? `Leader: ${cacheWinner.name} (${fmtPct(cacheWinner.cacheHitRate, 1)} hit rate)` : (cacheWinner.cachedPrice != null ? `Best Cache Rate: ${cacheWinner.name} (${fmtUsd(cacheWinner.cachedPrice, 2)}/1M)` : "No cache data")}</span>`
+    : "No data";
+
+  const corrTag = document.getElementById("corr-winner-tag");
+  if (corrTag) corrTag.innerHTML = corrWinner
+    ? `<span class="cursor-help" data-tip-provider="${corrWinner.id}" data-tip-type="corr">Top: ${corrWinner.name} (${fmtPct(corrWinner.corrScore)} ${corrWinner.corrTask})</span>`
+    : "No data";
+
+  // Render Matrix Table
+  const rankedStats = [...stats].sort((a, b) => {
+    if (a.id === valueWinner?.id) return -1;
+    if (b.id === valueWinner?.id) return 1;
+    return (b.tokTput ?? -1) - (a.tokTput ?? -1) || a.name.localeCompare(b.name);
+  });
+  const matrixTbody = document.getElementById("matrix-tbody");
+  if (matrixTbody) {
+    matrixTbody.innerHTML = rankedStats.map(s => {
+      const isPerf = s.id === perfWinner?.id;
+      const isCost = s.id === costWinner?.id;
+      const isRel = s.id === relWinner?.id;
+      const isCache = s.id === cacheWinner?.id && hasCacheHits;
+      const isCorr = s.id === corrWinner?.id;
+      const isValue = s.id === valueWinner?.id;
+      let badge = '<span class="text-slate-400">—</span>';
+      if (isValue) badge = '<span class="font-semibold text-slate-900">Recommended</span>';
+      else if (!s.sloPassed) badge = '<span class="text-rose-600">Below SLO</span>';
+      else if (isCorr) badge = '<span class="font-semibold text-purple-700">Top Accuracy</span>';
+      else if (isPerf) badge = '<span class="font-semibold text-blue-700">Highest TPS</span>';
+      else if (isCost) badge = '<span class="font-semibold text-emerald-700">Lowest Cost</span>';
+      else if (isRel) badge = '<span class="font-semibold text-teal-700">Most Reliable</span>';
+      else if (isCache) badge = '<span class="font-semibold text-teal-700">Best Cache</span>';
+      else if (s.sloPassed) badge = '<span class="text-emerald-700 font-medium">Meets SLO</span>';
+
+      return `
+      <tr class="hover:bg-slate-50 transition-colors ${isValue ? 'bg-slate-50/70' : ''}">
+        <td class="py-2.5 px-3.5 font-sans font-semibold text-slate-900 cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${esc(s.name)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isPerf ? 'font-bold text-blue-700' : ''}" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.tokTput, 1)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.ttftP95, 0)} ms</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isCost ? 'font-bold text-emerald-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costUsd, 3)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isRel ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="rel">${fmtPct(s.relRate)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isCache ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cache">${fmtPct(s.cacheHitRate, 1)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help ${isCorr ? 'font-bold text-purple-700' : ''}" data-tip-provider="${s.id}" data-tip-type="corr">${fmtPct(s.corrScore)}</td>
+        <td class="py-2.5 px-3.5 text-center text-[11px] cursor-help" data-tip-provider="${s.id}" data-tip-type="summary">${badge}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  const valSummaryEl = document.getElementById("value-summary");
+  if (valSummaryEl) {
+    if (valueWinner) {
+      const costText = valueWinner.costPer1kSuccessful != null ? ` · ${fmtUsd(valueWinner.costPer1kSuccessful, 3)}/1k successful` : "";
+      const subtitle = hasCostData
+        ? "Delivers the highest measured output throughput per dollar among providers meeting all SLO targets."
+        : "Delivers the highest measured output throughput among providers meeting all SLO targets.";
+      valSummaryEl.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1">
+          <div class="text-xs text-slate-700">
+            <span class="font-semibold text-slate-900">Recommended Provider: ${esc(valueWinner.name)}</span>
+            <span class="text-slate-500"> · ${num(valueWinner.tokTput, 1)} TPS${costText} · ${fmtPct(valueWinner.relRate)} success${valueWinner.corrScore != null ? ` · ${fmtPct(valueWinner.corrScore)} accuracy` : ""}</span>
+          </div>
+          <span class="font-mono text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Recommended</span>
+        </div>
+        <div class="text-[11px] text-slate-500">${subtitle}</div>
+      `;
+    } else {
+      valSummaryEl.innerHTML = '<p class="text-xs text-slate-500">No providers met the required SLO targets to qualify for recommendation.</p>';
+    }
+  }
+
+  // 1. RENDER SECTION DATA TABLES FIRST (Guaranteed Rendering)
+  renderSectionTables(stats, rows);
+
+  // 2. RENDER CHARTS USING CHART.JS (Protected by try/catch)
+  try {
+    renderChartJs(stats, perfWinner?.id, costWinner?.id, relWinner?.id, cacheWinner?.id, corrWinner?.id);
+  } catch (chartErr) {
+    console.warn("Chart rendering encountered an issue:", chartErr);
+  }
+}
+
+function providerTooltip(stats, detailLines) {
+  return {
+    displayColors: false,
+    bodySpacing: 3,
+    filter: item => item.datasetIndex === 0,
+    callbacks: {
+      title: items => {
+        const item = items[0];
+        const stat = item?.raw?.stat || stats[item?.dataIndex];
+        const model = modelSelect.value || uniqueModels[0] || "";
+        return stat ? `${stat.name} · ${model}` : model;
+      },
+      label: context => {
+        const stat = context.raw?.stat || stats[context.dataIndex];
+        return stat ? detailLines(stat) : "";
+      }
+    }
+  };
+}
+
+function runContextLines(s) {
+  const concurrency = s.concurrencies.length ? s.concurrencies.join(", ") : "—";
+  const duration = s.durations.length ? s.durations.map(v => `${num(v / 60, v % 60 ? 1 : 0)} min`).join(", ") : "—";
+  return [`Concurrency: ${concurrency}`, `Benchmark duration: ${duration}`];
+}
+
+function perfDetailLines(s) {
+  return [
+    `Output TPS: ${num(s.tokTput, 1)} (user avg: ${num(s.userTputMean, 1)} · p95: ${num(s.userTputP95, 1)})`,
+    `Request Throughput: ${num(s.reqTput, 2)} req/s`,
+    `TTFT p50 / p90 / p95: ${num(s.ttftP50, 0)} / ${num(s.ttftP90, 0)} / ${num(s.ttftP95, 0)} ms`,
+    `TTFT mean / range: ${num(s.ttftMean, 0)} ms (${num(s.ttftMin, 0)}–${num(s.ttftMax, 0)} ms)`,
+    `ITL mean / p95: ${num(s.itlMean, 1)} / ${num(s.itlP95, 1)} ms`,
+    `E2E latency mean / p95: ${num(s.e2eMean, 0)} / ${num(s.e2eP95, 0)} ms`,
+    `Sequence (avg): ISL ${num(s.islMean, 0)} tok · OSL ${num(s.oslMean, 0)} tok`,
+    ...runContextLines(s)
+  ];
+}
+
+function costDetailLines(s) {
+  return [
+    `Workload Spend: ${fmtUsd(s.costUsd, 4)}`,
+    `Cost / 1k Successful: ${fmtUsd(s.costPer1kSuccessful, 3)}`,
+    `Cost / 1k Attempts: ${fmtUsd(s.costPer1kAttempts, 3)}`,
+    `Cost / Request: ${fmtUsd(s.costPerRequest, 4)}`,
+    `Prompt Rate: ${fmtUsd(s.inPrice, 2)} / 1M tokens`,
+    `Completion Rate: ${fmtUsd(s.outPrice, 2)} / 1M tokens`,
+    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 2)} / 1M tokens` : null,
+    `Token Volume: ${s.inTokens?.toLocaleString() ?? 0} in · ${s.outTokens?.toLocaleString() ?? 0} out (${s.totalTokens?.toLocaleString() ?? 0} total)`,
+    `Pricing Basis: ${s.pricingMethods.map(titleCase).join(", ") || "Standard"}`
+  ].filter(Boolean);
+}
+
+const knownErrorLabels = {
+  http_429: "HTTP 429 Rate Limits",
+  http_5xx: "HTTP 5xx Server Errors",
+  http_4xx: "HTTP 4xx Client Errors",
+  timeouts: "Timeouts",
+  connection_errors: "Connection Errors",
+  parse_errors: "Parse Errors",
+  context_overflow: "Context Overflow",
+  cancelled_requests: "Cancelled Requests",
+  other: "Other Errors"
+};
+
+const knownErrorColors = {
+  http_429: "#dc2626",
+  http_5xx: "#991b1b",
+  http_4xx: "#ef4444",
+  timeouts: "#f87171",
+  connection_errors: "#b91c1c",
+  parse_errors: "#fca5a5",
+  context_overflow: "#7f1d1d",
+  cancelled_requests: "#e11d48",
+  other: "#dc2626"
+};
+
+function relDetailLines(s) {
+  const errEntries = Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0);
+  const errorBreakdown = errEntries.length
+    ? errEntries.map(([k, v]) => `${knownErrorLabels[k] || titleCase(k)}: ${v}`).join(", ")
+    : "None";
+  return [
+    `Success Rate: ${fmtPct(s.relRate)} (${s.succRequests.toLocaleString()} / ${s.totalRequests.toLocaleString()})`,
+    `Failed Requests: ${s.failRequests.toLocaleString()} (${fmtPct(s.errorRate)} error rate)`,
+    `HTTP 429 Rate Limits: ${s.http429s.toLocaleString()}`,
+    `Error Breakdown: ${errorBreakdown}`,
+    `SLO Success Target: >= ${fmtPct(s.successSloTarget)} (${s.successSloTarget != null && s.relRate != null && s.relRate >= s.successSloTarget * 100 ? "PASS" : "FAIL"})`,
+    `SLO TTFT p95 Target: <= ${s.ttftSloTarget != null ? num(s.ttftSloTarget, 0) + " ms" : "—"} (${s.ttftSloTarget != null && s.ttftP95 != null && s.ttftP95 <= s.ttftSloTarget ? "PASS" : "FAIL"})`,
+    `SLO Decision: ${s.sloPassed ? "PASSED all configured targets" : "FAILED one or more SLO checks"}`
+  ];
+}
+
+function corrDetailLines(s) {
+  return [
+    `Benchmark Accuracy: ${fmtPct(s.corrScore, 2)}`,
+    s.corrStderr != null ? `Standard Error: ±${fmtPp(s.corrStderr)}` : null,
+    `Task / Metric: ${s.corrTask} (${s.corrMetric})`,
+    `Evaluated Samples: ${s.corrSamples?.toLocaleString() ?? "—"}`,
+    `Evaluation Cost: ${fmtUsd(s.corrCost, 4)}`,
+    `Completed Evaluations: ${s.corrRunCount}`
+  ].filter(Boolean);
+}
+
+function cacheDetailLines(s) {
+  return [
+    `Cache Hit Rate: ${fmtPct(s.cacheHitRate, 1)}`,
+    `Cached Input Tokens: ${s.cachedTokens?.toLocaleString() ?? 0} of ${s.inTokens?.toLocaleString() ?? 0} total`,
+    `Standard Input Rate: ${fmtUsd(s.inPrice, 2)} / 1M tokens`,
+    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 2)} / 1M tokens` : `Cached Input Rate: Standard`,
+    `Realized Cache Savings: ${fmtUsd(s.cacheSavings, 4)}`,
+    `TTL (Time-To-Live): Not exposed in LLM API protocols`
+  ];
+}
+
+function providerSummaryLines(s) {
+  return [
+    `Output TPS: ${num(s.tokTput, 1)} · TTFT p95: ${num(s.ttftP95, 0)} ms`,
+    `Cost / 1k Successful: ${fmtUsd(s.costPer1kSuccessful, 3)} (spend: ${fmtUsd(s.costUsd, 3)})`,
+    `Reliability: ${fmtPct(s.relRate)} success (${s.http429s} 429s)`,
+    s.corrScore != null ? `Accuracy: ${fmtPct(s.corrScore)} (${s.corrTask})` : null,
+    `Cache Hit Rate: ${fmtPct(s.cacheHitRate, 1)} (saved ${fmtUsd(s.cacheSavings, 3)})`,
+    `SLO: ${s.sloPassed ? "Passed" : "Below SLO"}`
+  ].filter(Boolean);
+}
+
+// Render All Five Charts Using Chart.js
+function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWinId) {
+  if (typeof Chart === "undefined") return;
+
+  const labels = stats.map(s => s.name);
+
+  // 1. Performance Chart (Trade-Off Scatter Plot: Output TPS [Y] vs TTFT p95 [X])
+  if (perfChartInstance) perfChartInstance.destroy();
+  const perfCanvas = document.getElementById("perf-chart");
+  if (perfCanvas) {
+    const perfCtx = perfCanvas.getContext("2d");
+    const perfStats = stats.filter(s => s.ttftP95 != null && s.tokTput != null);
+
+    const scatterProviderLabelsPlugin = {
+      id: "scatterProviderLabels",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data) return;
+
+        ctx.save();
+        meta.data.forEach((element, idx) => {
+          const s = perfStats[idx];
+          if (!s) return;
+
+          const x = element.x;
+          const y = element.y;
+          const isWinner = s.id === perfWinId;
+          const label = isWinner ? `${s.name} ★` : s.name;
+
+          ctx.font = isWinner ? "600 11px Inter, sans-serif" : "500 11px Inter, sans-serif";
+          const textWidth = ctx.measureText(label).width;
+
+          // Determine horizontal position avoiding boundary overflow
+          const pad = 10;
+          const placeRight = (x + pad + textWidth) <= (chartArea.right - 6);
+          const textX = placeRight ? (x + pad) : (x - pad);
+          ctx.textAlign = placeRight ? "left" : "right";
+          ctx.textBaseline = "middle";
+
+          // Crisp white outline halo for maximum readability over grid lines
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 3.5;
+          ctx.strokeText(label, textX, y);
+
+          // Label text color
+          ctx.fillStyle = isWinner ? "#1e40af" : "#1e293b";
+          ctx.fillText(label, textX, y);
+        });
+        ctx.restore();
+      }
+    };
+
+    perfChartInstance = new Chart(perfCtx, {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Providers (Top-Left is optimal: Low TTFT & High TPS)",
+            data: perfStats.map(s => ({
+              x: Number(s.ttftP95.toFixed(1)),
+              y: Number(s.tokTput.toFixed(1)),
+              stat: s
+            })),
+            backgroundColor: perfStats.map(s => s.id === perfWinId ? "#2563eb" : "#475569"),
+            borderColor: perfStats.map(s => s.id === perfWinId ? "#1d4ed8" : "#334155"),
+            borderWidth: 2,
+            pointRadius: perfStats.map(s => s.id === perfWinId ? 8 : 6),
+            pointHoverRadius: perfStats.map(s => s.id === perfWinId ? 10 : 8),
+            pointHoverBackgroundColor: perfStats.map(s => s.id === perfWinId ? "#1d4ed8" : "#0f172a"),
+            pointHoverBorderColor: "#ffffff",
+            pointHoverBorderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "nearest", intersect: false },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 10,
+              boxHeight: 10,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 11, family: "Inter", weight: "500" }
+            }
+          },
+          tooltip: providerTooltip(stats, perfDetailLines)
+        },
+        scales: {
+          x: {
+            type: "linear",
+            position: "bottom",
+            beginAtZero: true,
+            grace: "8%",
+            title: {
+              display: true,
+              text: "TTFT p95 (ms) ↓ (lower is better)",
+              color: "#475569",
+              font: { weight: "600", family: "Inter", size: 11 },
+              padding: { top: 8, bottom: 0 }
+            },
+            grid: { color: "#f1f5f9" },
+            ticks: {
+              color: "#64748b",
+              font: { family: "Inter", size: 11 },
+              callback: v => Number(v).toLocaleString()
+            }
+          },
+          y: {
+            type: "linear",
+            position: "left",
+            beginAtZero: true,
+            grace: "8%",
+            title: {
+              display: true,
+              text: "Output TPS ↑ (higher is better)",
+              color: "#475569",
+              font: { weight: "600", family: "Inter", size: 11 },
+              padding: { top: 0, bottom: 8 }
+            },
+            grid: { color: "#f1f5f9" },
+            ticks: {
+              color: "#64748b",
+              font: { family: "Inter", size: 11 },
+              callback: v => Number(v).toLocaleString()
+            }
+          }
+        }
+      },
+      plugins: [scatterProviderLabelsPlugin]
+    });
+  }
+
+  // 2. Cost Chart (Combo: Workload Spend Breakdown [Stacked Bars] + Effective Cost per 1k Successful [Line])
+  if (costChartInstance) costChartInstance.destroy();
+  const costCanvas = document.getElementById("cost-chart");
+  if (costCanvas) {
+    const costCtx = costCanvas.getContext("2d");
+    const costBreakdowns = stats.map(s => {
+      if (s.costUsd == null) return { prompt: 0, completion: 0 };
+      const uncached = Math.max(0, (s.inTokens || 0) - (s.cachedTokens || 0));
+      const cached = s.cachedTokens || 0;
+      const pCost = (uncached * (s.inPrice || 0) + cached * ((s.cachedPrice != null ? s.cachedPrice : s.inPrice) || 0)) / 1e6;
+      const cCost = ((s.outTokens || 0) * (s.outPrice || 0)) / 1e6;
+      const sum = pCost + cCost;
+      if (sum > 0) {
+        return {
+          prompt: Number(((pCost / sum) * s.costUsd).toFixed(4)),
+          completion: Number(((cCost / sum) * s.costUsd).toFixed(4))
+        };
+      }
+      return { prompt: Number(s.costUsd.toFixed(4)), completion: 0 };
+    });
+
+    costChartInstance = new Chart(costCtx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            type: "bar",
+            label: "Prompt Input Spend ($)",
+            data: costBreakdowns.map(b => b.prompt),
+            backgroundColor: "#475569",
+            borderRadius: 0,
+            stack: "spend",
+            yAxisID: "y"
+          },
+          {
+            type: "bar",
+            label: "Completion Output Spend ($)",
+            data: costBreakdowns.map(b => b.completion),
+            backgroundColor: "#94a3b8",
+            borderRadius: 4,
+            stack: "spend",
+            yAxisID: "y"
+          },
+          {
+            type: "line",
+            label: "$ / 1k Successful (Delivered Cost) ↓",
+            data: stats.map(s => s.costPer1kSuccessful != null ? Number(s.costPer1kSuccessful.toFixed(3)) : null),
+            borderColor: "#0f172a",
+            backgroundColor: "#ffffff",
+            pointBorderColor: "#0f172a",
+            pointBackgroundColor: "#ffffff",
+            pointBorderWidth: 2.5,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            borderWidth: 2.5,
+            tension: 0.2,
+            yAxisID: "y1"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 12,
+              font: { size: 11, family: 'Inter', weight: '500' }
+            }
+          },
+          tooltip: providerTooltip(stats, costDetailLines)
+        },
+        scales: {
+          y: {
+            type: "linear",
+            position: "left",
+            stacked: true,
+            title: { display: true, text: "Workload Spend Breakdown ($)", color: "#475569", font: { weight: '600', family: 'Inter' } },
+            grid: { color: "#f1f5f9" },
+            ticks: { callback: v => "$" + Number(v).toFixed(2) }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            title: { display: true, text: "$ / 1k Successful Requests", color: "#0f172a", font: { weight: '600', family: 'Inter' } },
+            grid: { drawOnChartArea: false },
+            ticks: { callback: v => "$" + Number(v).toFixed(2) }
+          },
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { font: { weight: '600', family: 'Inter' } }
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Reliability Chart (Success Rate % [Green] vs Error Breakdown [Red])
+  if (relChartInstance) relChartInstance.destroy();
+  const relCanvas = document.getElementById("rel-chart");
+  if (relCanvas) {
+    const relCtx = relCanvas.getContext("2d");
+    const activeErrorKeys = [...new Set(
+      stats.flatMap(s => Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0).map(([k]) => k))
+    )];
+    const errorKeysToShow = activeErrorKeys.length > 0
+      ? [...new Set(["http_429", ...activeErrorKeys])]
+      : ["http_429"];
+
+    const errorDatasets = errorKeysToShow.map(k => ({
+      label: `${knownErrorLabels[k] || titleCase(k)} (count) ↓`,
+      data: stats.map(s => (s.errorMap && s.errorMap[k]) || 0),
+      backgroundColor: knownErrorColors[k] || "#dc2626",
+      borderRadius: 4,
+      stack: "errors",
+      yAxisID: "y1"
+    }));
+
+    relChartInstance = new Chart(relCtx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Success Rate (%) ↑",
+            data: stats.map(s => s.relRate != null ? Number(s.relRate.toFixed(1)) : null),
+            backgroundColor: "#16a34a",
+            borderColor: "#15803d",
+            borderWidth: 1,
+            borderRadius: 4,
+            stack: "success",
+            yAxisID: "y"
+          },
+          ...errorDatasets
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 12,
+              font: { size: 11, family: 'Inter', weight: '500' }
+            }
+          },
+          tooltip: providerTooltip(stats, relDetailLines)
+        },
+        scales: {
+          y: {
+            type: "linear",
+            position: "left",
+            min: 0,
+            max: 100,
+            title: { display: true, text: "Success Rate (%)", color: "#16a34a", font: { weight: '600', family: 'Inter' } },
+            grid: { color: "#f1f5f9" },
+            ticks: { callback: v => v + "%" }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            beginAtZero: true,
+            title: { display: true, text: "Errors (count)", color: "#dc2626", font: { weight: '600', family: 'Inter' } },
+            grid: { drawOnChartArea: false },
+            ticks: { precision: 0 }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { weight: '600', family: 'Inter' } }
+          }
+        }
+      }
+    });
+  }
+
+  // 4. Cache Hit Rate Chart (Trade-Off Scatter Plot: Cache Hit Rate [Y] vs Cached Rate [X])
+  if (cacheChartInstance) cacheChartInstance.destroy();
+  const cacheCanvas = document.getElementById("cache-chart");
+  if (cacheCanvas) {
+    const cacheCtx = cacheCanvas.getContext("2d");
+    const cacheStats = stats.filter(s => s.cacheHitRate != null);
+
+    const scatterCacheLabelsPlugin = {
+      id: "scatterCacheLabels",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data) return;
+
+        ctx.save();
+        meta.data.forEach((element, idx) => {
+          const s = cacheStats[idx];
+          if (!s) return;
+
+          const x = element.x;
+          const y = element.y;
+          const isWinner = s.id === cacheWinId;
+          const label = isWinner ? `${s.name} ★` : s.name;
+
+          ctx.font = isWinner ? "600 11px Inter, sans-serif" : "500 11px Inter, sans-serif";
+          const textWidth = ctx.measureText(label).width;
+
+          // Determine horizontal position avoiding boundary overflow
+          const pad = 10;
+          const placeRight = (x + pad + textWidth) <= (chartArea.right - 6);
+          const textX = placeRight ? (x + pad) : (x - pad);
+          ctx.textAlign = placeRight ? "left" : "right";
+          ctx.textBaseline = "middle";
+
+          // Crisp white outline halo for maximum readability over grid lines
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 3.5;
+          ctx.strokeText(label, textX, y);
+
+          // Label text color
+          ctx.fillStyle = isWinner ? "#0f766e" : "#1e293b";
+          ctx.fillText(label, textX, y);
+        });
+        ctx.restore();
+      }
+    };
+
+    cacheChartInstance = new Chart(cacheCtx, {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Providers (Top-Left is optimal: Low Cached Rate & High Hit Rate)",
+            data: cacheStats.map(s => ({
+              x: Number((s.cachedPrice != null ? s.cachedPrice : (s.inPrice != null ? s.inPrice : 0)).toFixed(3)),
+              y: Number(s.cacheHitRate.toFixed(1)),
+              stat: s
+            })),
+            backgroundColor: cacheStats.map(s => s.id === cacheWinId ? "#0f766e" : "#475569"),
+            borderColor: cacheStats.map(s => s.id === cacheWinId ? "#115e59" : "#334155"),
+            borderWidth: 2,
+            pointRadius: cacheStats.map(s => s.id === cacheWinId ? 8 : 6),
+            pointHoverRadius: cacheStats.map(s => s.id === cacheWinId ? 10 : 8),
+            pointHoverBackgroundColor: cacheStats.map(s => s.id === cacheWinId ? "#115e59" : "#0f172a"),
+            pointHoverBorderColor: "#ffffff",
+            pointHoverBorderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "nearest", intersect: false },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 10,
+              boxHeight: 10,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 11, family: "Inter", weight: "500" }
+            }
+          },
+          tooltip: providerTooltip(stats, cacheDetailLines)
+        },
+        scales: {
+          x: {
+            type: "linear",
+            position: "bottom",
+            beginAtZero: true,
+            grace: "8%",
+            title: {
+              display: true,
+              text: "Cached Input Rate ($/1M) ↓ (lower is better)",
+              color: "#475569",
+              font: { weight: "600", family: "Inter", size: 11 },
+              padding: { top: 8, bottom: 0 }
+            },
+            grid: { color: "#f1f5f9" },
+            ticks: {
+              color: "#64748b",
+              font: { family: "Inter", size: 11 },
+              callback: v => "$" + Number(v).toFixed(2)
+            }
+          },
+          y: {
+            type: "linear",
+            position: "left",
+            beginAtZero: true,
+            min: 0,
+            max: 100,
+            title: {
+              display: true,
+              text: "Cache Hit Rate (%) ↑ (higher is better)",
+              color: "#475569",
+              font: { weight: "600", family: "Inter", size: 11 },
+              padding: { top: 0, bottom: 8 }
+            },
+            grid: { color: "#f1f5f9" },
+            ticks: {
+              color: "#64748b",
+              font: { family: "Inter", size: 11 },
+              callback: v => v + "%"
+            }
+          }
+        }
+      },
+      plugins: [scatterCacheLabelsPlugin]
+    });
+  }
+
+  // 5. Correctness Chart (Benchmark Accuracy %)
+  if (corrChartInstance) corrChartInstance.destroy();
+  const corrCanvas = document.getElementById("corr-chart");
+  if (corrCanvas) {
+    const corrCtx = corrCanvas.getContext("2d");
+    corrChartInstance = new Chart(corrCtx, {
+      type: "bar",
+      data: {
+        labels: stats.map(s => `${s.name} (${s.corrTask})`),
+        datasets: [
+          {
+            label: "Benchmark Accuracy (%) ↑",
+            data: stats.map(s => s.corrScore != null ? Number(s.corrScore.toFixed(2)) : null),
+            backgroundColor: stats.map(s => s.id === corrWinId ? "#0f172a" : "#94a3b8"),
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 12,
+              font: { size: 11, family: 'Inter', weight: '500' }
+            }
+          },
+          tooltip: providerTooltip(stats, corrDetailLines)
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            title: { display: true, text: "Accuracy (%)", color: "#0f172a", font: { weight: '600', family: 'Inter' } },
+            grid: { color: "#f1f5f9" },
+            ticks: { callback: v => v + "%" }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { weight: '600', family: 'Inter' } }
+          }
+        }
+      }
+    });
+  }
+}
+
+function renderSectionTables(stats, rows) {
+  // 1. Performance table
+  const perfTbody = document.getElementById("perf-table-body");
+  if (perfTbody) {
+    perfTbody.innerHTML = stats.map(s => `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${num(s.tokTput, 1)}</td>
+        <td class="py-2 px-3 text-right">${num(s.reqTput, 1)}</td>
+        <td class="py-2 px-3 text-right">${num(s.ttftMean, 1)} ms</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${num(s.ttftP95, 1)} ms</td>
+        <td class="py-2 px-3 text-right">${num(s.itlP95, 1)} ms</td>
+        <td class="py-2 px-3 text-right">${num(s.e2eP95, 1)} ms</td>
+      </tr>
+    `).join("");
+  }
+
+  // 2. Cost table
+  const costTbody = document.getElementById("cost-table-body");
+  if (costTbody) {
+    costTbody.innerHTML = stats.map(s => `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cost">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costUsd, 3)}</td>
+        <td class="py-2 px-3 text-right">${fmtUsd(s.costPer1kAttempts, 3)}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costPer1kSuccessful, 3)}</td>
+        <td class="py-2 px-3 text-right">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.outPrice != null ? "$" + num(s.outPrice, 2) : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.inTokens != null ? s.inTokens.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.outTokens != null ? s.outTokens.toLocaleString() : "—"}</td>
+      </tr>
+    `).join("");
+  }
+
+  // 3. Reliability table
+  const relTbody = document.getElementById("rel-table-body");
+  if (relTbody) {
+    relTbody.innerHTML = stats.map(s => {
+      const errEntries = Object.entries(s.errorMap || {}).filter(([_, v]) => v > 0);
+      const errList = errEntries.length
+        ? errEntries.map(([k, v]) => `${knownErrorLabels[k] || k}: ${v}`).join(", ")
+        : "None";
+      const sloBadge = s.sloPassed
+        ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Passed</span>'
+        : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Failed</span>';
+      return `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="rel">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right font-bold text-teal-700">${fmtPct(s.relRate)}</td>
+        <td class="py-2 px-3 text-right">${s.totalRequests != null ? s.totalRequests.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.succRequests != null ? s.succRequests.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right ${s.failRequests ? 'text-rose-600 font-bold' : 'text-slate-400'}">${s.failRequests || 0}</td>
+        <td class="py-2 px-3 text-right ${s.http429s ? 'text-rose-600 font-bold' : 'text-slate-400'}">${s.http429s || 0}</td>
+        <td class="py-2 px-3 text-slate-500 font-mono text-[11px]">${esc(errList)}</td>
+        <td class="py-2 px-3 text-center">${sloBadge}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  // 4. Cache table
+  const cacheTbody = document.getElementById("cache-table-body");
+  if (cacheTbody) {
+    cacheTbody.innerHTML = stats.map(s => `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cache">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right font-bold text-teal-700">${fmtPct(s.cacheHitRate, 1)}</td>
+        <td class="py-2 px-3 text-right">${s.cachedTokens != null ? s.cachedTokens.toLocaleString() : "0"}</td>
+        <td class="py-2 px-3 text-right">${s.inTokens != null ? s.inTokens.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${s.cachedPrice != null ? "$" + num(s.cachedPrice, 2) : "—"}</td>
+        <td class="py-2 px-3 text-right font-medium text-emerald-700">${fmtUsd(s.cacheSavings, 4)}</td>
+      </tr>
+    `).join("");
+  }
+
+  // 5. Correctness table
+  const corrTbody = document.getElementById("corr-table-body");
+  if (corrTbody) {
+    corrTbody.innerHTML = stats.map(s => `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="corr">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 font-mono">${esc(s.corrTask)}</td>
+        <td class="py-2 px-3 text-slate-500 font-mono text-[11px]">${esc(s.corrMetric)}</td>
+        <td class="py-2 px-3 text-right font-bold text-purple-700">${s.corrScore != null ? fmtPct(s.corrScore) : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.corrSamples != null ? s.corrSamples.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right text-slate-500">${s.corrStderr != null ? "±" + fmtPp(s.corrStderr) : "—"}</td>
+        <td class="py-2 px-3 text-right">${s.corrCost != null ? fmtUsd(s.corrCost, 3) : "—"}</td>
+      </tr>
+    `).join("");
+  }
+}
+
+// Floating Minimal Tooltip Implementation
+const tooltipEl = document.getElementById("hover-tooltip");
+
+function showTooltip(e, title, lines) {
+  if (!tooltipEl || !lines || !lines.length) return;
+  const headerHtml = title ? `<div class="font-sans font-semibold text-white border-b border-slate-700/80 pb-1 mb-1.5 text-xs">${esc(title)}</div>` : "";
+  const bodyHtml = lines.map(line => `<div class="text-slate-300 text-[11px] leading-tight py-0.5">${esc(line)}</div>`).join("");
+  tooltipEl.innerHTML = headerHtml + bodyHtml;
+  tooltipEl.classList.remove("hidden");
+  positionTooltip(e);
+}
+
+function positionTooltip(e) {
+  if (!tooltipEl || tooltipEl.classList.contains("hidden")) return;
+  const pad = 12;
+  let x = e.clientX + pad;
+  let y = e.clientY + pad;
+  const rect = tooltipEl.getBoundingClientRect();
+  if (x + rect.width > window.innerWidth - pad) {
+    x = Math.max(pad, e.clientX - rect.width - pad);
+  }
+  if (y + rect.height > window.innerHeight - pad) {
+    y = Math.max(pad, e.clientY - rect.height - pad);
+  }
+  tooltipEl.style.left = `${x}px`;
+  tooltipEl.style.top = `${y}px`;
+}
+
+function hideTooltip() {
+  if (tooltipEl) tooltipEl.classList.add("hidden");
+}
+
+document.addEventListener("mousemove", positionTooltip);
+
+document.addEventListener("mouseover", e => {
+  const target = e.target.closest("[data-tip-type]");
+  if (!target) return;
+  const pId = target.getAttribute("data-tip-provider");
+  const tipType = target.getAttribute("data-tip-type");
+  const stat = pId ? currentStatsMap[pId] : null;
+  const model = modelSelect.value || uniqueModels[0] || "";
+
+  if (tipType === "perf" && stat) {
+    showTooltip(e, `${stat.name} · Performance & Latency`, perfDetailLines(stat));
+  } else if (tipType === "cost" && stat) {
+    showTooltip(e, `${stat.name} · Cost Economics`, costDetailLines(stat));
+  } else if (tipType === "rel" && stat) {
+    showTooltip(e, `${stat.name} · Reliability & Rate Limits`, relDetailLines(stat));
+  } else if (tipType === "corr" && stat) {
+    showTooltip(e, `${stat.name} · Correctness & Accuracy`, corrDetailLines(stat));
+  } else if (tipType === "cache" && stat) {
+    showTooltip(e, `${stat.name} · Prefix Caching & Hit Rate`, cacheDetailLines(stat));
+  } else if (tipType === "summary" && stat) {
+    showTooltip(e, `${stat.name} · ${model}`, providerSummaryLines(stat));
+  } else if (tipType === "sec-perf") {
+    showTooltip(e, `Performance Methodology`, [
+      `Output TPS: Total generated tokens delivered per second across duration.`,
+      `TTFT: Time-To-First-Token p95 latency in milliseconds.`,
+      `ITL: Inter-token streaming interval latency in milliseconds.`
+    ]);
+  } else if (tipType === "sec-cost") {
+    showTooltip(e, `Cost Economics Methodology`, [
+      `Workload Spend: Actual dollar expenditure incurred for completed run.`,
+      `$/1k Successful: Delivered spend per 1,000 requests delivering output.`,
+      `Token Rates: Contracted pricing per 1,000,000 tokens.`
+    ]);
+  } else if (tipType === "sec-rel") {
+    showTooltip(e, `Reliability Methodology`, [
+      `Success Rate: Successful requests ÷ total attempts × 100.`,
+      `HTTP 429: Rate-limit rejections under concurrency load.`,
+      `SLO Status: Evaluates success rate & TTFT against quality targets.`
+    ]);
+  } else if (tipType === "sec-corr") {
+    showTooltip(e, `Correctness Methodology`, [
+      `Measures evaluation benchmark accuracy against task dataset.`,
+      `Reported with sample-weighted mean and standard error.`
+    ]);
+  } else if (tipType === "sec-cache") {
+    showTooltip(e, `Cache Hit Rate Methodology`, [
+      `Cache Hit Rate: Percentage of input prompt tokens served from KV cache.`,
+      `Cached Rate: Discounted rate billed per 1M cached tokens.`,
+      `TTL: Cache expiration duration is internal to provider infrastructure and not exposed by APIs.`
+    ]);
+  }
+});
+
+document.addEventListener("mouseout", e => {
+  const target = e.target.closest("[data-tip-type]");
+  if (target) hideTooltip();
+});
+
+modelSelect.addEventListener("change", render);
+render();
+</script>
+</body>
+</html>

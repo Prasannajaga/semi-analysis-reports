@@ -1,0 +1,19 @@
+model: local-chat-completions
+model_args:
+  model: accounts/fireworks/models/glm-5p3-flash
+  base_url: https://api.fireworks.ai/inference/v1/chat/completions
+  tokenizer_backend: none
+  tokenized_requests: false
+  max_gen_toks: 1024
+  seed: 42
+  timeout: 300.0
+tasks:
+- gsm8k
+apply_chat_template: true
+gen_kwargs:
+  temperature: 0.0
+  max_tokens: 1024
+seed: 42
+output_path: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/correctness/gsm8k/correctness--glm-5-3-flash--fireworks--gsm8k--8fbf7814/artifacts
+log_samples: true
+limit: 100

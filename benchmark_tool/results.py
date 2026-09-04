@@ -85,6 +85,23 @@ class TokenUsage(ResultModel):
     output_tokens: int
     cached_input_tokens: int = 0
     cache_write_tokens: int = 0
+    missing_input_records: int = 0
+
+
+class TraceCost(ResultModel):
+    trace_id: str
+    request_count: int
+    input_tokens: int
+    cached_input_tokens: int = 0
+    uncached_input_tokens: int = 0
+    cache_write_tokens: int = 0
+    cache_hit_rate: float = 0.0
+    prompt_cache_read_ratio: float = 0.0
+    output_tokens: int = 0
+    reasoning_tokens: int = 0
+    total_tokens: int = 0
+    estimated_cost_usd: float | None = None
+    cost_per_request_usd: float | None = None
 
 
 class PricingResult(ResultModel):
@@ -100,6 +117,7 @@ class PricingResult(ResultModel):
     estimated_cost_usd: float | None = None
     cost_per_request_usd: float | None = None
     notes: list[str] = Field(default_factory=list)
+    trace_costs: list[TraceCost] = Field(default_factory=list)
 
 
 class CorrectnessResult(ResultModel):

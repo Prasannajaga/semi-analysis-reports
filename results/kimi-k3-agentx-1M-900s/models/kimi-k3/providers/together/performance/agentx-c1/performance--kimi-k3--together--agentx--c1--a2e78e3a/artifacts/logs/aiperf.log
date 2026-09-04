@@ -1,0 +1,87 @@
+2026-09-04 18:15:01.782 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': setting profiling-phase timing_mode=agentic_replay.
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': injecting extra_inputs.ignore_eos=true (was absent).
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --cache-bust=first_turn_prefix (was at default none).
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --trajectory-start-min-ratio=0.0 (was at default 0.25).
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --trajectory-start-max-ratio=1.0 (was at default 0.75).
+2026-09-04 18:15:01.794 - aiperf.common.scenario.validator - INFO - Scenario 'inferencex-agentx-mvp': auto-set --system-idle-gap-cap-seconds=10.0 (was unset).
+2026-09-04 18:15:02.148 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://api.together.ai/v1/chat/completions/metrics']
+2026-09-04 18:15:02.149 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 18:15:02.155 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 18:15:02.172 - GPUTelemetryJSONLWriter_5dc19f86 - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 18:15:02.177 - OTelMetricsResultsProcessor_432b8287 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 18:15:02.177 - RecordExportJSONLWriter_fd15834e - INFO - Record metrics export enabled: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/profile_export.jsonl
+2026-09-04 18:15:02.177 - RecordExportJSONLWriter_fd15834e - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 18:15:02.234 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 18:15:02.258 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 18:15:02.261 - RawRecordWriterProcessor_52ba073e - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/raw_records/raw_records_record_processor_635329c0.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 18:15:02.266 - system_controller - INFO - Registered Record Processor (id: 'record_processor_635329c0')
+2026-09-04 18:15:02.284 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 18:15:02.365 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 18:15:02.379 - system_controller - INFO - Registered Worker (id: 'worker_2d3b1a3b')
+2026-09-04 18:15:02.632 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 18:15:02.632 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 18:15:02.635 - InferenceResultParser_0d8e8f47 - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 18:15:02.634 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 18:15:02.646 - dataset_manager - INFO - Memory-mapped dataset cache HIT (key=461388492092e099072de07135949345); skipping tokenizer + composer.
+2026-09-04 18:15:02.647 - aiperf.dataset.mmap_cache - INFO - Restored mmap cache file dataset.dat via hardlink in 0.000s (0.11 GiB)
+2026-09-04 18:15:02.647 - aiperf.dataset.mmap_cache - INFO - Restored mmap cache file index.dat via hardlink in 0.000s (0.00 GiB)
+2026-09-04 18:15:02.647 - aiperf.dataset.mmap_cache - INFO - Restored mmap cache files in 0.000s via dataset=hardlink index=hardlink (dataset=0.11 GiB, index=0.00 GiB)
+2026-09-04 18:15:02.659 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 18:15:02.660 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 18:15:02.660 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 18:15:02.660 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 18:15:02.668 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 281, unique turn count: 3132
+2026-09-04 18:15:02.727 - aiperf.timing.trajectory_source - INFO - TrajectorySource: built 1 trajectories from 82 traces
+2026-09-04 18:15:02.727 - aiperf.timing.trajectory_source - INFO -   range cfg=[0.00, 1.00]  observed sample pct: min= 26% median= 26% max= 26%
+2026-09-04 18:15:02.727 - aiperf.timing.trajectory_source - INFO -     lane=00  sample_time= 26%  root_next=  5/33  ( 15% turns)  live=1 ready=1  trace_id=006c98de37d819e95b0840e25426bb7ca99d
+2026-09-04 18:15:02.728 - PhaseOrchestrator_9528353a - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 18:15:02.776 - dataset_manager - INFO - Dataset client initialized and freed 0 conversations from memory
+2026-09-04 18:15:03.702 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 18:15:03.703 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 18:15:03.703 - system_controller - INFO - All services configured in 1.07 seconds
+2026-09-04 18:15:03.703 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 18:15:03.706 - system_controller - INFO - All services started profiling successfully
+2026-09-04 18:15:03.706 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 18:15:03.714 - PhaseRunner - NOTICE - Phase warmup (warmup) started | target: 1 requests
+2026-09-04 18:15:03.714 - AgenticReplayTiming - INFO - WARMUP execute: dispatching 1 trajectory credits
+2026-09-04 18:15:03.715 - AgenticReplayTiming - INFO - WARMUP spread: 0.0s ramp aligning 1 request(s) on t* (earliest fires at 0, last at 0.0s)
+2026-09-04 18:15:03.715 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 18:15:03.715 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 18:15:07.157 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=0, cancelled=0 | elapsed=3.44s
+2026-09-04 18:15:07.158 - AgenticReplayTiming - INFO - Global system-idle cap summary: limit=10s, jumps=0, skipped=0.000s
+2026-09-04 18:15:07.158 - aiperf.timing.branch_orchestrator - INFO - BranchOrchestrator stats: spawned=0 completed=0 errored=0 suspended=0 resumed=0 parents_failed_due_to_child_error=0 joins_suppressed=0 delayed=0
+2026-09-04 18:15:07.158 - PhaseRunner - INFO - Session-tree slots for phase warmup: peak_open=0 (target concurrency 1); released 0 still-open at teardown; late_events=0
+2026-09-04 18:15:07.167 - aiperf.timing.replay_dependencies - INFO - Replay interval barriers active: 3132 requests, 1065 gated turns, join-widths={1: 844, 2: 179, 3: 13, 4: 18, 5: 11}
+2026-09-04 18:15:07.167 - AgenticReplayTiming - INFO - PROFILING setup: 1 trajectory lanes; recycle draws roots from the dataset sampler
+2026-09-04 18:15:07.167 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 900.0s duration
+2026-09-04 18:15:07.168 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 899.999512258s
+2026-09-04 18:15:07.168 - AgenticReplayTiming - INFO - PROFILING execute: resuming 1 trajectory sessions (spread; first-request spread 0.0s)
+2026-09-04 18:15:07.169 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 18:30:07.168 - PhaseRunner - INFO - Timeout of 899.999512258s elapsed for event 'profiling phase sending'
+2026-09-04 18:30:07.169 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=64, completed=63, in_flight=1 | sessions: sent=3, completed=2 | timeout_triggered=True
+2026-09-04 18:30:07.169 - PhaseRunner - INFO - Timeout of 0.0s elapsed for event 'profiling phase credits returned'
+2026-09-04 18:30:07.169 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=64, completed=63, cancelled=0, in_flight=1
+2026-09-04 18:30:07.169 - StickyCreditRouter_e9fe84a6 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 18:30:07.169 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 18:30:07.169 - records_manager - INFO - Sent 64 requests. Waiting for all to complete...
+2026-09-04 18:30:07.170 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 18:30:07.170 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=63, cancelled=1, errors=0 | sessions: completed=2, cancelled=0 | elapsed=900.00s | grace_period_timeout=True
+2026-09-04 18:30:07.171 - AgenticReplayTiming - INFO - Global system-idle cap summary: limit=10s, jumps=13, skipped=4274.530s
+2026-09-04 18:30:07.171 - aiperf.timing.branch_orchestrator - INFO - BranchOrchestrator stats: spawned=14 completed=14 errored=0 suspended=1 resumed=1 parents_failed_due_to_child_error=0 joins_suppressed=0 delayed=13
+2026-09-04 18:30:07.171 - PhaseRunner - INFO - Session-tree slots for phase profiling: peak_open=1 (target concurrency 1); released 1 still-open at teardown; late_events=0
+2026-09-04 18:30:07.171 - PhaseOrchestrator_9528353a - NOTICE - All credits completed
+2026-09-04 18:30:07.171 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788525907167573602, sent_end_ns=1788526807168921105, requests_end_ns=1788526807170623373, baseline_start_ns=1788525907167549397, baseline_end_ns=1788526807170630088, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=63, final_requests_cancelled=1, final_request_errors=0, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=63, error_records=0)
+2026-09-04 18:30:07.171 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 18:30:07.171 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 63 of 63 records processed)...
+2026-09-04 18:30:07.172 - records_manager - INFO - Processed 63 valid requests and 0 errors (63 total).
+2026-09-04 18:30:07.172 - records_manager - INFO - Received all records, processing now...
+2026-09-04 18:30:07.172 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 18:30:07.173 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 18:30:09.171 - records_manager - INFO - Processing records results...
+2026-09-04 18:30:09.191 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 18:30:09.192 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 18:30:09.797 - ExporterManager - INFO - Exporting all records
+2026-09-04 18:30:09.839 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/raw_records to /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/profile_export_raw.jsonl
+2026-09-04 18:30:09.898 - RawRecordAggregator - INFO - Aggregated 64 raw records to /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts/profile_export_raw.jsonl
+2026-09-04 18:30:09.898 - ExporterManager - INFO - Exporting console data

@@ -1,0 +1,19 @@
+model: local-chat-completions
+model_args:
+  model: zai-org/GLM-5.3-Flash
+  base_url: https://inference.baseten.co/v1/chat/completions
+  tokenizer_backend: none
+  tokenized_requests: false
+  max_gen_toks: 1024
+  seed: 42
+  timeout: 300.0
+tasks:
+- gsm8k
+apply_chat_template: true
+gen_kwargs:
+  temperature: 0.0
+  max_tokens: 1024
+seed: 42
+output_path: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/baseten/correctness/gsm8k/correctness--glm-5-3-flash--baseten--gsm8k--818283d5/artifacts
+log_samples: true
+limit: 100

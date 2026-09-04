@@ -1,0 +1,381 @@
+03:22:48.319 INFO     Starting AIPerf System (_single_run.py:64)
+03:22:48.329 INFO     [OK] Tokenizer deepseek-ai/DeepSeek-V3 detected (tokenizer_display.py:297)
+03:22:48.329 INFO     1 tokenizer validated | 0.0s (tokenizer_display.py:306)
+03:22:48.329 INFO     HF cache hit (skipping prefetch): ['deepseek-ai/DeepSeek-V3'] (tokenizer_validator.py:99)
+03:22:48.527 WARNING  Using --osl without ignore_eos or min_tokens in --extra-inputs. Output sequence length cannot be guaranteed unless the server honors these parameters. Consider: --extra-inputs ignore_eos:true (generate until max_tokens) or --extra-inputs min_tokens:<value> (set minimum output length). (cli_utils.py:157)
+03:22:48.666 INFO     Server Metrics: Discovered 1 endpoints: ['https://api.together.ai/v1/chat/completions/metrics'] (manager.py:97)
+03:22:48.668 INFO     Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager') (system_controller.py:411)
+03:22:48.676 INFO     Registered Server Metrics Manager (id: 'server_metrics_manager') (system_controller.py:411)
+03:22:48.689 INFO     Registered Dataset Manager (id: 'dataset_manager') (system_controller.py:411)
+03:22:48.708 INFO     GPU telemetry export enabled: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/gpu_telemetry_export.jsonl (jsonl_writer.py:56)
+03:22:48.714 INFO     Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable) (otel_metrics_results_processor.py:127)
+03:22:48.714 INFO     Record metrics export enabled: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export.jsonl (record_export_jsonl_writer.py:62)
+03:22:48.714 INFO     HTTP trace export enabled (--export-http-trace) (record_export_jsonl_writer.py:64)
+03:22:48.727 INFO     Registered Records Manager (id: 'records_manager') (system_controller.py:411)
+03:22:48.750 INFO     Registered Worker Manager (id: 'worker_manager') (system_controller.py:411)
+03:22:48.780 INFO     RawRecordWriter initialized: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/raw_records/raw_records_record_processor_cb28acd4.jsonl - FULL request/response data will be exported (files may be large) (raw_record_writer_processor.py:79)
+03:22:48.887 INFO     Registered Record Processor (id: 'record_processor_cb28acd4') (system_controller.py:411)
+03:22:48.928 INFO     Registered Timing Manager (id: 'timing_manager') (system_controller.py:411)
+03:22:49.011 INFO     Registered Worker (id: 'worker_dc7d57a4') (system_controller.py:411)
+03:22:49.150 INFO     AIPerf System is CONFIGURING (system_controller.py:292)
+03:22:49.150 INFO     Configuring all services to start profiling (system_controller.py:305)
+03:22:49.151 INFO     Tokenization is disabled for this endpoint, skipping tokenizer configuration (inference_result_parser.py:80)
+03:22:49.151 INFO     Waiting for dataset to be configured before configuring timing (manager.py:124)
+03:22:49.152 INFO     Configuring tokenizer(s) for dataset manager (dataset_manager.py:240)
+03:22:49.170 WARNING  GPU Telemetry: http://localhost:9400/metrics is not reachable (manager.py:253)
+03:22:49.171 WARNING  GPU Telemetry: http://localhost:9401/metrics is not reachable (manager.py:253)
+03:22:49.171 INFO     DCGM telemetry skipped: no telemetry sources reachable (system_controller.py:531)
+03:22:49.171 INFO     Waiting for result domains: profile, server_metrics (system_controller.py:824)
+03:22:49.618 INFO     Server metrics disabled - no Prometheus endpoints reachable (system_controller.py:557)
+03:22:49.618 INFO     Waiting for result domains: profile (system_controller.py:824)
+03:22:50.295 INFO     HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect" (_client.py:1025)
+03:22:50.302 INFO     HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/config.json "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:50.545 INFO     HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/configuration_deepseek.py "HTTP/1.1 307 Temporary Redirect" (_client.py:1025)
+03:22:50.551 INFO     HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/configuration_deepseek.py "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:50.953 INFO     HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect" (_client.py:1025)
+03:22:50.954 WARNING  Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads. (_http.py:955)
+03:22:50.960 INFO     HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/config.json "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:51.224 INFO     HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect" (_client.py:1025)
+03:22:51.228 INFO     HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/tokenizer_config.json "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:51.598 INFO     HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect" (_client.py:1025)
+03:22:51.604 INFO     HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/tokenizer_config.json "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:51.825 INFO     HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found" (_client.py:1025)
+03:22:52.076 INFO     HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:52.866 INFO     HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3 "HTTP/1.1 200 OK" (_client.py:1025)
+03:22:52.889 INFO     Tokenizer(s) configured in 3.74 seconds (dataset_manager.py:244)
+03:22:52.889 INFO     Configuring dataset for dataset_manager (dataset_manager.py:250)
+03:22:53.399 INFO     Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_f28f3c39f805/dataset.dat) (memory_map_utils.py:160)
+03:22:53.400 INFO     Data file finalized: 12 conversations, 0.42 MB (memory_map_utils.py:288)
+03:22:53.401 INFO     Index file created: /tmp/aiperf_mmap_f28f3c39f805/index.dat (memory_map_utils.py:295)
+03:22:53.401 INFO     Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_f28f3c39f805/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_f28f3c39f805/index.dat') conversation_count=12 total_size_bytes=435340 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0 (dataset_manager.py:969)
+03:22:53.401 INFO     sampling strategy: sequential, unique conversations: 12, unique turn count: 12 (dataset_manager.py:987)
+03:22:53.402 INFO     Generating inputs.json file at /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/inputs.json (dataset_manager.py:489)
+03:22:53.404 INFO     Initialized 2 phase(s): ['Warmup', 'Profiling'] (phase_orchestrator.py:228)
+03:22:53.405 INFO     inputs.json file generated in 0.00 seconds (dataset_manager.py:508)
+03:22:53.493 INFO     Dataset client initialized and freed 12 conversations from memory (dataset_manager.py:327)
+03:22:53.493 INFO     Dataset configured in 0.60 seconds (dataset_manager.py:263)
+03:22:53.494 INFO     All services configured in 4.34 seconds (system_controller.py:316)
+03:22:53.494 INFO     AIPerf System is CONFIGURED (system_controller.py:294)
+03:22:53.497 INFO     Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None (request_rate.py:114)
+03:22:53.498 NOTICE   Phase warmup (warmup) started | phase_index=0 | target: 1 requests (runner.py:559)
+03:22:53.498 NOTICE   Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0 (runner.py:997)
+03:22:53.499 INFO     All services started profiling successfully (system_controller.py:338)
+03:22:53.499 INFO     AIPerf System is PROFILING (system_controller.py:296)
+03:22:53.499 INFO     Credit phase start: warmup (records_manager.py:943)
+03:23:17.381 NOTICE   Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=1, cancelled=0 | elapsed=23.88s (runner.py:1120)
+03:23:17.381 INFO     Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None (request_rate.py:114)
+03:23:17.382 NOTICE   Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 300.0s duration (runner.py:559)
+03:23:17.382 INFO     Waiting for event 'profiling phase sending' with timeout of 299.999584896s (runner.py:1178)
+03:23:17.382 INFO     Credit phase start: profiling (records_manager.py:943)
+03:23:31.640 WARNING  OSL mismatch: got 644 tokens (requested 1024, diff -37.1%) (osl_mismatch_metrics.py:193)
+03:24:16.917 WARNING  OSL mismatch: got 274 tokens (requested 1024, diff -73.2%) (osl_mismatch_metrics.py:193)
+03:25:30.226 WARNING  OSL mismatch: got 419 tokens (requested 1024, diff -59.1%) (osl_mismatch_metrics.py:193)
+03:25:40.604 WARNING  OSL mismatch: got 610 tokens (requested 1024, diff -40.4%) (osl_mismatch_metrics.py:193)
+03:25:52.456 WARNING  OSL mismatch: got 390 tokens (requested 1024, diff -61.9%) (osl_mismatch_metrics.py:193)
+03:27:31.123 WARNING  OSL mismatch: got 575 tokens (requested 1024, diff -43.8%) (osl_mismatch_metrics.py:193)
+03:28:17.381 INFO     Timeout of 299.999584896s elapsed for event 'profiling phase sending' (runner.py:1166)
+03:28:17.381 NOTICE   Phase profiling (profiling) sending complete | sent=47, completed=46, in_flight=1 | sessions: sent=47, completed=46 | timeout_triggered=True (runner.py:997)
+03:28:17.382 INFO     Timeout of 0.0s elapsed for event 'profiling phase credits returned' (runner.py:1166)
+03:28:17.382 WARNING  Phase profiling timed out, cancelling all credits. Stats: sent=47, completed=46, cancelled=0, in_flight=1 (runner.py:1061)
+03:28:17.382 INFO     Sent cancellation requests for 1 in-flight credits across 1 workers (sticky_router.py:489)
+03:28:17.382 INFO     Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits. (runner.py:1075)
+03:28:17.382 INFO     Sent 47 requests. Waiting for all to complete... (records_manager.py:959)
+03:28:17.382 INFO     All cancelled credits returned for phase profiling (runner.py:1094)
+03:28:17.383 NOTICE   Phase profiling (profiling) complete | completed=46, cancelled=1, errors=30 | sessions: completed=46, cancelled=1 | elapsed=300.00s | grace_period_timeout=True (runner.py:1120)
+03:28:17.383 NOTICE   All credits completed (phase_orchestrator.py:245)
+03:28:17.383 INFO     Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788472397381931628, sent_end_ns=1788472697381922255, requests_end_ns=1788472697382916653, baseline_start_ns=1788472397381909401, baseline_end_ns=1788472697382922604, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=46, final_requests_cancelled=1, final_request_errors=30, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=16, error_records=30) (records_manager.py:985)
+03:28:17.383 NOTICE   All requests have completed, please wait for the results to be processed (currently 46 of 46 records processed)... (records_manager.py:996)
+03:28:17.383 INFO     Received credits complete from 'timing_manager' (system_controller.py:446)
+03:28:17.383 INFO     Processed 16 valid requests and 30 errors (46 total). (records_manager.py:858)
+03:28:17.384 INFO     Received all records, processing now... (records_manager.py:864)
+03:28:17.384 INFO     All credits complete, please wait for the results to be processed... (records_manager.py:1022)
+03:28:17.385 INFO     Waiting 2.0s for server metrics flush period... (records_manager.py:918)
+03:28:19.383 INFO     Processing records results... (records_manager.py:1908)
+03:28:19.421 INFO     _finalize_and_process_results completed (records_manager.py:925)
+03:28:19.423 INFO     All results received, initiating shutdown (system_controller.py:819)
+03:28:20.027 INFO     Exporting all records (exporter_manager.py:69)
+03:28:20.068 INFO     Aggregating 1 raw record files from /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/raw_records to /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_raw.jsonl (raw_record_writer_processor.py:211)
+03:28:20.086 INFO     Aggregated 47 raw records to /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_raw.jsonl (raw_record_writer_processor.py:227)
+03:28:20.094 INFO     Exporting console data (exporter_manager.py:326)
+
+
+                                                       NVIDIA AIPerf | Error Summary                                                        
+┏━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Code ┃              Type ┃ Message                                                                                               ┃ Count ┃
+┡━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│  429 │ Too Many Requests │ {"id":"285eb981-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"9e662886-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"fa5964ff-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"8c4bf5af-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"1395e249-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"147524cd-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"729987fe-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"b255d712-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"94b6ec79-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"cbaa7fb1-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"97b90f83-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"dfc09203-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"f03a1ab9-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"2cb5b005-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"18afc48e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"09593a23-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"ba9c2450-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"20804ab8-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"ba0b8598-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"5a1d918f-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"c66b827e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"01610cd6-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"4e7d07e6-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"34013664-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"e811b96c-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"646f7559-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"4f5140a0-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"236328c5-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"7a756c42-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+│  429 │ Too Many Requests │ {"id":"a28d223e-aws_ec1","error":{"message":"Too many requests in a short window. Our rate limits are │     1 │
+│      │                   │ dynamic - they shift with live model capacity and your traffic shape, so steady traffic and           │       │
+│      │                   │ exponential back-off help. Retry starting from ~2s (X-RateLimit-Reset header). If you hit rate limits │       │
+│      │                   │ often, consider a dedicated endpoint or batch inference. See                                          │       │
+│      │                   │ https://docs.together.ai/docs/rate-limits.","type":"rate_limit","param":null,"code":null}}            │       │
+└──────┴───────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────┴───────┘
+
+
+                                         NVIDIA AIPerf | LLM Metrics: Effective                                          
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                    Metric ┃      avg ┃  min ┃       max ┃       p99 ┃       p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│          Effective Concurrency (requests) │     0.69 │ 0.00 │      1.00 │      1.00 │      1.00 │     1.00 │     0.46 │
+│  Effective Decode Throughput (tokens/sec) │    43.79 │ 0.00 │ 40,278.82 │    130.91 │    100.47 │    10.35 │    57.85 │
+│ Effective Prefill Throughput (tokens/sec) │   437.12 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │     0.00 │ 1,399.11 │
+│   Effective Decode Concurrency (requests) │     0.57 │ 0.00 │      1.00 │      1.00 │      1.00 │     1.00 │     0.50 │
+│  Effective Prefill Concurrency (requests) │     0.13 │ 0.00 │      1.00 │      1.00 │      1.00 │     0.00 │     0.33 │
+│   Effective Total Throughput (tokens/sec) │   480.91 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │    72.49 │ 1,385.93 │
+│      Effective Decode Throughput Per User │    43.79 │ 0.00 │ 40,278.82 │    130.91 │    100.47 │    10.35 │    57.85 │
+│                         (tokens/sec/user) │          │      │           │           │           │          │          │
+│     Effective Prefill Throughput Per User │   437.12 │ 0.00 │ 12,539.91 │  8,410.63 │  2,479.75 │     0.00 │ 1,399.11 │
+│                         (tokens/sec/user) │          │      │           │           │           │          │          │
+│                 Tokens In Flight (tokens) │ 5,927.50 │ 0.00 │  9,220.00 │  9,192.94 │  8,954.78 │ 8,293.50 │ 3,956.81 │
+│         Effective Latency (CO-aware) (ms) │ 4,518.24 │ 0.60 │ 20,505.97 │ 19,663.11 │ 14,800.16 │     1.04 │ 6,559.61 │
+└───────────────────────────────────────────┴──────────┴──────┴───────────┴───────────┴───────────┴──────────┴──────────┘
+                                           NVIDIA AIPerf | LLM Metrics: Active                                           
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                 Metric ┃      avg ┃      min ┃       max ┃       p99 ┃      p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│  Active Decode Throughput (tokens/sec) │    77.29 │     0.00 │ 40,278.82 │    141.11 │   114.15 │    87.67 │    57.59 │
+│ Active Prefill Throughput (tokens/sec) │ 3,465.59 │ 2,208.56 │ 12,539.91 │ 12,539.91 │ 3,893.06 │ 2,699.85 │ 2,241.47 │
+│      Active Decode Throughput Per User │    77.29 │     0.00 │ 40,278.82 │    141.11 │   114.15 │    87.67 │    57.59 │
+│                      (tokens/sec/user) │          │          │           │           │          │          │          │
+│     Active Prefill Throughput Per User │ 3,465.59 │ 2,208.56 │ 12,539.91 │ 12,539.91 │ 3,893.06 │ 2,699.85 │ 2,241.47 │
+│                      (tokens/sec/user) │          │          │           │           │          │          │          │
+│   Active Total Throughput (tokens/sec) │   694.30 │    47.79 │ 12,539.91 │ 10,487.39 │ 2,699.85 │    79.57 │ 1,620.18 │
+└────────────────────────────────────────┴──────────┴──────────┴───────────┴───────────┴──────────┴──────────┴──────────┘
+                                            NVIDIA AIPerf | LLM Metrics: Usage                                            
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                  Metric ┃        avg ┃      min ┃      max ┃      p99 ┃      p90 ┃      p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩
+│            Usage Prompt Tokens (tokens) │   8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │ 8,196.00 │     0.00 │
+│ Usage Prompt Cache Read Tokens (tokens) │   2,560.94 │     0.00 │ 8,195.00 │ 8,195.00 │ 8,195.00 │     0.00 │ 3,798.48 │
+│        Usage Completion Tokens (tokens) │     822.00 │   274.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │   273.29 │
+│         Usage Reasoning Tokens (tokens) │     505.50 │   186.00 │ 1,024.00 │ 1,024.00 │ 1,024.00 │   301.00 │   352.57 │
+│             Usage Total Tokens (tokens) │   9,018.00 │ 8,470.00 │ 9,220.00 │ 9,220.00 │ 9,220.00 │ 9,220.00 │   273.29 │
+│      Total Usage Prompt Tokens (tokens) │ 131,136.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│    Total Usage Prompt Cache Read Tokens │  40,975.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│                                (tokens) │            │          │          │          │          │          │          │
+│       Overall Usage Prompt Cache Read % │      31.25 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│                                     (%) │            │          │          │          │          │          │          │
+│  Total Usage Completion Tokens (tokens) │  13,152.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│   Total Usage Reasoning Tokens (tokens) │   8,088.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+│       Total Usage Total Tokens (tokens) │ 144,288.00 │      N/A │      N/A │      N/A │      N/A │      N/A │      N/A │
+└─────────────────────────────────────────┴────────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
+                                                    NVIDIA AIPerf | LLM Metrics                                                    
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                                        Metric ┃       avg ┃      min ┃       max ┃       p99 ┃       p90 ┃       p50 ┃      std ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
+│                      Time to First Token (ms) │  2,364.97 │   653.59 │  3,711.02 │  3,675.36 │  3,389.25 │  2,676.85 │ 1,015.06 │
+│                     Time to Second Token (ms) │     24.10 │     0.00 │    272.57 │    235.75 │     26.39 │      0.00 │    65.03 │
+│               Time to First Output Token (ms) │  5,860.24 │ 4,284.25 │ 11,029.12 │ 10,627.08 │  7,008.73 │  5,245.53 │ 1,816.92 │
+│                          Request Latency (ms) │ 12,982.45 │ 5,942.48 │ 20,498.77 │ 20,217.97 │ 17,387.59 │ 12,949.74 │ 3,700.98 │
+│                          Decode Duration (ms) │ 10,617.48 │ 3,344.09 │ 17,025.45 │ 16,851.47 │ 14,986.95 │ 11,084.85 │ 3,585.23 │
+│                      Inter Token Latency (ms) │     13.24 │     8.83 │     20.92 │     20.27 │     16.08 │     12.73 │     2.75 │
+│              Output Token Throughput Per User │     78.45 │    47.81 │    113.24 │    110.65 │     92.43 │     78.59 │    14.82 │
+│                             (tokens/sec/user) │           │          │           │           │           │           │          │
+│ E2E Output Token Throughput (tokens/sec/user) │     63.43 │    32.92 │    104.33 │    100.98 │     79.18 │     61.76 │    16.10 │
+│               Output Sequence Length (tokens) │    822.00 │   274.00 │  1,024.00 │  1,024.00 │  1,024.00 │  1,024.00 │   273.29 │
+│                Input Sequence Length (tokens) │  8,196.00 │ 8,196.00 │  8,196.00 │  8,196.00 │  8,196.00 │  8,196.00 │     0.00 │
+│          Output Token Throughput (tokens/sec) │     43.84 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│           Input Token Throughput (tokens/sec) │    437.12 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│             Request Throughput (requests/sec) │      0.05 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│          Completed Requests (Success + Error) │     46.00 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                    (requests) │           │          │           │           │           │           │          │
+│                        Request Error Rate (%) │     65.22 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                      Request Count (requests) │     16.00 │      N/A │       N/A │       N/A │       N/A │       N/A │      N/A │
+│          Time to First Token (error-adjusted) │       N/A │   653.59 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│              Request Latency (error-adjusted) │       N/A │ 5,942.48 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│              Decode Duration (error-adjusted) │       N/A │ 3,344.09 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+│          Inter Token Latency (error-adjusted) │       N/A │     8.83 │       N/A │       N/A │       N/A │       N/A │      N/A │
+│                                          (ms) │           │          │           │           │           │           │          │
+└───────────────────────────────────────────────┴───────────┴──────────┴───────────┴───────────┴───────────┴───────────┴──────────┘
+
+
+╭──────────────────────────────────────────── GPU Telemetry Platform ─────────────────────────────────────────────╮
+│  Platform: unknown                                                                                              │
+│  Metric semantics are platform-specific; cross-platform comparisons require workload and collector validation.  │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+No GPU telemetry data collected during the benchmarking run.
+
+╭───────────────────────────── Output Sequence Length Mismatch Warning ──────────────────────────────╮
+│  6 of 16 requests (37.5%) have output length differing from requested by more than the threshold.  │
+│  Threshold (tokens): min(requested x 5%, 50)                                                       │
+│  Average mismatch: -19.7%                                                                          │
+│                                                                                                    │
+│  Why: Server hit EOS token before reaching requested output length.                                │
+│                                                                                                    │
+│  Fix Options:                                                                                      │
+│    - --extra-inputs ignore_eos:true - Generate until max_tokens (vLLM, TensorRT-LLM)               │
+│    - --extra-inputs min_tokens:<N> - Set minimum output length (vLLM, TensorRT-LLM, SGLang)        │
+│    - --use-server-token-count - Use server-reported token counts if tokenizer mismatch suspected   │
+│                                                                                                    │
+│  Diagnostics:                                                                                      │
+│    - Review profile_export.jsonl -> osl_mismatch_diff_pct for per-request values                   │
+│    - Adjust: AIPERF_METRICS_OSL_MISMATCH_PCT_THRESHOLD=5                                           │
+│    - Adjust: AIPERF_METRICS_OSL_MISMATCH_MAX_TOKEN_THRESHOLD=50                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+CLI Command: aiperf profile --config 
+'/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--de
+epseek-v4-pro--together--synthetic--c1--5457fd28/aiperf-config.yaml' --export-level 'raw' --export-http-trace
+Benchmark Duration: 286.10 sec
+CSV Export: 
+/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--dee
+pseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_aiperf.csv
+JSON Export: 
+/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--dee
+pseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_aiperf.json
+Raw Records: 
+/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--dee
+pseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_raw.jsonl
+Log File: 
+/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--dee
+pseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/logs/aiperf.log
+

@@ -9,13 +9,17 @@ from benchmark_tool.adapters.aiperf import (
     agentx_metadata,
     load_aiperf,
     performance_metrics,
+    profiling_records,
     reliability,
     token_usage,
 )
 from benchmark_tool.adapters.correctness import parse_bfcl, parse_lm_eval
-from benchmark_tool.adapters.pricing import normalize_pricing
+from benchmark_tool.adapters.pricing import (
+    generate_trace_cost_breakdown,
+    normalize_pricing,
+)
 from benchmark_tool.config import AgentXWorkload, BenchmarkConfig, load_config
-from benchmark_tool.io import read_json, write_jsonl
+from benchmark_tool.io import read_json, write_json, write_jsonl
 from benchmark_tool.results import (
     CanonicalResult,
     ModelDimension,
@@ -137,14 +141,31 @@ def normalize_job(
                             }
                         ],
                     }
-            request_count = data["reliability"].total_requests if data.get("reliability") else None
+            if data.get("reliability"):
+                request_count = data["reliability"].total_requests
+            elif records:
+                request_count = len(profiling_records(records))
+            else:
+                request_count = None
             data["pricing"] = normalize_pricing(
-                snapshot, usage, config.pricing.enabled, request_count=request_count
+                snapshot,
+                usage,
+                config.pricing.enabled,
+                request_count=request_count,
+                records=records,
             )
             sources = {
                 "summary": str(summary_path.relative_to(run_dir)),
                 "records": str(records_path.relative_to(run_dir)),
             }
+            if config.pricing.enabled and records:
+                breakdown = generate_trace_cost_breakdown(
+                    snapshot, records, enabled=config.pricing.enabled
+                )
+                if breakdown.get("traces"):
+                    breakdown_path = summary_path.parent / "trace-cost-breakdown.json"
+                    write_json(breakdown_path, breakdown)
+                    sources["traceCostBreakdown"] = str(breakdown_path.relative_to(run_dir))
             if snapshot_path.exists():
                 sources["pricingSnapshot"] = str(snapshot_path.relative_to(run_dir))
             data["source"].update(sources)

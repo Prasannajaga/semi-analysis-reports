@@ -1226,7 +1226,7 @@ document.addEventListener("mouseover", e => {
     ]);
   } else if (tipType === "sec-cache") {
     showTooltip(e, `Cache Hit Rate Methodology`, [
-      `Cache Hit Rate: Percentage of input prompt tokens served from KV cache.`,
+      `Prompt Cache Read Ratio: Percentage of input prompt tokens reported as cached by the provider (not internal GPU KV cache telemetry).`,
       `Cached Rate: Discounted rate billed per 1M cached tokens.`,
       `TTL: Cache expiration duration is internal to provider infrastructure and not exposed by APIs.`
     ]);

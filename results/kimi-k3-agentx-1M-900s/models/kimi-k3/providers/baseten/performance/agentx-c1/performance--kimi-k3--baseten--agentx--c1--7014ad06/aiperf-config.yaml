@@ -1,0 +1,36 @@
+schemaVersion: '2.0'
+randomSeed: 42
+benchmark:
+  model: moonshotai/Kimi-K3
+  endpoint:
+    url: https://inference.baseten.co/v1/chat/completions
+    type: chat
+    apiKey: ${BASETEN_API_KEY}
+    streaming: true
+    timeout: 180.0
+    useLegacyMaxTokens: true
+    useServerTokenCount: true
+  tokenizer:
+    name: moonshotai/Kimi-K3
+    trustRemoteCode: true
+  profiling:
+    type: concurrency
+    concurrency: 1
+    duration: 900
+  artifacts:
+    dir: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/artifacts
+    summary:
+    - json
+    records:
+    - jsonl
+    raw: true
+    trace: true
+  scenario: inferencex-agentx-mvp
+  dataset:
+    type: public
+    dataset: semianalysis_cc_traces_weka_062126
+    maxContextLength: 131072
+  warmup:
+    type: concurrency
+    requests: 1
+    concurrency: 1

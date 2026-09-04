@@ -13,7 +13,7 @@ from typing import Any, cast
 from dotenv import load_dotenv
 
 from benchmark_tool.config import AgentXWorkload, BenchmarkConfig, load_config
-from benchmark_tool.io import slug, stable_hash, write_json, write_text
+from benchmark_tool.io import read_json, read_jsonl, slug, stable_hash, write_json, write_text
 from benchmark_tool.manifest import RunManifest
 from benchmark_tool.matrix import Job, expand_matrix
 from benchmark_tool.openrouter import OpenRouterClient, pricing_snapshot
@@ -99,6 +99,28 @@ def _preflight(
     return result
 
 
+def _save_trace_cost_breakdown_if_available(job_dir: Path, *, enabled: bool = True) -> None:
+    if not enabled:
+        return
+    try:
+        from benchmark_tool.adapters.aiperf import find_artifact
+        from benchmark_tool.adapters.pricing import generate_trace_cost_breakdown
+
+        records_path = find_artifact(job_dir, "profile_export.jsonl")
+        summary_path = find_artifact(job_dir, "profile_export_aiperf.json")
+        snapshot_path = job_dir.parents[2] / "endpoint" / "pricing-snapshot.json"
+        if records_path.exists() and snapshot_path.exists():
+            records = read_jsonl(records_path)
+            snapshot = read_json(snapshot_path)
+            breakdown = generate_trace_cost_breakdown(snapshot, records, enabled=enabled)
+            if breakdown.get("traces"):
+                output_path = summary_path.parent / "trace-cost-breakdown.json"
+                write_json(output_path, breakdown)
+                log_state("artifact", f"Saved trace cost breakdown: {output_path}")
+    except Exception as error:
+        log_state("artifact", f"Trace cost breakdown skipped: {error}")
+
+
 def _execute_job(
     config: BenchmarkConfig,
     job: Job,
@@ -175,6 +197,8 @@ def _execute_job(
     log_state("execute", f"Starting {job.runner} runner for {job.job_id}")
     if job.runner == "aiperf":
         execution = aiperf.execute(config, job, directory, api_key or "")
+        if execution.get("status") == "completed" and config.pricing.enabled:
+            _save_trace_cost_breakdown_if_available(directory, enabled=config.pricing.enabled)
     elif job.runner == "lm-eval":
         execution = lm_eval.execute(config, job, directory, api_key or "")
     else:
@@ -533,4 +557,13 @@ def execute_benchmark(
     manifest["completedAt"] = utc_now()
     _write_manifest(run_dir, manifest)
     log_state("run", f"Finished with status {manifest['status']}: {run_dir}")
+    if not dry_run and getattr(config, "normalize", False) and manifest["status"] not in {"failed"}:
+        try:
+            from benchmark_tool.normalization import normalize_run
+
+            results_path = run_dir / "results.jsonl"
+            normalize_run(run_dir, results_path)
+            log_state("normalize", f"Generated canonical results: {results_path}")
+        except Exception as error:
+            log_error(f"Normalization failed: {type(error).__name__}: {error}")
     return run_dir

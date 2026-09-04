@@ -1,0 +1,42 @@
+{
+  "apiKeyEnv": "DIRECT_PROVIDERS",
+  "benchmarkConfigSha256": "070ffb74aa5dd22c9ff00e79d77ec62212c9e5b430533bf765770840db29c610",
+  "completedAt": "2026-09-04T13:00:09.944633Z",
+  "dryRun": false,
+  "jobs": [
+    {
+      "jobId": "performance--kimi-k3--baseten--agentx--c1--7014ad06",
+      "path": "models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--kimi-k3--fireworks--agentx--c1--6441f039",
+      "path": "models/kimi-k3/providers/fireworks/performance/agentx-c1/performance--kimi-k3--fireworks--agentx--c1--6441f039",
+      "status": "completed"
+    },
+    {
+      "jobId": "performance--kimi-k3--together--agentx--c1--a2e78e3a",
+      "path": "models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a",
+      "status": "completed"
+    }
+  ],
+  "matrix": {
+    "endpointCombinations": 3,
+    "jobs": 3,
+    "models": 1,
+    "providers": 3
+  },
+  "runId": "kimi-k3-agentx-20260904T121154Z-070ffb74",
+  "runName": "kimi-k3-agentx",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-04T12:11:54.449819Z",
+  "status": "completed",
+  "updatedAt": "2026-09-04T13:00:09.944639Z",
+  "versions": {
+    "aiperf": "0.12.0",
+    "benchmarkTool": "0.1.0",
+    "bfcl": null,
+    "lmEval": "0.4.13",
+    "python": "3.12.3"
+  }
+}

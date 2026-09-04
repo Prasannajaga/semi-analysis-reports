@@ -77,6 +77,8 @@ def main() -> int:
         if job["status"] in {"failed", "unsupported"}:
             print(f"[details] : {path / job['path'] / 'job.json'}")
     print(f"[summary] : {manifest['status']} ({len(manifest['jobs'])} jobs)")
+    if (path / "results.jsonl").exists():
+        print(f"[results] : {path / 'results.jsonl'}")
     return 1 if manifest["status"] in {"failed", "completed-with-errors"} else 0
 
 

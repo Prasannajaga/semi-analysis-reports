@@ -1,0 +1,45 @@
+{
+  "concurrency": 1,
+  "config_hash": "7014ad061abdb94c",
+  "finishedAt": "2026-09-04T12:29:14.003279Z",
+  "job_id": "performance--kimi-k3--baseten--agentx--c1--7014ad06",
+  "model_id": "kimi-k3",
+  "openrouter_model": "moonshotai/kimi-k3",
+  "phase": "performance",
+  "process": {
+    "command": [
+      "aiperf",
+      "profile",
+      "--config",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/aiperf-config.yaml",
+      "--export-level",
+      "raw",
+      "--export-http-trace"
+    ],
+    "durationSeconds": 1038.817797,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "baseten",
+  "provider_slug": "baseten",
+  "runner": "aiperf",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-04T12:11:54.458197Z",
+  "status": "completed",
+  "tokenizer": "moonshotai/Kimi-K3",
+  "tokenizer_trust_remote_code": true,
+  "validation": {
+    "command": [
+      "aiperf",
+      "config",
+      "validate",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/baseten/performance/agentx-c1/performance--kimi-k3--baseten--agentx--c1--7014ad06/aiperf-config.yaml"
+    ],
+    "durationSeconds": 0.723764,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "workload_type": "agentx"
+}

@@ -1,0 +1,45 @@
+{
+  "concurrency": 1,
+  "config_hash": "6441f0396cfd3557",
+  "finishedAt": "2026-09-04T12:45:00.295329Z",
+  "job_id": "performance--kimi-k3--fireworks--agentx--c1--6441f039",
+  "model_id": "kimi-k3",
+  "openrouter_model": "moonshotai/kimi-k3",
+  "phase": "performance",
+  "process": {
+    "command": [
+      "aiperf",
+      "profile",
+      "--config",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/fireworks/performance/agentx-c1/performance--kimi-k3--fireworks--agentx--c1--6441f039/aiperf-config.yaml",
+      "--export-level",
+      "raw",
+      "--export-http-trace"
+    ],
+    "durationSeconds": 945.443354,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "fireworks",
+  "provider_slug": "fireworks",
+  "runner": "aiperf",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-04T12:29:14.039121Z",
+  "status": "completed",
+  "tokenizer": "moonshotai/Kimi-K3",
+  "tokenizer_trust_remote_code": true,
+  "validation": {
+    "command": [
+      "aiperf",
+      "config",
+      "validate",
+      "/data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/fireworks/performance/agentx-c1/performance--kimi-k3--fireworks--agentx--c1--6441f039/aiperf-config.yaml"
+    ],
+    "durationSeconds": 0.808767,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "workload_type": "agentx"
+}

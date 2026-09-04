@@ -280,6 +280,7 @@ class BenchmarkMetadata(StrictModel):
 class BenchmarkConfig(StrictModel):
     debug: bool = Field(default=False, alias="DEBUG")
     schema_version: Literal["1.0"] = "1.0"
+    normalize: bool = False
     benchmark: BenchmarkMetadata
     gateway: Gateway
     providers: list[Provider] = Field(min_length=1)
@@ -298,6 +299,8 @@ class BenchmarkConfig(StrictModel):
                     phases["pricing"] = data.pop("pricing")
                 if "reliability" in data and "reliability" not in phases:
                     phases["reliability"] = data.pop("reliability")
+                if "normalize" in phases and "normalize" not in data:
+                    data["normalize"] = phases.pop("normalize")
 
             raw_gateway = data.get("gateway")
             gateway_type = "openrouter"

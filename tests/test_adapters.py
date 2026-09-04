@@ -15,7 +15,11 @@ from benchmark_tool.adapters.aiperf import (
     token_usage,
 )
 from benchmark_tool.adapters.correctness import parse_bfcl, parse_lm_eval
-from benchmark_tool.adapters.pricing import normalize_pricing
+from benchmark_tool.adapters.pricing import (
+    calculate_trace_costs,
+    generate_trace_cost_breakdown,
+    normalize_pricing,
+)
 from benchmark_tool.results import MetricStats, TokenUsage
 
 
@@ -74,6 +78,10 @@ def test_reliability_uses_only_profiling_population(tmp_path):
         ({"type": "JSONDecodeError", "message": "parse malformed JSON"}, "parse_errors"),
         ({"type": "ConnectError", "message": "socket disconnected"}, "connection_errors"),
         ({"message": "maximum context length exceeded"}, "context_overflow"),
+        ({"code": 400, "message": "maximum context length exceeded"}, "context_overflow"),
+        ({"code": 408, "message": "request timed out"}, "timeouts"),
+        ({"code": 504, "message": "gateway timeout"}, "timeouts"),
+        ({"code": 413, "message": "payload too large"}, "context_overflow"),
     ],
 )
 def test_error_classification(error, expected):
@@ -115,6 +123,171 @@ def test_pricing_calculation_from_snapshot():
     assert result.estimated_cost_usd == pytest.approx(2.275)
 
 
+def test_trace_cost_calculation_multi_trace():
+    snapshot = {
+        "matchingEndpoints": [
+            {
+                "provider_name": "Provider A",
+                "pricing": {
+                    "prompt": "0.000003",
+                    "completion": "0.000015",
+                    "input_cache_read": "0.0000003",
+                    "input_cache_write": "0.0000015",
+                },
+            }
+        ]
+    }
+    records = [
+        # Warmup record: must be excluded
+        {
+            "metadata": {"benchmark_phase": "warmup", "source_trace_id": "trace-1"},
+            "metrics": {
+                "input_sequence_length": {"value": 50000},
+                "usage_prompt_cache_read_tokens": {"value": 40000},
+                "output_sequence_length": {"value": 500},
+            },
+        },
+        # Trace 1, turn 1
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "trace-1"},
+            "metrics": {
+                "input_sequence_length": {"value": 10000},
+                "usage_prompt_cache_read_tokens": {"value": 8000},
+                "output_sequence_length": {"value": 200},
+                "usage_reasoning_tokens": {"value": 50},
+            },
+        },
+        # Trace 1, turn 2
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "trace-1"},
+            "metrics": {
+                "input_sequence_length": {"value": 15000},
+                "usage_prompt_cache_read_tokens": {"value": 14000},
+                "output_sequence_length": {"value": 300},
+                "usage_reasoning_tokens": {"value": 100},
+            },
+        },
+        # Trace 2, turn 1
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "trace-2"},
+            "metrics": {
+                "input_sequence_length": {"value": 20000},
+                "usage_prompt_cache_read_tokens": {"value": 5000},
+                "output_sequence_length": {"value": 1000},
+                "usage_reasoning_tokens": {"value": 0},
+            },
+        },
+    ]
+
+    trace_costs = calculate_trace_costs(snapshot, records, enabled=True)
+    assert len(trace_costs) == 2
+
+    t1 = trace_costs[0]
+    assert t1.trace_id == "trace-1"
+    assert t1.request_count == 2
+    assert t1.input_tokens == 25000
+    assert t1.cached_input_tokens == 22000
+    assert t1.uncached_input_tokens == 3000
+    assert t1.output_tokens == 500
+    assert t1.reasoning_tokens == 150
+    assert t1.total_tokens == 25500
+    assert t1.cache_hit_rate == pytest.approx(22000 / 25000, abs=1e-4)
+    # uncached: 3000 * 3.0 / 1e6 = 0.009
+    # cached: 22000 * 0.3 / 1e6 = 0.0066
+    # output: 500 * 15.0 / 1e6 = 0.0075
+    # total: 0.009 + 0.0066 + 0.0075 = 0.0231
+    assert t1.estimated_cost_usd == pytest.approx(0.0231)
+    assert t1.cost_per_request_usd == pytest.approx(0.0231 / 2)
+
+    t2 = trace_costs[1]
+    assert t2.trace_id == "trace-2"
+    assert t2.request_count == 1
+    assert t2.input_tokens == 20000
+    assert t2.cached_input_tokens == 5000
+    assert t2.uncached_input_tokens == 15000
+    assert t2.output_tokens == 1000
+    assert t2.cache_hit_rate == pytest.approx(5000 / 20000, abs=1e-4)
+    # uncached: 15000 * 3.0 / 1e6 = 0.045
+    # cached: 5000 * 0.3 / 1e6 = 0.0015
+    # output: 1000 * 15.0 / 1e6 = 0.015
+    # total: 0.045 + 0.0015 + 0.015 = 0.0615
+    assert t2.estimated_cost_usd == pytest.approx(0.0615)
+    assert t2.cost_per_request_usd == pytest.approx(0.0615)
+
+
+def test_trace_cost_fallback_to_conversation_id():
+    snapshot = {
+        "matchingEndpoints": [
+            {
+                "pricing": {"prompt": "0.000001", "completion": "0.000002"},
+            }
+        ]
+    }
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "conversation_id": "conv-xyz"},
+            "metrics": {
+                "input_sequence_length": {"value": 1000},
+                "output_sequence_length": {"value": 100},
+            },
+        }
+    ]
+    trace_costs = calculate_trace_costs(snapshot, records, enabled=True)
+    assert len(trace_costs) == 1
+    assert trace_costs[0].trace_id == "conv-xyz"
+
+
+def test_generate_trace_cost_breakdown_schema():
+    snapshot = {
+        "matchingEndpoints": [
+            {
+                "pricing": {"prompt": "0.000002", "completion": "0.000005"},
+            }
+        ]
+    }
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "t1"},
+            "metrics": {
+                "input_sequence_length": {"value": 1000},
+                "output_sequence_length": {"value": 100},
+            },
+        }
+    ]
+    breakdown = generate_trace_cost_breakdown(snapshot, records, enabled=True)
+    assert breakdown["schemaVersion"] == "1.0"
+    assert breakdown["totalTraces"] == 1
+    assert breakdown["totalRequests"] == 1
+    assert breakdown["totalEstimatedCostUsd"] is not None
+    assert breakdown["avgCostPerTraceUsd"] is not None
+    assert "pricingRates" in breakdown
+    assert len(breakdown["traces"]) == 1
+    assert breakdown["traces"][0]["traceId"] == "t1"
+
+
+def test_normalize_pricing_with_trace_records():
+    snapshot = {
+        "matchingEndpoints": [
+            {
+                "pricing": {"prompt": "0.000002", "completion": "0.000005"},
+            }
+        ]
+    }
+    usage = TokenUsage(input_tokens=1000, output_tokens=100)
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "trace-a"},
+            "metrics": {
+                "input_sequence_length": {"value": 1000},
+                "output_sequence_length": {"value": 100},
+            },
+        }
+    ]
+    result = normalize_pricing(snapshot, usage, True, request_count=1, records=records)
+    assert len(result.trace_costs) == 1
+    assert result.trace_costs[0].trace_id == "trace-a"
+
+
 def test_lm_eval_correctness_normalization(tmp_path):
     artifacts = tmp_path / "artifacts"
     artifacts.mkdir()
@@ -142,3 +315,99 @@ def test_bfcl_correctness_normalization(tmp_path):
     assert source == path
     assert result.score == 0.8
     assert result.sample_count == 100
+
+
+def test_pricing_breakdown_disabled():
+    snapshot = {
+        "matchingEndpoints": [{"pricing": {"prompt": "0.000001", "completion": "0.000002"}}]
+    }
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "t1"},
+            "metrics": {"input_sequence_length": {"value": 1000}, "output_sequence_length": {"value": 100}},
+        }
+    ]
+    breakdown = generate_trace_cost_breakdown(snapshot, records, enabled=False)
+    assert breakdown["totalTraces"] == 0
+    assert len(breakdown["traces"]) == 0
+    assert breakdown["totalEstimatedCostUsd"] is None
+
+
+def test_normalize_pricing_derives_request_count_without_reliability():
+    snapshot = {
+        "matchingEndpoints": [{"pricing": {"prompt": "0.000002", "completion": "0.000004"}}]
+    }
+    usage = TokenUsage(input_tokens=1000, output_tokens=100)
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "t1"},
+            "metrics": {"input_sequence_length": {"value": 500}, "output_sequence_length": {"value": 50}},
+        },
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "t2"},
+            "metrics": {"input_sequence_length": {"value": 500}, "output_sequence_length": {"value": 50}},
+        },
+    ]
+    result = normalize_pricing(snapshot, usage, enabled=True, request_count=None, records=records)
+    assert result.cost_per_request_usd is not None
+    assert result.cost_per_request_usd == pytest.approx(result.estimated_cost_usd / 2)
+
+
+def test_token_usage_aggregates_error_isl():
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling"},
+            "metrics": {"input_sequence_length": {"value": 1000}, "output_sequence_length": {"value": 100}},
+        },
+        {
+            "metadata": {"phase_kind": "profiling"},
+            "metrics": {"error_isl": {"value": 2500}},
+            "error": {"code": 500, "message": "server error"},
+        },
+    ]
+    usage = token_usage(records)
+    assert usage.input_tokens == 3500
+    assert usage.output_tokens == 100
+    assert usage.missing_input_records == 0
+
+
+def test_trace_ids_without_metadata_not_merged():
+    snapshot = {
+        "matchingEndpoints": [{"pricing": {"prompt": "0.000001", "completion": "0.000002"}}]
+    }
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "session_num": 0, "x_request_id": "req-1"},
+            "metrics": {"input_sequence_length": {"value": 1000}, "output_sequence_length": {"value": 100}},
+        },
+        {
+            "metadata": {"phase_kind": "profiling", "session_num": 0, "x_request_id": "req-2"},
+            "metrics": {"input_sequence_length": {"value": 1000}, "output_sequence_length": {"value": 100}},
+        },
+    ]
+    trace_costs = calculate_trace_costs(snapshot, records, enabled=True)
+    assert len(trace_costs) == 2
+    assert trace_costs[0].trace_id == "req-1"
+    assert trace_costs[1].trace_id == "req-2"
+
+
+def test_prompt_cache_read_ratio_field():
+    snapshot = {
+        "matchingEndpoints": [
+            {"pricing": {"prompt": "0.000002", "completion": "0.000004", "input_cache_read": "0.0000005"}}
+        ]
+    }
+    records = [
+        {
+            "metadata": {"phase_kind": "profiling", "source_trace_id": "t1"},
+            "metrics": {
+                "input_sequence_length": {"value": 1000},
+                "usage_prompt_cache_read_tokens": {"value": 400},
+                "output_sequence_length": {"value": 100},
+            },
+        }
+    ]
+    breakdown = generate_trace_cost_breakdown(snapshot, records, enabled=True)
+    assert breakdown["traces"][0]["cacheHitRate"] == 0.4
+    assert breakdown["traces"][0]["promptCacheReadRatio"] == 0.4
+

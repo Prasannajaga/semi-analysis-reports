@@ -1,0 +1,42 @@
+{
+  "concurrency": 1,
+  "config_hash": "a7fd85cfcaf6a0e8",
+  "finishedAt": "2026-09-03T14:30:03.959785Z",
+  "job_id": "performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf",
+  "model_id": "deepseek-v4-pro",
+  "openrouter_model": "deepseek/deepseek-v4-pro-0813",
+  "phase": "performance",
+  "process": {
+    "command": [
+      "aiperf",
+      "profile",
+      "--config",
+      "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T141349Z-1eb8f965/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf/aiperf-config.yaml"
+    ],
+    "durationSeconds": 327.932464,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "together",
+  "provider_slug": "together",
+  "runner": "aiperf",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T14:24:35.313827Z",
+  "status": "completed",
+  "tokenizer": "deepseek-ai/DeepSeek-V3",
+  "tokenizer_trust_remote_code": true,
+  "validation": {
+    "command": [
+      "aiperf",
+      "config",
+      "validate",
+      "/data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T141349Z-1eb8f965/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--a7fd85cf/aiperf-config.yaml"
+    ],
+    "durationSeconds": 0.710958,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "workload_type": "synthetic"
+}
