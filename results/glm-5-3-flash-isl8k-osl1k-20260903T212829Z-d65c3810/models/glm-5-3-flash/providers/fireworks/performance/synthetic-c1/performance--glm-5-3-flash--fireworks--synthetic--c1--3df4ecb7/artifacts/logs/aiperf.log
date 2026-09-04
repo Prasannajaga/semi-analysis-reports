@@ -1,0 +1,103 @@
+2026-09-04 03:15:34.228 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 03:15:34.237 - aiperf.config.resolution.resolvers - INFO - [OK] Tokenizer THUDM/glm-4-9b-chat detected
+2026-09-04 03:15:34.237 - aiperf.config.resolution.resolvers - INFO - 1 tokenizer validated | 0.0s
+2026-09-04 03:15:34.237 - aiperf.config.resolution.resolvers - INFO - HF cache hit (skipping prefetch): ['THUDM/glm-4-9b-chat']
+2026-09-04 03:15:34.437 - aiperf - WARNING - Using --osl without ignore_eos or min_tokens in --extra-inputs. Output sequence length cannot be guaranteed unless the server honors these parameters. Consider: --extra-inputs ignore_eos:true (generate until max_tokens) or --extra-inputs min_tokens:<value> (set minimum output length).
+2026-09-04 03:15:34.569 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 03:15:34.577 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://api.fireworks.ai/inference/v1/chat/completions/metrics']
+2026-09-04 03:15:34.584 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 03:15:34.599 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 03:15:34.617 - GPUTelemetryJSONLWriter_46367d88 - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 03:15:34.623 - OTelMetricsResultsProcessor_bbfde924 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 03:15:34.624 - RecordExportJSONLWriter_9dee07e3 - INFO - Record metrics export enabled: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/profile_export.jsonl
+2026-09-04 03:15:34.624 - RecordExportJSONLWriter_9dee07e3 - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 03:15:34.639 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 03:15:34.659 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 03:15:34.691 - RawRecordWriterProcessor_bc516123 - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/raw_records/raw_records_record_processor_434c3e1b.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 03:15:34.702 - system_controller - INFO - Registered Record Processor (id: 'record_processor_434c3e1b')
+2026-09-04 03:15:34.724 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 03:15:34.920 - system_controller - INFO - Registered Worker (id: 'worker_1240a276')
+2026-09-04 03:15:35.060 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 03:15:35.061 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 03:15:35.061 - InferenceResultParser_c967add6 - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 03:15:35.061 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 03:15:35.062 - dataset_manager - INFO - Configuring tokenizer(s) for dataset manager
+2026-09-04 03:15:35.086 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 03:15:35.087 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 03:15:35.088 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 03:15:35.088 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 03:15:35.272 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 03:15:35.272 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 03:15:36.103 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:36.322 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:36.322 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 03:15:36.329 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:15:36.577 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:36.800 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/configuration_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:36.806 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/configuration_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:15:37.026 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:37.250 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:37.258 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:15:37.482 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:37.704 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:37.709 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:15:37.928 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/THUDM/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:38.147 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/zai-org/glm-4-9b-chat/resolve/main/tokenization_chatglm.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:38.152 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/zai-org/glm-4-9b-chat/bd8234fe5e0c09c48637a92abb0c797cb5fa0e73/tokenization_chatglm.py "HTTP/1.1 200 OK"
+2026-09-04 03:15:38.378 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:38.608 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 03:15:38.828 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/THUDM/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:15:39.054 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/zai-org/glm-4-9b-chat/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 03:15:39.253 - dataset_manager - INFO - Tokenizer(s) configured in 4.19 seconds
+2026-09-04 03:15:39.253 - dataset_manager - INFO - Configuring dataset for dataset_manager
+2026-09-04 03:15:40.889 - MemoryMapDatasetBackingStore_25e79fbb - INFO - Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_20d7112bef07/dataset.dat)
+2026-09-04 03:15:40.892 - MemoryMapDatasetBackingStore_25e79fbb - INFO - Data file finalized: 12 conversations, 0.42 MB
+2026-09-04 03:15:40.893 - MemoryMapDatasetBackingStore_25e79fbb - INFO - Index file created: /tmp/aiperf_mmap_20d7112bef07/index.dat
+2026-09-04 03:15:40.893 - dataset_manager - INFO - Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_20d7112bef07/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_20d7112bef07/index.dat') conversation_count=12 total_size_bytes=435747 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0
+2026-09-04 03:15:40.894 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 12, unique turn count: 12
+2026-09-04 03:15:40.894 - dataset_manager - INFO - Generating inputs.json file at /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/inputs.json
+2026-09-04 03:15:40.896 - PhaseOrchestrator_01fe2b8e - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 03:15:40.898 - dataset_manager - INFO - inputs.json file generated in 0.00 seconds
+2026-09-04 03:15:40.985 - dataset_manager - INFO - Dataset client initialized and freed 12 conversations from memory
+2026-09-04 03:15:40.985 - dataset_manager - INFO - Dataset configured in 1.73 seconds
+2026-09-04 03:15:40.986 - system_controller - INFO - All services configured in 5.93 seconds
+2026-09-04 03:15:40.986 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 03:15:40.987 - system_controller - INFO - All services started profiling successfully
+2026-09-04 03:15:40.987 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 03:15:40.989 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:15:40.990 - PhaseRunner - NOTICE - Phase warmup (warmup) started | phase_index=0 | target: 1 requests
+2026-09-04 03:15:40.991 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 03:15:40.991 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 03:15:49.886 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=1, cancelled=0 | elapsed=8.90s
+2026-09-04 03:15:49.887 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:15:49.887 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 300.0s duration
+2026-09-04 03:15:49.887 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 299.99972911s
+2026-09-04 03:15:49.888 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 03:15:49.900 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 633 tokens (requested 1024, diff -38.2%)
+2026-09-04 03:16:47.282 - InferenceResultParser_c967add6 - WARNING - Server reported inconsistent token counts: completion_tokens=1024, reasoning_tokens=1025. Clamping output tokens to 0.
+2026-09-04 03:18:07.502 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 623 tokens (requested 1024, diff -39.2%)
+2026-09-04 03:18:30.702 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 688 tokens (requested 1024, diff -32.8%)
+2026-09-04 03:20:49.888 - PhaseRunner - INFO - Timeout of 299.99972911s elapsed for event 'profiling phase sending'
+2026-09-04 03:20:49.888 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=23, completed=22, in_flight=1 | sessions: sent=23, completed=22 | timeout_triggered=True
+2026-09-04 03:20:49.890 - PhaseRunner - INFO - Timeout of 0.0s elapsed for event 'profiling phase credits returned'
+2026-09-04 03:20:49.891 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=23, completed=22, cancelled=0, in_flight=1
+2026-09-04 03:20:49.891 - StickyCreditRouter_8cad2a79 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 03:20:49.891 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 03:20:49.891 - records_manager - INFO - Sent 23 requests. Waiting for all to complete...
+2026-09-04 03:20:49.892 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 03:20:49.892 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=22, cancelled=1, errors=0 | sessions: completed=22, cancelled=1 | elapsed=300.00s | grace_period_timeout=True
+2026-09-04 03:20:49.892 - PhaseOrchestrator_01fe2b8e - NOTICE - All credits completed
+2026-09-04 03:20:49.892 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788471949887400919, sent_end_ns=1788472249888772038, requests_end_ns=1788472249892211412, baseline_start_ns=1788471949887386346, baseline_end_ns=1788472249892218374, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=22, final_requests_cancelled=1, final_request_errors=0, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=22, error_records=0)
+2026-09-04 03:20:49.893 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 22 of 22 records processed)...
+2026-09-04 03:20:49.893 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 03:20:49.893 - records_manager - INFO - Processed 22 valid requests and 0 errors (22 total).
+2026-09-04 03:20:49.893 - records_manager - INFO - Received all records, processing now...
+2026-09-04 03:20:49.893 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 03:20:49.894 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 03:20:51.892 - records_manager - INFO - Processing records results...
+2026-09-04 03:20:51.937 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 03:20:51.938 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 03:20:52.541 - ExporterManager - INFO - Exporting all records
+2026-09-04 03:20:52.567 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/raw_records to /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/profile_export_raw.jsonl
+2026-09-04 03:20:52.602 - RawRecordAggregator - INFO - Aggregated 23 raw records to /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts/profile_export_raw.jsonl
+2026-09-04 03:20:52.611 - ExporterManager - INFO - Exporting console data

@@ -13,8 +13,7 @@ htmlcov/
 .env.*
 !.env.example
 
-# Benchmark output
-artifacts/  
+# Benchmark output 
 dumps/
 
 # Editors and operating systems

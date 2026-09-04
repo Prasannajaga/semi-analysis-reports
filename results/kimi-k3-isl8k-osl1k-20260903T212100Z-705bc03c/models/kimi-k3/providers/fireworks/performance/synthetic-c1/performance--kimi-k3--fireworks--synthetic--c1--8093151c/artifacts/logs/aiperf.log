@@ -1,0 +1,99 @@
+2026-09-04 03:13:21.493 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 03:13:21.504 - aiperf.config.resolution.resolvers - INFO - [OK] Tokenizer moonshotai/Kimi-K3 detected
+2026-09-04 03:13:21.504 - aiperf.config.resolution.resolvers - INFO - 1 tokenizer validated | 0.0s
+2026-09-04 03:13:21.504 - aiperf.config.resolution.resolvers - INFO - HF cache hit (skipping prefetch): ['moonshotai/Kimi-K3']
+2026-09-04 03:13:21.704 - aiperf - WARNING - Using --osl without ignore_eos or min_tokens in --extra-inputs. Output sequence length cannot be guaranteed unless the server honors these parameters. Consider: --extra-inputs ignore_eos:true (generate until max_tokens) or --extra-inputs min_tokens:<value> (set minimum output length).
+2026-09-04 03:13:21.839 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 03:13:21.850 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://api.fireworks.ai/inference/v1/chat/completions/metrics']
+2026-09-04 03:13:21.850 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 03:13:21.862 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 03:13:21.879 - GPUTelemetryJSONLWriter_3e3ee95c - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 03:13:21.885 - OTelMetricsResultsProcessor_f28c0a67 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 03:13:21.885 - RecordExportJSONLWriter_e9d6b89b - INFO - Record metrics export enabled: /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/profile_export.jsonl
+2026-09-04 03:13:21.885 - RecordExportJSONLWriter_e9d6b89b - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 03:13:21.926 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 03:13:21.955 - RawRecordWriterProcessor_0803f119 - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/raw_records/raw_records_record_processor_266aafb9.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 03:13:21.963 - system_controller - INFO - Registered Record Processor (id: 'record_processor_266aafb9')
+2026-09-04 03:13:21.998 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 03:13:22.088 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 03:13:22.179 - system_controller - INFO - Registered Worker (id: 'worker_ce8cf5df')
+2026-09-04 03:13:22.327 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 03:13:22.327 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 03:13:22.328 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 03:13:22.328 - InferenceResultParser_f393e389 - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 03:13:22.329 - dataset_manager - INFO - Configuring tokenizer(s) for dataset manager
+2026-09-04 03:13:22.347 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 03:13:22.348 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 03:13:22.349 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 03:13:22.349 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 03:13:22.515 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 03:13:22.515 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 03:13:23.362 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:13:23.370 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:13:23.588 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/configuration_kimi_k3.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:13:23.594 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/configuration_kimi_k3.py "HTTP/1.1 200 OK"
+2026-09-04 03:13:23.817 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:13:23.823 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:13:24.054 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:13:24.059 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:13:24.278 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/moonshotai/Kimi-K3/resolve/main/tokenization_kimi.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:13:24.279 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 03:13:24.286 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/moonshotai/Kimi-K3/f831ab66814297da540d832a5235f8e904f29d06/tokenization_kimi.py "HTTP/1.1 200 OK"
+2026-09-04 03:13:24.519 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/moonshotai/Kimi-K3/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 03:13:24.756 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/moonshotai/Kimi-K3/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 03:13:24.904 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - INFO - Reloaded tiktoken model from /home/prasanna/.cache/huggingface/hub/models--moonshotai--Kimi-K3/snapshots/f831ab66814297da540d832a5235f8e904f29d06/tiktoken.model
+2026-09-04 03:13:24.904 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - INFO - #words: 163840 - BOS ID: 163584 - EOS ID: 163585
+2026-09-04 03:13:25.060 - dataset_manager - INFO - Tokenizer(s) configured in 2.73 seconds
+2026-09-04 03:13:25.060 - dataset_manager - INFO - Configuring dataset for dataset_manager
+2026-09-04 03:13:25.509 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 03:13:25.509 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 03:13:25.510 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 03:13:25.510 - transformers_modules.moonshotai.Kimi_hyphen_K3.f831ab66814297da540d832a5235f8e904f29d06.tokenization_kimi - WARNING - Calling super().encode with {'add_special_tokens': False}
+2026-09-04 03:13:25.526 - MemoryMapDatasetBackingStore_52eaba2a - INFO - Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_52d8e30f0322/dataset.dat)
+2026-09-04 03:13:25.528 - MemoryMapDatasetBackingStore_52eaba2a - INFO - Data file finalized: 12 conversations, 0.41 MB
+2026-09-04 03:13:25.528 - MemoryMapDatasetBackingStore_52eaba2a - INFO - Index file created: /tmp/aiperf_mmap_52d8e30f0322/index.dat
+2026-09-04 03:13:25.529 - dataset_manager - INFO - Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_52d8e30f0322/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_52d8e30f0322/index.dat') conversation_count=12 total_size_bytes=429969 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0
+2026-09-04 03:13:25.529 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 12, unique turn count: 12
+2026-09-04 03:13:25.529 - dataset_manager - INFO - Generating inputs.json file at /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/inputs.json
+2026-09-04 03:13:25.531 - PhaseOrchestrator_a3677bc0 - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 03:13:25.532 - dataset_manager - INFO - inputs.json file generated in 0.00 seconds
+2026-09-04 03:13:25.621 - dataset_manager - INFO - Dataset client initialized and freed 12 conversations from memory
+2026-09-04 03:13:25.621 - dataset_manager - INFO - Dataset configured in 0.56 seconds
+2026-09-04 03:13:25.621 - system_controller - INFO - All services configured in 3.29 seconds
+2026-09-04 03:13:25.621 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 03:13:25.622 - system_controller - INFO - All services started profiling successfully
+2026-09-04 03:13:25.623 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 03:13:25.624 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:13:25.625 - PhaseRunner - NOTICE - Phase warmup (warmup) started | phase_index=0 | target: 1 requests
+2026-09-04 03:13:25.625 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 03:13:25.626 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 03:13:44.060 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=1, cancelled=0 | elapsed=18.43s
+2026-09-04 03:13:44.060 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:13:44.061 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 300.0s duration
+2026-09-04 03:13:44.061 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 299.999746899s
+2026-09-04 03:13:44.061 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 03:18:44.060 - PhaseRunner - INFO - Timeout of 299.999746899s elapsed for event 'profiling phase sending'
+2026-09-04 03:18:44.060 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=15, completed=14, in_flight=1 | sessions: sent=15, completed=14 | timeout_triggered=True
+2026-09-04 03:18:44.061 - PhaseRunner - INFO - Waiting for event 'profiling phase credits returned' with timeout of 7.828999997627761e-05s
+2026-09-04 03:18:44.061 - PhaseRunner - INFO - Timeout of 7.828999997627761e-05s elapsed for event 'profiling phase credits returned'
+2026-09-04 03:18:44.061 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=15, completed=14, cancelled=0, in_flight=1
+2026-09-04 03:18:44.061 - StickyCreditRouter_dc4b6ae5 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 03:18:44.061 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 03:18:44.061 - records_manager - INFO - Sent 15 requests. Waiting for all to complete...
+2026-09-04 03:18:44.062 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 03:18:44.062 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=14, cancelled=1, errors=0 | sessions: completed=14, cancelled=1 | elapsed=300.00s | grace_period_timeout=True
+2026-09-04 03:18:44.062 - PhaseOrchestrator_a3677bc0 - NOTICE - All credits completed
+2026-09-04 03:18:44.062 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788471824061166558, sent_end_ns=1788472124060895189, requests_end_ns=1788472124062212602, baseline_start_ns=1788471824061152382, baseline_end_ns=1788472124062217273, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=14, final_requests_cancelled=1, final_request_errors=0, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=14, error_records=0)
+2026-09-04 03:18:44.062 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 03:18:44.062 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 14 of 14 records processed)...
+2026-09-04 03:18:44.063 - records_manager - INFO - Processed 14 valid requests and 0 errors (14 total).
+2026-09-04 03:18:44.063 - records_manager - INFO - Received all records, processing now...
+2026-09-04 03:18:44.063 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 03:18:44.064 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 03:18:46.062 - records_manager - INFO - Processing records results...
+2026-09-04 03:18:46.101 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 03:18:46.101 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 03:18:46.705 - ExporterManager - INFO - Exporting all records
+2026-09-04 03:18:46.735 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/raw_records to /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/profile_export_raw.jsonl
+2026-09-04 03:18:46.771 - RawRecordAggregator - INFO - Aggregated 15 raw records to /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/fireworks/performance/synthetic-c1/performance--kimi-k3--fireworks--synthetic--c1--8093151c/artifacts/profile_export_raw.jsonl
+2026-09-04 03:18:46.781 - ExporterManager - INFO - Exporting console data

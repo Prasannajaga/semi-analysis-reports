@@ -1,0 +1,99 @@
+2026-09-04 03:22:48.319 - aiperf.cli_runner._single_run - INFO - Starting AIPerf System
+2026-09-04 03:22:48.329 - aiperf.config.resolution.resolvers - INFO - [OK] Tokenizer deepseek-ai/DeepSeek-V3 detected
+2026-09-04 03:22:48.329 - aiperf.config.resolution.resolvers - INFO - 1 tokenizer validated | 0.0s
+2026-09-04 03:22:48.329 - aiperf.config.resolution.resolvers - INFO - HF cache hit (skipping prefetch): ['deepseek-ai/DeepSeek-V3']
+2026-09-04 03:22:48.527 - aiperf - WARNING - Using --osl without ignore_eos or min_tokens in --extra-inputs. Output sequence length cannot be guaranteed unless the server honors these parameters. Consider: --extra-inputs ignore_eos:true (generate until max_tokens) or --extra-inputs min_tokens:<value> (set minimum output length).
+2026-09-04 03:22:48.666 - server_metrics_manager - INFO - Server Metrics: Discovered 1 endpoints: ['https://api.together.ai/v1/chat/completions/metrics']
+2026-09-04 03:22:48.668 - system_controller - INFO - Registered Gpu Telemetry Manager (id: 'gpu_telemetry_manager')
+2026-09-04 03:22:48.676 - system_controller - INFO - Registered Server Metrics Manager (id: 'server_metrics_manager')
+2026-09-04 03:22:48.689 - system_controller - INFO - Registered Dataset Manager (id: 'dataset_manager')
+2026-09-04 03:22:48.708 - GPUTelemetryJSONLWriter_6dc21600 - INFO - GPU telemetry export enabled: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/gpu_telemetry_export.jsonl
+2026-09-04 03:22:48.714 - OTelMetricsResultsProcessor_3e897c37 - INFO - Telemetry streaming is disabled (set --otel-url and/or --mlflow-tracking-uri to enable)
+2026-09-04 03:22:48.714 - RecordExportJSONLWriter_540dffda - INFO - Record metrics export enabled: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export.jsonl
+2026-09-04 03:22:48.714 - RecordExportJSONLWriter_540dffda - INFO - HTTP trace export enabled (--export-http-trace)
+2026-09-04 03:22:48.727 - system_controller - INFO - Registered Records Manager (id: 'records_manager')
+2026-09-04 03:22:48.750 - system_controller - INFO - Registered Worker Manager (id: 'worker_manager')
+2026-09-04 03:22:48.780 - RawRecordWriterProcessor_a12c6db6 - INFO - RawRecordWriter initialized: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/raw_records/raw_records_record_processor_cb28acd4.jsonl - FULL request/response data will be exported (files may be large)
+2026-09-04 03:22:48.887 - system_controller - INFO - Registered Record Processor (id: 'record_processor_cb28acd4')
+2026-09-04 03:22:48.928 - system_controller - INFO - Registered Timing Manager (id: 'timing_manager')
+2026-09-04 03:22:49.011 - system_controller - INFO - Registered Worker (id: 'worker_dc7d57a4')
+2026-09-04 03:22:49.150 - system_controller - INFO - AIPerf System is CONFIGURING
+2026-09-04 03:22:49.150 - system_controller - INFO - Configuring all services to start profiling
+2026-09-04 03:22:49.151 - InferenceResultParser_fd49b9de - INFO - Tokenization is disabled for this endpoint, skipping tokenizer configuration
+2026-09-04 03:22:49.151 - timing_manager - INFO - Waiting for dataset to be configured before configuring timing
+2026-09-04 03:22:49.152 - dataset_manager - INFO - Configuring tokenizer(s) for dataset manager
+2026-09-04 03:22:49.170 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9400/metrics is not reachable
+2026-09-04 03:22:49.171 - gpu_telemetry_manager - WARNING - GPU Telemetry: http://localhost:9401/metrics is not reachable
+2026-09-04 03:22:49.171 - system_controller - INFO - DCGM telemetry skipped: no telemetry sources reachable
+2026-09-04 03:22:49.171 - system_controller - INFO - Waiting for result domains: profile, server_metrics
+2026-09-04 03:22:49.618 - system_controller - INFO - Server metrics disabled - no Prometheus endpoints reachable
+2026-09-04 03:22:49.618 - system_controller - INFO - Waiting for result domains: profile
+2026-09-04 03:22:50.295 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:22:50.302 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:22:50.545 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/configuration_deepseek.py "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:22:50.551 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/configuration_deepseek.py "HTTP/1.1 200 OK"
+2026-09-04 03:22:50.953 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:22:50.954 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-04 03:22:50.960 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/config.json "HTTP/1.1 200 OK"
+2026-09-04 03:22:51.224 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:22:51.228 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:22:51.598 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/deepseek-ai/DeepSeek-V3/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-09-04 03:22:51.604 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/deepseek-ai/DeepSeek-V3/e815299b0bcbac849fa540c768ef21845365c9eb/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-09-04 03:22:51.825 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-09-04 03:22:52.076 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-09-04 03:22:52.866 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/deepseek-ai/DeepSeek-V3 "HTTP/1.1 200 OK"
+2026-09-04 03:22:52.889 - dataset_manager - INFO - Tokenizer(s) configured in 3.74 seconds
+2026-09-04 03:22:52.889 - dataset_manager - INFO - Configuring dataset for dataset_manager
+2026-09-04 03:22:53.399 - MemoryMapDatasetBackingStore_1a937d9d - INFO - Memory-mapped backing store initialized (streaming to /tmp/aiperf_mmap_f28f3c39f805/dataset.dat)
+2026-09-04 03:22:53.400 - MemoryMapDatasetBackingStore_1a937d9d - INFO - Data file finalized: 12 conversations, 0.42 MB
+2026-09-04 03:22:53.401 - MemoryMapDatasetBackingStore_1a937d9d - INFO - Index file created: /tmp/aiperf_mmap_f28f3c39f805/index.dat
+2026-09-04 03:22:53.401 - dataset_manager - INFO - Backing store finalized: client_type=DatasetClientStoreType.MEMORY_MAP format=MemoryMapFormat.CONVERSATION data_file_path=PosixPath('/tmp/aiperf_mmap_f28f3c39f805/dataset.dat') index_file_path=PosixPath('/tmp/aiperf_mmap_f28f3c39f805/index.dat') conversation_count=12 total_size_bytes=435340 compressed=False compressed_data_file_path=None compressed_index_file_path=None compressed_size_bytes=0
+2026-09-04 03:22:53.401 - dataset_manager - INFO - sampling strategy: sequential, unique conversations: 12, unique turn count: 12
+2026-09-04 03:22:53.402 - dataset_manager - INFO - Generating inputs.json file at /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/inputs.json
+2026-09-04 03:22:53.404 - PhaseOrchestrator_e55759b6 - INFO - Initialized 2 phase(s): ['Warmup', 'Profiling']
+2026-09-04 03:22:53.405 - dataset_manager - INFO - inputs.json file generated in 0.00 seconds
+2026-09-04 03:22:53.493 - dataset_manager - INFO - Dataset client initialized and freed 12 conversations from memory
+2026-09-04 03:22:53.493 - dataset_manager - INFO - Dataset configured in 0.60 seconds
+2026-09-04 03:22:53.494 - system_controller - INFO - All services configured in 4.34 seconds
+2026-09-04 03:22:53.494 - system_controller - INFO - AIPerf System is CONFIGURED
+2026-09-04 03:22:53.497 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:22:53.498 - PhaseRunner - NOTICE - Phase warmup (warmup) started | phase_index=0 | target: 1 requests
+2026-09-04 03:22:53.498 - PhaseRunner - NOTICE - Phase warmup (warmup) sending complete | sent=1, completed=0, in_flight=1 | sessions: sent=1, completed=0
+2026-09-04 03:22:53.499 - system_controller - INFO - All services started profiling successfully
+2026-09-04 03:22:53.499 - system_controller - INFO - AIPerf System is PROFILING
+2026-09-04 03:22:53.499 - records_manager - INFO - Credit phase start: warmup
+2026-09-04 03:23:17.381 - PhaseRunner - NOTICE - Phase warmup (warmup) complete | completed=1, cancelled=0, errors=0 | sessions: completed=1, cancelled=0 | elapsed=23.88s
+2026-09-04 03:23:17.381 - RateTiming - INFO - Creating interval generator: pattern=concurrency_burst, rate=None, smoothness=None
+2026-09-04 03:23:17.382 - PhaseRunner - NOTICE - Phase profiling (profiling) started | phase_index=1 | profiling_index=0 | target: 300.0s duration
+2026-09-04 03:23:17.382 - PhaseRunner - INFO - Waiting for event 'profiling phase sending' with timeout of 299.999584896s
+2026-09-04 03:23:17.382 - records_manager - INFO - Credit phase start: profiling
+2026-09-04 03:23:31.640 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 644 tokens (requested 1024, diff -37.1%)
+2026-09-04 03:24:16.917 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 274 tokens (requested 1024, diff -73.2%)
+2026-09-04 03:25:30.226 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 419 tokens (requested 1024, diff -59.1%)
+2026-09-04 03:25:40.604 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 610 tokens (requested 1024, diff -40.4%)
+2026-09-04 03:25:52.456 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 390 tokens (requested 1024, diff -61.9%)
+2026-09-04 03:27:31.123 - aiperf.metrics.types.osl_mismatch_metrics - WARNING - OSL mismatch: got 575 tokens (requested 1024, diff -43.8%)
+2026-09-04 03:28:17.381 - PhaseRunner - INFO - Timeout of 299.999584896s elapsed for event 'profiling phase sending'
+2026-09-04 03:28:17.381 - PhaseRunner - NOTICE - Phase profiling (profiling) sending complete | sent=47, completed=46, in_flight=1 | sessions: sent=47, completed=46 | timeout_triggered=True
+2026-09-04 03:28:17.382 - PhaseRunner - INFO - Timeout of 0.0s elapsed for event 'profiling phase credits returned'
+2026-09-04 03:28:17.382 - PhaseRunner - WARNING - Phase profiling timed out, cancelling all credits. Stats: sent=47, completed=46, cancelled=0, in_flight=1
+2026-09-04 03:28:17.382 - StickyCreditRouter_c87b2782 - INFO - Sent cancellation requests for 1 in-flight credits across 1 workers
+2026-09-04 03:28:17.382 - PhaseRunner - INFO - Waiting for all cancelled credits to be returned for phase profiling. Need 1 more credits.
+2026-09-04 03:28:17.382 - records_manager - INFO - Sent 47 requests. Waiting for all to complete...
+2026-09-04 03:28:17.382 - PhaseRunner - INFO - All cancelled credits returned for phase profiling
+2026-09-04 03:28:17.383 - PhaseRunner - NOTICE - Phase profiling (profiling) complete | completed=46, cancelled=1, errors=30 | sessions: completed=46, cancelled=1 | elapsed=300.00s | grace_period_timeout=True
+2026-09-04 03:28:17.383 - PhaseOrchestrator_e55759b6 - NOTICE - All credits completed
+2026-09-04 03:28:17.383 - records_manager - INFO - Received CREDIT_PHASE_COMPLETE message, Phase complete: PhaseRecordsStats(phase=CreditPhase.PROFILING, phase_index=1, profiling_index=0, phase_name='profiling', phase_kind='profiling', start_ns=1788472397381931628, sent_end_ns=1788472697381922255, requests_end_ns=1788472697382916653, baseline_start_ns=1788472397381909401, baseline_end_ns=1788472697382922604, total_expected_requests=None, expected_duration_sec=None, expected_num_sessions=None, expected_grace_period_sec=None, final_requests_sent=None, final_requests_completed=46, final_requests_cancelled=1, final_request_errors=30, final_sent_sessions=None, final_completed_sessions=None, final_cancelled_sessions=None, timeout_triggered=True, grace_period_timeout_triggered=True, was_cancelled=False, records_end_ns=None, success_records=16, error_records=30)
+2026-09-04 03:28:17.383 - records_manager - NOTICE - All requests have completed, please wait for the results to be processed (currently 46 of 46 records processed)...
+2026-09-04 03:28:17.383 - system_controller - INFO - Received credits complete from 'timing_manager'
+2026-09-04 03:28:17.383 - records_manager - INFO - Processed 16 valid requests and 30 errors (46 total).
+2026-09-04 03:28:17.384 - records_manager - INFO - Received all records, processing now...
+2026-09-04 03:28:17.384 - records_manager - INFO - All credits complete, please wait for the results to be processed...
+2026-09-04 03:28:17.385 - records_manager - INFO - Waiting 2.0s for server metrics flush period...
+2026-09-04 03:28:19.383 - records_manager - INFO - Processing records results...
+2026-09-04 03:28:19.421 - records_manager - INFO - _finalize_and_process_results completed
+2026-09-04 03:28:19.423 - system_controller - INFO - All results received, initiating shutdown
+2026-09-04 03:28:20.027 - ExporterManager - INFO - Exporting all records
+2026-09-04 03:28:20.068 - RawRecordAggregator - INFO - Aggregating 1 raw record files from /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/raw_records to /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_raw.jsonl
+2026-09-04 03:28:20.086 - RawRecordAggregator - INFO - Aggregated 47 raw records to /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/together/performance/synthetic-c1/performance--deepseek-v4-pro--together--synthetic--c1--5457fd28/artifacts/profile_export_raw.jsonl
+2026-09-04 03:28:20.094 - ExporterManager - INFO - Exporting console data
