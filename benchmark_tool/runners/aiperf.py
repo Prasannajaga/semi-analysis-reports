@@ -97,6 +97,28 @@ def prepare(config: BenchmarkConfig, job: Job, job_dir: Path) -> Path:
     return path
 
 
+def _aiperf_environment(env_name: str, api_key: str | None = None) -> dict[str, str]:
+    dataset_timeout = os.environ.get("AIPERF_DATASET_CONFIGURATION_TIMEOUT", "1800")
+    profile_timeout = os.environ.get("AIPERF_SERVICE_PROFILE_CONFIGURE_TIMEOUT", dataset_timeout)
+    try:
+        if float(profile_timeout) < float(dataset_timeout):
+            profile_timeout = dataset_timeout
+    except ValueError:
+        profile_timeout = dataset_timeout
+
+    env = {
+        "AIPERF_DATASET_CONFIGURATION_TIMEOUT": dataset_timeout,
+        "AIPERF_SERVICE_PROFILE_CONFIGURE_TIMEOUT": profile_timeout,
+        "AIPERF_DATASET_WEKA_PARALLEL_WORKERS": os.environ.get(
+            "AIPERF_DATASET_WEKA_PARALLEL_WORKERS",
+            os.environ.get("AIPERF_DATASET_WEKA_NUM_WORKERS", "10"),
+        ),
+    }
+    if api_key is not None:
+        env[env_name] = api_key
+    return env
+
+
 def validate(
     config: BenchmarkConfig,
     path: Path,
@@ -105,7 +127,7 @@ def validate(
     api_key_env: str | None = None,
 ) -> dict[str, object]:
     env_name = api_key_env or config.gateway.api_key_env or "API_KEY"
-    environment = {env_name: api_key} if api_key is not None else None
+    environment = _aiperf_environment(env_name, api_key)
     return run_process(
         ["aiperf", "config", "validate", str(path)],
         job_dir,
@@ -155,16 +177,7 @@ def execute(
             "--export-http-trace",
         ],
         job_dir,
-        {
-            env_name: api_key,
-            "AIPERF_DATASET_CONFIGURATION_TIMEOUT": os.environ.get(
-                "AIPERF_DATASET_CONFIGURATION_TIMEOUT", "1800"
-            ),
-            "AIPERF_DATASET_WEKA_PARALLEL_WORKERS": os.environ.get(
-                "AIPERF_DATASET_WEKA_PARALLEL_WORKERS",
-                os.environ.get("AIPERF_DATASET_WEKA_NUM_WORKERS", "2"),
-            ),
-        },
+        _aiperf_environment(env_name, api_key),
         log_prefix="aiperf",
         redact_values=(api_key,),
     )
