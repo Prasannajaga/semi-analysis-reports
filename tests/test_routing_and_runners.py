@@ -64,6 +64,12 @@ def test_aiperf_config_forwards_explicit_tokenizer_trust(benchmark_config, tmp_p
     }
 
 
+def test_aiperf_agentx_options_are_written_to_config(benchmark_config, tmp_path):
+    native = make_aiperf_config(benchmark_config, performance_job(benchmark_config), tmp_path)
+    assert native["benchmark"]["profiling"]["burstPhaseStarts"] is True
+    assert native["benchmark"]["profiling"]["agenticWarmupGracePeriod"] == 300
+
+
 def test_current_aiperf_chat_formatter_emits_top_level_provider():
     from aiperf.common.models import RequestInfo, Turn
     from aiperf.common.models.model_endpoint_info import (
@@ -130,7 +136,12 @@ def test_aiperf_native_validation_wrapper(monkeypatch, benchmark_config, tmp_pat
     result = aiperf_runner.validate(benchmark_config, path, tmp_path, "runtime-only")
     assert result["returnCode"] == 0
     assert captured["command"] == ["aiperf", "config", "validate", str(path)]
-    assert captured["environment"] == {"OPENROUTER_API_KEY": "runtime-only"}
+    assert captured["environment"] == {
+        "OPENROUTER_API_KEY": "runtime-only",
+        "AIPERF_DATASET_CONFIGURATION_TIMEOUT": "1800",
+        "AIPERF_SERVICE_PROFILE_CONFIGURE_TIMEOUT": "1800",
+        "AIPERF_DATASET_WEKA_PARALLEL_WORKERS": "10",
+    }
     assert captured["redact_values"] == ("runtime-only",)
 
 
@@ -179,7 +190,12 @@ def test_aiperf_execution_enables_raw_records_and_http_trace(
         "raw",
         "--export-http-trace",
     ]
-    assert captured["environment"] == {"OPENROUTER_API_KEY": "runtime-only"}
+    assert captured["environment"] == {
+        "OPENROUTER_API_KEY": "runtime-only",
+        "AIPERF_DATASET_CONFIGURATION_TIMEOUT": "1800",
+        "AIPERF_SERVICE_PROFILE_CONFIGURE_TIMEOUT": "1800",
+        "AIPERF_DATASET_WEKA_PARALLEL_WORKERS": "10",
+    }
 
 
 def test_subprocess_artifacts_redact_secret(monkeypatch, tmp_path):

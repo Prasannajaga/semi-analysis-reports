@@ -171,24 +171,19 @@ def execute(
             ),
             "validation": validation,
         }
-    cmd = [
-        "aiperf",
-        "profile",
-        "--config",
-        str(path),
-        "--export-level",
-        "raw",
-        "--export-http-trace",
-    ]
-    if job.workload_type == "agentx":
-        cmd.append("--burst-phase-starts")
-        if config.reliability and config.reliability.slo:
-            cmd.extend([
-                "--agentic-warmup-grace-period",
-                str(int(config.reliability.slo.request_timeout_seconds)),
-            ])
+    # Keep AgentX-only options in the YAML above. AIPerf 0.12's CLI overlay
+    # incorrectly nests these flags under phases[*].concurrency, where strict
+    # validation rejects them as extra fields.
     process = run_process(
-        cmd,
+        [
+            "aiperf",
+            "profile",
+            "--config",
+            str(path),
+            "--export-level",
+            "raw",
+            "--export-http-trace",
+        ],
         job_dir,
         _aiperf_environment(env_name, api_key),
         log_prefix="aiperf",
