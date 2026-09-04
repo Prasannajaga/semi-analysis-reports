@@ -1,7 +1,7 @@
 schemaVersion: "1.0"
 DEBUG: true
 benchmark:
-  name: glm-5-3-flash-agentx
+  name: glm-5-3-flash-agentx-130k
   description: AgentX benchmark for GLM 5.3 Flash across Direct Providers (Fireworks, Together, Baseten)
   seed: 42
 
@@ -58,8 +58,8 @@ phases:
         # maxContextLength: 262144
     load:
       mode: concurrency
-      values: [1]
-    durationSeconds: 900
+      values: [4]
+    durationSeconds: 3600
     warmup:
       requestCount: 1
     useServerTokenCount: true
@@ -77,5 +77,5 @@ phases:
       contextOverflow: true
     slo:
       requestTimeoutSeconds: 180
-      maxP95TtftMs: 5000
+      maxP95TtftMs: 20000
       minSuccessRate: 0.90

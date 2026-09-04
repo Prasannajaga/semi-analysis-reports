@@ -160,8 +160,9 @@ def execute(
             "AIPERF_DATASET_CONFIGURATION_TIMEOUT": os.environ.get(
                 "AIPERF_DATASET_CONFIGURATION_TIMEOUT", "1800"
             ),
-            "AIPERF_DATASET_WEKA_NUM_WORKERS": os.environ.get(
-                "AIPERF_DATASET_WEKA_NUM_WORKERS", "2"
+            "AIPERF_DATASET_WEKA_PARALLEL_WORKERS": os.environ.get(
+                "AIPERF_DATASET_WEKA_PARALLEL_WORKERS",
+                os.environ.get("AIPERF_DATASET_WEKA_NUM_WORKERS", "2"),
             ),
         },
         log_prefix="aiperf",
