@@ -1,0 +1,31 @@
+{
+  "config_hash": "658106826603d16f",
+  "finishedAt": "2026-09-03T18:14:17.387846Z",
+  "job_id": "correctness--kimi-k3--together--gsm8k--65810682",
+  "limit": 5,
+  "model_id": "kimi-k3",
+  "openrouter_model": "moonshotai/kimi-k3",
+  "phase": "correctness",
+  "process": {
+    "command": [
+      "/data/semi-analysis-report/.venv/bin/python3",
+      "-m",
+      "lm_eval",
+      "run",
+      "--config",
+      "/data/semi-analysis-report/results/correctness-smoke-test-20260903T181345Z-c87fc636/models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--65810682/lm-eval-config.yaml"
+    ],
+    "durationSeconds": 31.782725,
+    "error": null,
+    "failureSummary": null,
+    "returnCode": 0
+  },
+  "provider_id": "together",
+  "provider_slug": "together",
+  "runner": "lm-eval",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T18:13:45.602767Z",
+  "status": "completed",
+  "task_name": "gsm8k",
+  "tokenizer_trust_remote_code": false
+}

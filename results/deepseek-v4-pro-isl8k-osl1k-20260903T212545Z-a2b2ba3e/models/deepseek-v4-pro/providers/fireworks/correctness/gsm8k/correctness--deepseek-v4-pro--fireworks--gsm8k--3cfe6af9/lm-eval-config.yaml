@@ -1,0 +1,19 @@
+model: local-chat-completions
+model_args:
+  model: accounts/fireworks/models/deepseek-v4-pro-0813
+  base_url: https://api.fireworks.ai/inference/v1/chat/completions
+  tokenizer_backend: none
+  tokenized_requests: false
+  max_gen_toks: 1024
+  seed: 42
+  timeout: 300.0
+tasks:
+- gsm8k
+apply_chat_template: true
+gen_kwargs:
+  temperature: 0.0
+  max_tokens: 1024
+seed: 42
+output_path: /data/semi-analysis-report/results/deepseek-v4-pro-isl8k-osl1k-20260903T212545Z-a2b2ba3e/models/deepseek-v4-pro/providers/fireworks/correctness/gsm8k/correctness--deepseek-v4-pro--fireworks--gsm8k--3cfe6af9/artifacts
+log_samples: true
+limit: 100

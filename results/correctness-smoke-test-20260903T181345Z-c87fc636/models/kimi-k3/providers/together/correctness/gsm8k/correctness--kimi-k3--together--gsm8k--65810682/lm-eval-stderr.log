@@ -1,0 +1,31 @@
+2026-09-03:23:43:45 WARNING  [config.evaluate_config:337] --limit SHOULD ONLY BE USED FOR TESTING. REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2026-09-03:23:43:45 INFO     [config.evaluate_config:357] Using default fewshot_as_multiturn=True.
+2026-09-03:23:43:50 INFO     [_cli.run:392] Selected Tasks: ['gsm8k']
+2026-09-03:23:43:50 INFO     [evaluator:214] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-09-03:23:43:50 WARNING  [evaluator:226] generation_kwargs: {'temperature': 0.0, 'max_tokens': 512} specified through cli, these settings will update set parameters in yaml tasks. Ensure 'do_sample=True' for non-greedy decoding!
+2026-09-03:23:43:50 INFO     [evaluator:239] Initializing local-chat-completions model, with arguments: {'model': 'moonshotai/Kimi-K3', 'base_url': 'https://api.together.ai/v1/chat/completions', 'tokenizer_backend': 'none', 'tokenized_requests': False, 'max_gen_toks': 512, 'seed': 42, 'timeout': 120.0}
+2026-09-03:23:43:50 INFO     [models.api_models:176] Using max length 2048 - 1
+2026-09-03:23:43:50 INFO     [models.api_models:179] Concurrent requests are disabled. To enable concurrent requests, set `num_concurrent` > 1.
+2026-09-03:23:43:50 INFO     [models.api_models:197] Using tokenizer None
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-09-03:23:43:55 INFO     [evaluator_utils:472] Selected tasks:
+2026-09-03:23:43:55 INFO     [evaluator_utils:506] Task: gsm8k (gsm8k/gsm8k.yaml)
+2026-09-03:23:43:55 INFO     [evaluator:314] gsm8k: Using gen_kwargs: {'until': ['Question:', '</s>', '<|im_end|>'], 'do_sample': False, 'temperature': 0.0, 'max_tokens': 512}
+2026-09-03:23:43:55 INFO     [api.task:312] Building contexts for gsm8k on rank 0...
+
+  0%|          | 0/5 [00:00<?, ?it/s]
+100%|██████████| 5/5 [00:00<00:00, 303.82it/s]
+2026-09-03:23:43:55 INFO     [evaluator:589] Running generate_until requests
+2026-09-03:23:43:55 INFO     [models.api_models:752] Tokenized requests are disabled. Context + generation length is not checked.
+
+Requesting API:   0%|          | 0/5 [00:00<?, ?it/s]2026-09-03:23:43:55 WARNING  [models.api_models:375] Cannot determine EOS string to pass to stop sequence. Manually set by passing `eos_string` to model_args.
+
+Requesting API:  20%|██        | 1/5 [00:03<00:12,  3.15s/it]
+Requesting API:  40%|████      | 2/5 [00:06<00:10,  3.41s/it]
+Requesting API:  60%|██████    | 3/5 [00:13<00:09,  4.93s/it]
+Requesting API:  80%|████████  | 4/5 [00:15<00:03,  3.69s/it]
+Requesting API: 100%|██████████| 5/5 [00:21<00:00,  4.43s/it]
+Requesting API: 100%|██████████| 5/5 [00:21<00:00,  4.20s/it]
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+2026-09-03:23:44:17 INFO     [loggers.evaluation_tracker:247] Saving results aggregated
+2026-09-03:23:44:17 INFO     [loggers.evaluation_tracker:119] Saving per-task samples to /data/semi-analysis-report/results/correctness-smoke-test-20260903T181345Z-c87fc636/models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--65810682/artifacts/moonshotai__Kimi-K3/*.jsonl

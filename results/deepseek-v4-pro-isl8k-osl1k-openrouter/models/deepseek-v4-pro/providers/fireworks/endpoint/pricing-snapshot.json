@@ -1,0 +1,1530 @@
+{
+  "allEndpoints": [
+    {
+      "context_length": 1000000,
+      "latency_last_30m": {
+        "p50": 1255,
+        "p75": 1896,
+        "p90": 3619.8,
+        "p99": 20241.439999999977
+      },
+      "max_completion_tokens": 393216,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Alibaba | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1254.5,
+            "p75": 1896,
+            "p90": 3619.6000000000004,
+            "p99": 20234.57999999998
+          },
+          "request_count": 1898,
+          "throughput": {
+            "p50": 59,
+            "p75": 66,
+            "p90": 77.29999999999995,
+            "p99": 123.26999999999975
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.0000017424",
+        "discount": 0,
+        "input_cache_read": "0.00000005808",
+        "overrides": [
+          {
+            "completion": "0.000003366",
+            "input_cache_read": "0.0000001122",
+            "prompt": "0.000001122",
+            "utc_end": 1400,
+            "utc_start": 0
+          },
+          {
+            "completion": "0.0000017424",
+            "input_cache_read": "0.00000005808",
+            "prompt": "0.0000005808",
+            "utc_end": 0,
+            "utc_start": 1400
+          }
+        ],
+        "prompt": "0.0000005808"
+      },
+      "provider_name": "Alibaba",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "seed",
+        "presence_penalty",
+        "response_format",
+        "top_k",
+        "frequency_penalty",
+        "stop",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "alibaba",
+      "throughput_last_30m": {
+        "p50": 59,
+        "p75": 66,
+        "p90": 77.40000000000009,
+        "p99": 123.35999999999967
+      },
+      "uptime_last_1d": 99.9771003749148,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1027,
+        "p75": 1309,
+        "p90": 1789,
+        "p99": 3812.9900000000016
+      },
+      "max_completion_tokens": 384000,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "DeepSeek | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1037,
+            "p75": 1308,
+            "p90": 1758,
+            "p99": 4104.550000000014
+          },
+          "request_count": 72573,
+          "throughput": {
+            "p50": 21,
+            "p75": 31,
+            "p90": 42,
+            "p99": 71
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000198",
+        "discount": 0,
+        "input_cache_read": "0.000000022",
+        "overrides": [
+          {
+            "completion": "0.00000198",
+            "input_cache_read": "0.000000022",
+            "prompt": "0.00000066",
+            "utc_days": [
+              "saturday",
+              "sunday"
+            ]
+          },
+          {
+            "completion": "0.00000198",
+            "input_cache_read": "0.000000022",
+            "prompt": "0.00000066",
+            "utc_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "utc_end": 100,
+            "utc_start": 0
+          },
+          {
+            "completion": "0.00000396",
+            "input_cache_read": "0.000000044",
+            "prompt": "0.00000132",
+            "utc_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "utc_end": 400,
+            "utc_start": 100
+          },
+          {
+            "completion": "0.00000198",
+            "input_cache_read": "0.000000022",
+            "prompt": "0.00000066",
+            "utc_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "utc_end": 600,
+            "utc_start": 400
+          },
+          {
+            "completion": "0.00000396",
+            "input_cache_read": "0.000000044",
+            "prompt": "0.00000132",
+            "utc_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "utc_end": 1000,
+            "utc_start": 600
+          },
+          {
+            "completion": "0.00000198",
+            "input_cache_read": "0.000000022",
+            "prompt": "0.00000066",
+            "utc_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "utc_end": 0,
+            "utc_start": 1000
+          }
+        ],
+        "prompt": "0.00000066"
+      },
+      "provider_name": "DeepSeek",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "logprobs",
+        "top_logprobs",
+        "tools",
+        "tool_choice",
+        "response_format",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": true,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "deepseek",
+      "throughput_last_30m": {
+        "p50": 21,
+        "p75": 30,
+        "p90": 42,
+        "p99": 74
+      },
+      "uptime_last_1d": 99.98583217222824,
+      "uptime_last_30m": 99.99539743176693,
+      "uptime_last_5m": 99.97071742313324
+    },
+    {
+      "context_length": 1024000,
+      "latency_last_30m": {
+        "p50": 3601,
+        "p75": 5166.25,
+        "p90": 7102.900000000001,
+        "p99": 14902.630000000001
+      },
+      "max_completion_tokens": 384000,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "StreamLake | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 3633,
+            "p75": 5148.25,
+            "p90": 7149.600000000002,
+            "p99": 15137.770000000008
+          },
+          "request_count": 12934,
+          "throughput": {
+            "p50": 52,
+            "p75": 63,
+            "p90": 71,
+            "p99": 86
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.0000033462",
+        "discount": 0.155,
+        "input_cache_read": "0.00000003718",
+        "prompt": "0.0000011154"
+      },
+      "provider_name": "StreamLake",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "response_format",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": false,
+        "none": true,
+        "required": false
+      },
+      "supports_voice_cloning": false,
+      "tag": "streamlake",
+      "throughput_last_30m": {
+        "p50": 52,
+        "p75": 63,
+        "p90": 71,
+        "p99": 87
+      },
+      "uptime_last_1d": 99.7869064212685,
+      "uptime_last_30m": 99.93826207748108,
+      "uptime_last_5m": 99.82678983833718
+    },
+    {
+      "context_length": 1048575,
+      "latency_last_30m": {
+        "p50": 5571,
+        "p75": 8829,
+        "p90": 13043,
+        "p99": 73954.30000000022
+      },
+      "max_completion_tokens": 943717,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "GMICloud | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 5571,
+            "p75": 8829,
+            "p90": 13043,
+            "p99": 73954.30000000022
+          },
+          "request_count": 591,
+          "throughput": {
+            "p50": 44,
+            "p75": 56,
+            "p90": 65,
+            "p99": 87.20000000000005
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.000003366",
+        "discount": 0.15,
+        "input_cache_read": "0.0000000374",
+        "prompt": "0.000001122"
+      },
+      "provider_name": "GMICloud",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "seed",
+        "response_format",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": false,
+        "none": true,
+        "required": false
+      },
+      "supports_voice_cloning": false,
+      "tag": "gmicloud/fp8",
+      "throughput_last_30m": {
+        "p50": 44,
+        "p75": 56,
+        "p90": 65,
+        "p99": 87.20000000000005
+      },
+      "uptime_last_1d": 99.7623874961113,
+      "uptime_last_30m": 96.8,
+      "uptime_last_5m": 96.92307692307692
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1272,
+        "p75": 1966,
+        "p90": 5419.200000000003,
+        "p99": 48857.22000000027
+      },
+      "max_completion_tokens": 16384,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "DeepInfra | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1261.5,
+            "p75": 1930.5,
+            "p90": 5343.600000000007,
+            "p99": 48268.40999999913
+          },
+          "request_count": 140,
+          "throughput": {
+            "p50": 29,
+            "p75": 41.25,
+            "p90": 56.10000000000001,
+            "p99": 83.60999999999999
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.0000026",
+        "discount": 0,
+        "input_cache_read": "0.0000001",
+        "prompt": "0.0000013"
+      },
+      "provider_name": "DeepInfra",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "repetition_penalty",
+        "top_k",
+        "seed",
+        "min_p",
+        "logit_bias",
+        "tools",
+        "tool_choice",
+        "structured_outputs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "deepinfra/fp8",
+      "throughput_last_30m": {
+        "p50": 29,
+        "p75": 40.5,
+        "p90": 56.2,
+        "p99": 83.62
+      },
+      "uptime_last_1d": 99.36720640238228,
+      "uptime_last_30m": 99.29577464788733,
+      "uptime_last_5m": null
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1393,
+        "p75": 2973.5,
+        "p90": 5382.800000000001,
+        "p99": 46274.53999999982
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "CoreWeave | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1393.5,
+            "p75": 2973.75,
+            "p90": 5382.200000000001,
+            "p99": 46249.91000000003
+          },
+          "request_count": 4630,
+          "throughput": {
+            "p50": 53,
+            "p75": 72,
+            "p90": 94,
+            "p99": 140.71000000000004
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000131"
+      },
+      "provider_name": "CoreWeave",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "top_k",
+        "repetition_penalty",
+        "frequency_penalty",
+        "presence_penalty",
+        "stop",
+        "seed",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "coreweave/fp8",
+      "throughput_last_30m": {
+        "p50": 53,
+        "p75": 72,
+        "p90": 94,
+        "p99": 140.73999999999978
+      },
+      "uptime_last_1d": 99.78849685838568,
+      "uptime_last_30m": 99.80653482373172,
+      "uptime_last_5m": 99.7867803837953
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 10773,
+        "p75": 27880,
+        "p90": 43832,
+        "p99": 77607.64000000001
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "NextBit | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 10782.5,
+            "p75": 27884.5,
+            "p90": 43830,
+            "p99": 77604.55000000002
+          },
+          "request_count": 1206,
+          "throughput": {
+            "p50": 45,
+            "p75": 60,
+            "p90": 72,
+            "p99": 80.95000000000005
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000045",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "NextBit",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "response_format",
+        "structured_outputs",
+        "repetition_penalty",
+        "seed",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "nextbit/fp8",
+      "throughput_last_30m": {
+        "p50": 45,
+        "p75": 60,
+        "p90": 72,
+        "p99": 80.96000000000004
+      },
+      "uptime_last_1d": 98.54716137684399,
+      "uptime_last_30m": 99.6694214876033,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1449,
+        "p75": 3351,
+        "p90": 8719,
+        "p99": 47814.6000000002
+      },
+      "max_completion_tokens": 384000,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Sail Research | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1449,
+            "p75": 3355,
+            "p90": 8717.500000000002,
+            "p99": 47786.80000000023
+          },
+          "request_count": 1760,
+          "throughput": {
+            "p50": 38,
+            "p75": 68,
+            "p90": 117,
+            "p99": 222.82000000000016
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Sail Research",
+      "quantization": "fp4",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "temperature",
+        "top_p",
+        "top_k",
+        "frequency_penalty",
+        "presence_penalty",
+        "stop",
+        "seed",
+        "max_tokens",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "sail-research/fp4",
+      "throughput_last_30m": {
+        "p50": 38,
+        "p75": 68,
+        "p90": 117,
+        "p99": 222.84000000000015
+      },
+      "uptime_last_1d": 99.89104210444393,
+      "uptime_last_30m": 99.94410285075462,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 564,
+        "p75": 871,
+        "p90": 1353.9,
+        "p99": 7751.439999999944
+      },
+      "max_completion_tokens": 262144,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "BaseTen | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 565,
+            "p75": 871,
+            "p90": 1353.4,
+            "p99": 7738.640000000014
+          },
+          "request_count": 2707,
+          "throughput": {
+            "p50": 49,
+            "p75": 86.5,
+            "p90": 132,
+            "p99": 187.94000000000005
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000132",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "BaseTen",
+      "quantization": "fp4",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "baseten/fp4",
+      "throughput_last_30m": {
+        "p50": 49,
+        "p75": 86,
+        "p90": 132,
+        "p99": 187.98999999999978
+      },
+      "uptime_last_1d": 99.56857181724547,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 913,
+        "p75": 1330.5,
+        "p90": 2159.2000000000003,
+        "p99": 15013.499999999929
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Parasail | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 913.5,
+            "p75": 1330.25,
+            "p90": 2158.8999999999996,
+            "p99": 15004.749999999936
+          },
+          "request_count": 1468,
+          "throughput": {
+            "p50": 54,
+            "p75": 64,
+            "p90": 71,
+            "p99": 81
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Parasail",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "frequency_penalty",
+        "presence_penalty",
+        "repetition_penalty",
+        "seed",
+        "stop",
+        "top_k",
+        "logit_bias",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": false,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "parasail/fp8",
+      "throughput_last_30m": {
+        "p50": 54,
+        "p75": 64,
+        "p90": 71,
+        "p99": 81
+      },
+      "uptime_last_1d": 99.58760862094358,
+      "uptime_last_30m": 99.66777408637874,
+      "uptime_last_5m": 99.14529914529915
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1249,
+        "p75": 2082,
+        "p90": 5629.5000000000055,
+        "p99": 38413.81
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Together | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1254,
+            "p75": 2096,
+            "p90": 5594.999999999997,
+            "p99": 38402.92000000001
+          },
+          "request_count": 717,
+          "throughput": {
+            "p50": 80,
+            "p75": 103,
+            "p90": 131,
+            "p99": 190.84000000000003
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.00000013",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Together",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "top_k",
+        "repetition_penalty",
+        "logit_bias",
+        "min_p",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "together",
+      "throughput_last_30m": {
+        "p50": 80,
+        "p75": 103,
+        "p90": 131,
+        "p99": 190.87
+      },
+      "uptime_last_1d": 96.60095937640534,
+      "uptime_last_30m": 98.64314789687924,
+      "uptime_last_5m": 99.42528735632183
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1129.5,
+        "p75": 2056.75,
+        "p90": 3356.8000000000006,
+        "p99": 24154.07999999982
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "DigitalOcean | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1129.5,
+            "p75": 2056.75,
+            "p90": 3356.8000000000006,
+            "p99": 24154.07999999982
+          },
+          "request_count": 858,
+          "throughput": {
+            "p50": 43,
+            "p75": 53,
+            "p90": 59,
+            "p99": 70.42999999999995
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "DigitalOcean",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "temperature",
+        "top_p",
+        "max_tokens",
+        "response_format",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "digitalocean",
+      "throughput_last_30m": {
+        "p50": 43,
+        "p75": 53,
+        "p90": 59,
+        "p99": 70.42999999999995
+      },
+      "uptime_last_1d": 99.60194053986814,
+      "uptime_last_30m": 99.42263279445727,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1460,
+        "p75": 1976,
+        "p90": 3304.6000000000004,
+        "p99": 12005.799999999945
+      },
+      "max_completion_tokens": 393216,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Novita | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1445,
+            "p75": 1972.5,
+            "p90": 3302.7999999999997,
+            "p99": 11986.899999999961
+          },
+          "request_count": 559,
+          "throughput": {
+            "p50": 48,
+            "p75": 59,
+            "p90": 70,
+            "p99": 98
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000132",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Novita",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "seed",
+        "top_k",
+        "repetition_penalty",
+        "response_format",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "novita/fp8",
+      "throughput_last_30m": {
+        "p50": 48,
+        "p75": 59,
+        "p90": 70,
+        "p99": 98
+      },
+      "uptime_last_1d": 99.9145755472504,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1266,
+        "p75": 2356,
+        "p90": 3646.6000000000004,
+        "p99": 54263.519999999946
+      },
+      "max_completion_tokens": 393216,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "SiliconFlow | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1266,
+            "p75": 2342,
+            "p90": 3644.3999999999996,
+            "p99": 54229.32999999998
+          },
+          "request_count": 494,
+          "throughput": {
+            "p50": 50,
+            "p75": 60,
+            "p90": 65,
+            "p99": 81
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "SiliconFlow",
+      "quantization": "fp8",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "temperature",
+        "top_p",
+        "top_k",
+        "frequency_penalty",
+        "max_tokens",
+        "response_format",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "siliconflow/fp8",
+      "throughput_last_30m": {
+        "p50": 50,
+        "p75": 60,
+        "p90": 65,
+        "p99": 81
+      },
+      "uptime_last_1d": 99.98833411105926,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 474,
+        "p75": 637,
+        "p90": 880,
+        "p99": 2260
+      },
+      "max_completion_tokens": 262144,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "BaseTen | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 474,
+            "p75": 639.25,
+            "p90": 883.8000000000002,
+            "p99": 2253.849999999959
+          },
+          "request_count": 2204,
+          "throughput": {
+            "p50": 35,
+            "p75": 55.25,
+            "p90": 77,
+            "p99": 180
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000132",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "BaseTen",
+      "quantization": "fp4",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "baseten/fp4",
+      "throughput_last_30m": {
+        "p50": 35,
+        "p75": 55,
+        "p90": 77,
+        "p99": 180
+      },
+      "uptime_last_1d": 99.42560681860293,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 2514,
+        "p75": 4392,
+        "p90": 6964.100000000006,
+        "p99": 32884.27000000005
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Cloudflare | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 2510,
+            "p75": 4388.75,
+            "p90": 6948.700000000002,
+            "p99": 32832.290000000095
+          },
+          "request_count": 730,
+          "throughput": {
+            "p50": 55,
+            "p75": 61,
+            "p90": 65,
+            "p99": 69.71000000000004
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Cloudflare",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "top_k",
+        "seed",
+        "repetition_penalty",
+        "frequency_penalty",
+        "presence_penalty",
+        "min_p",
+        "stop",
+        "logit_bias",
+        "response_format",
+        "structured_outputs",
+        "logprobs",
+        "top_logprobs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "cloudflare",
+      "throughput_last_30m": {
+        "p50": 55,
+        "p75": 61,
+        "p90": 65,
+        "p99": 69.73000000000002
+      },
+      "uptime_last_1d": 99.32745479001645,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1681,
+        "p75": 3246,
+        "p90": 5266.800000000003,
+        "p99": 17449.44000000001
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Fireworks | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1681,
+            "p75": 3246,
+            "p90": 5266.800000000003,
+            "p99": 17449.44000000001
+          },
+          "request_count": 1929,
+          "throughput": {
+            "p50": 64,
+            "p75": 78,
+            "p90": 89,
+            "p99": 116.72000000000003
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Fireworks",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "top_k",
+        "repetition_penalty",
+        "logit_bias",
+        "logprobs",
+        "top_logprobs",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "fireworks",
+      "throughput_last_30m": {
+        "p50": 64,
+        "p75": 78,
+        "p90": 89,
+        "p99": 116.72000000000003
+      },
+      "uptime_last_1d": 99.83010728057114,
+      "uptime_last_30m": 99.88944168048646,
+      "uptime_last_5m": 100
+    },
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1275,
+        "p75": 1797,
+        "p90": 2543.3999999999996,
+        "p99": 11518.750000000025
+      },
+      "max_completion_tokens": 393216,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Phala | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1275,
+            "p75": 1797,
+            "p90": 2543.3999999999996,
+            "p99": 11518.750000000025
+          },
+          "request_count": 334,
+          "throughput": {
+            "p50": 47,
+            "p75": 54,
+            "p90": 60,
+            "p99": 87.67000000000002
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000436",
+        "discount": 0,
+        "input_cache_read": "0.00000015",
+        "prompt": "0.00000145"
+      },
+      "provider_name": "Phala",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "seed",
+        "top_k",
+        "min_p",
+        "repetition_penalty",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "phala",
+      "throughput_last_30m": {
+        "p50": 47,
+        "p75": 54,
+        "p90": 60,
+        "p99": 87.67000000000002
+      },
+      "uptime_last_1d": 99.54409420188516,
+      "uptime_last_30m": 100,
+      "uptime_last_5m": null
+    }
+  ],
+  "matchingEndpoints": [
+    {
+      "context_length": 1048576,
+      "latency_last_30m": {
+        "p50": 1681,
+        "p75": 3246,
+        "p90": 5266.800000000003,
+        "p99": 17449.44000000001
+      },
+      "max_completion_tokens": 943718,
+      "max_prompt_tokens": null,
+      "model_id": "deepseek/deepseek-v4-pro-0813",
+      "model_name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "name": "Fireworks | deepseek/deepseek-v4-pro-20260813",
+      "perf_last_30m_by_workload": {
+        "text_generation": {
+          "latency": {
+            "p50": 1681,
+            "p75": 3246,
+            "p90": 5266.800000000003,
+            "p99": 17449.44000000001
+          },
+          "request_count": 1929,
+          "throughput": {
+            "p50": 64,
+            "p75": 78,
+            "p90": 89,
+            "p99": 116.72000000000003
+          }
+        }
+      },
+      "pricing": {
+        "completion": "0.00000396",
+        "discount": 0,
+        "input_cache_read": "0.000000044",
+        "prompt": "0.00000132"
+      },
+      "provider_name": "Fireworks",
+      "quantization": "unknown",
+      "status": 0,
+      "supported_parameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "top_k",
+        "repetition_penalty",
+        "logit_bias",
+        "logprobs",
+        "top_logprobs",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "supports_implicit_caching": false,
+      "supports_tool_choice": {
+        "auto": true,
+        "function": true,
+        "none": true,
+        "required": true
+      },
+      "supports_voice_cloning": false,
+      "tag": "fireworks",
+      "throughput_last_30m": {
+        "p50": 64,
+        "p75": 78,
+        "p90": 89,
+        "p99": 116.72000000000003
+      },
+      "uptime_last_1d": 99.83010728057114,
+      "uptime_last_30m": 99.88944168048646,
+      "uptime_last_5m": 100
+    }
+  ],
+  "model": "deepseek/deepseek-v4-pro-0813",
+  "provider": "fireworks",
+  "schemaVersion": "1.0"
+}

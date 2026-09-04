@@ -1,0 +1,39 @@
+schemaVersion: '2.0'
+randomSeed: 42
+benchmark:
+  model: moonshotai/Kimi-K3
+  endpoint:
+    url: https://inference.baseten.co/v1/chat/completions
+    type: chat
+    apiKey: ${BASETEN_API_KEY}
+    streaming: true
+    timeout: 90.0
+    useLegacyMaxTokens: true
+    useServerTokenCount: true
+  tokenizer:
+    name: moonshotai/Kimi-K3
+    trustRemoteCode: true
+  profiling:
+    type: concurrency
+    concurrency: 1
+    duration: 300
+  artifacts:
+    dir: /data/semi-analysis-report/results/kimi-k3-isl8k-osl1k-20260903T212100Z-705bc03c/models/kimi-k3/providers/baseten/performance/synthetic-c1/performance--kimi-k3--baseten--synthetic--c1--cb76c295/artifacts
+    summary:
+    - json
+    records:
+    - jsonl
+    raw: true
+    trace: true
+  dataset:
+    name: synthetic-performance
+    type: synthetic
+    entries: 12
+    randomSeed: 42
+    prompts:
+      isl: 8192
+      osl: 1024
+  warmup:
+    type: concurrency
+    requests: 1
+    concurrency: 1

@@ -1,0 +1,14 @@
+{
+  "performance": {
+    "reason": "direct provider endpoint configured",
+    "status": "supported"
+  },
+  "plain": {
+    "reason": "direct provider endpoint configured",
+    "status": "supported"
+  },
+  "tools": {
+    "reason": "direct provider endpoint configured",
+    "status": "supported"
+  }
+}

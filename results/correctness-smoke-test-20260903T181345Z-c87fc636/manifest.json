@@ -1,0 +1,32 @@
+{
+  "apiKeyEnv": "DIRECT_PROVIDERS",
+  "benchmarkConfigSha256": "c87fc6364ea2ca569e5ac751be45b0dbdd309a1c3b52c60ddc3215eb324d0d1f",
+  "completedAt": "2026-09-03T18:14:17.390621Z",
+  "dryRun": false,
+  "jobs": [
+    {
+      "jobId": "correctness--kimi-k3--together--gsm8k--65810682",
+      "path": "models/kimi-k3/providers/together/correctness/gsm8k/correctness--kimi-k3--together--gsm8k--65810682",
+      "status": "completed"
+    }
+  ],
+  "matrix": {
+    "endpointCombinations": 1,
+    "jobs": 1,
+    "models": 1,
+    "providers": 1
+  },
+  "runId": "correctness-smoke-test-20260903T181345Z-c87fc636",
+  "runName": "correctness-smoke-test",
+  "schemaVersion": "1.0",
+  "startedAt": "2026-09-03T18:13:45.594588Z",
+  "status": "completed",
+  "updatedAt": "2026-09-03T18:14:17.390642Z",
+  "versions": {
+    "aiperf": "0.12.0",
+    "benchmarkTool": "0.1.0",
+    "bfcl": null,
+    "lmEval": "0.4.13",
+    "python": "3.12.3"
+  }
+}

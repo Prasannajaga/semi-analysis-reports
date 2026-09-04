@@ -1,0 +1,39 @@
+schemaVersion: '2.0'
+randomSeed: 42
+benchmark:
+  model: accounts/fireworks/models/glm-5p3-flash
+  endpoint:
+    url: https://api.fireworks.ai/inference/v1/chat/completions
+    type: chat
+    apiKey: ${FIREWORKS_API_KEY}
+    streaming: true
+    timeout: 300.0
+    useLegacyMaxTokens: true
+    useServerTokenCount: true
+  tokenizer:
+    name: THUDM/glm-4-9b-chat
+    trustRemoteCode: true
+  profiling:
+    type: concurrency
+    concurrency: 1
+    duration: 300
+  artifacts:
+    dir: /data/semi-analysis-report/results/glm-5-3-flash-isl8k-osl1k-20260903T212829Z-d65c3810/models/glm-5-3-flash/providers/fireworks/performance/synthetic-c1/performance--glm-5-3-flash--fireworks--synthetic--c1--3df4ecb7/artifacts
+    summary:
+    - json
+    records:
+    - jsonl
+    raw: true
+    trace: true
+  dataset:
+    name: synthetic-performance
+    type: synthetic
+    entries: 12
+    randomSeed: 42
+    prompts:
+      isl: 8192
+      osl: 1024
+  warmup:
+    type: concurrency
+    requests: 1
+    concurrency: 1
