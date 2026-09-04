@@ -66,6 +66,7 @@ table { border-collapse: collapse; }
             <th class="py-2.5 px-3.5 text-right">Output TPS</th>
             <th class="py-2.5 px-3.5 text-right">TTFT p95</th>
             <th class="py-2.5 px-3.5 text-right">Workload Cost</th>
+            <th class="py-2.5 px-3.5 text-right font-bold text-slate-900">Cost / Req</th>
             <th class="py-2.5 px-3.5 text-right">Success Rate</th>
             <th class="py-2.5 px-3.5 text-right">Cache Hit Rate</th>
             <th class="py-2.5 px-3.5 text-right">Accuracy</th>
@@ -83,6 +84,7 @@ table { border-collapse: collapse; }
       <div class="font-semibold text-slate-800 mb-1.5">Formulas:</div>
       <ul class="space-y-1 text-[11px] font-mono text-slate-700">
         <li>• <span class="font-sans font-semibold text-slate-800">Workload Cost</span> = Total spend across input, cached, and output tokens</li>
+        <li>• <span class="font-sans font-semibold text-slate-800">Cost / Req</span> = Workload spend ÷ completed requests</li>
         <li>• <span class="font-sans font-semibold text-slate-800">SLO Gate</span> = Success Rate ≥ Min Target AND TTFT p95 ≤ Max Target</li>
       </ul>
     </div>
@@ -148,12 +150,50 @@ table { border-collapse: collapse; }
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
         <div>
           <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-cost">
-            <span>2. Cost Economics</span>
+            <span>2. Cost Economics & Unit Pricing</span>
             <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
           </h3>
-          <p class="text-xs text-slate-500 mt-0.5">Measured workload spend and effective cost normalized per 1,000 successful requests.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Measured workload spend, delivered unit cost per request, and trace economics for multi-turn agent workloads.</p>
         </div>
         <div id="cost-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+        </div>
+      </div>
+
+      <!-- Trace & Multi-Turn Economics Banner -->
+      <div class="mb-4 p-3.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Trace & Multi-Turn Workload Economics</span>
+          </div>
+          <p class="text-[11px] text-slate-600 mt-0.5">In agentic and conversational workflows, users experience costs per end-to-end trace. Each trace comprises multiple turns/requests reusing prefix KV-cache.</p>
+        </div>
+        <button id="btn-toggle-trace" onclick="toggleTraceBreakdown()" class="text-xs font-mono font-semibold px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded shadow-sm transition-colors whitespace-nowrap self-start sm:self-auto">
+          Explore Trace Economics ▾
+        </button>
+      </div>
+
+      <!-- Expandable Trace Breakdown Drawer -->
+      <div id="trace-breakdown-drawer" class="hidden mb-4 p-4 bg-white border border-slate-200 rounded-lg shadow-inner">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-xs font-bold text-slate-900">Trace Economics Summary</div>
+          <span class="text-[11px] font-mono text-slate-500">Single-turn / Multi-turn trace analysis</span>
+        </div>
+        <div class="overflow-x-auto border border-slate-200 rounded">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+              <tr>
+                <th class="py-2 px-3">Provider</th>
+                <th class="py-2 px-3 text-right">Total Traces</th>
+                <th class="py-2 px-3 text-right">Turns / Trace</th>
+                <th class="py-2 px-3 text-right">Avg Tokens / Turn</th>
+                <th class="py-2 px-3 text-right font-bold text-slate-900">Cost / Trace</th>
+                <th class="py-2 px-3 text-right font-medium text-slate-800">Cost / Request</th>
+              </tr>
+            </thead>
+            <tbody id="trace-breakdown-body" class="divide-y divide-slate-100 font-mono text-slate-700">
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -170,9 +210,11 @@ table { border-collapse: collapse; }
           <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
             <tr>
               <th class="py-2 px-3">Provider</th>
-              <th class="py-2 px-3 text-right">Workload Cost</th>
-              <th class="py-2 px-3 text-right">$ / 1k Attempts</th>
-              <th class="py-2 px-3 text-right">$ / 1k Successful</th>
+              <th class="py-2 px-3 text-right font-bold text-slate-900">Cost / Request</th>
+              <th class="py-2 px-3 text-right font-bold text-slate-900">Cost / Trace</th>
+              <th class="py-2 px-3 text-right text-slate-600">Traces (Turns)</th>
+              <th class="py-2 px-3 text-right font-medium text-slate-800">Workload Spend</th>
+              <th class="py-2 px-3 text-right font-medium text-slate-800">$ / 1k Successful</th>
               <th class="py-2 px-3 text-right">Prompt ($/1M)</th>
               <th class="py-2 px-3 text-right">Completion ($/1M)</th>
               <th class="py-2 px-3 text-right">Input Tokens</th>
@@ -188,10 +230,11 @@ table { border-collapse: collapse; }
       <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
         <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
         <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
+          <li>• <span class="font-sans font-semibold text-slate-800">Cost / Request ($)</span> = Total Workload Spend ÷ Total Completed Requests</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cost / Trace ($)</span> = Total Workload Spend ÷ Total Completed Traces</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Turns / Trace</span> = Total Completed Requests ÷ Total Traces</li>
           <li>• <span class="font-sans font-semibold text-slate-800">Workload Spend ($)</span> = (Uncached Tokens × Input Rate + Cached Tokens × Cached Rate + Output Tokens × Output Rate) ÷ 1,000,000</li>
           <li>• <span class="font-sans font-semibold text-slate-800">Cost / 1k Successful</span> = (Total Workload Spend ÷ Successful Requests) × 1,000</li>
-          <li>• <span class="font-sans font-semibold text-slate-800">Cost / 1k Attempts</span> = (Total Workload Spend ÷ Total Requests) × 1,000</li>
-          <li>• <span class="font-sans font-semibold text-slate-800">Cost / Request</span> = Total Workload Spend ÷ Total Requests</li>
         </ul>
       </div>
     </section>
@@ -252,10 +295,10 @@ table { border-collapse: collapse; }
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
         <div>
           <h3 class="text-sm font-bold text-slate-900 cursor-help inline-flex items-center gap-1.5" data-tip-type="sec-cache">
-            <span>4. Cache Hit Rate & Prefix Caching</span>
+            <span>4. Cache Hit Rate & Prefix Caching Economics</span>
             <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1">Details</span>
           </h3>
-          <p class="text-xs text-slate-500 mt-0.5">Prompt cache hit ratio (%, higher is better) and discounted cached token pricing economics.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Prompt cache hit ratio (%), provider token discount rate, and effective blended input rate ($/1M).</p>
         </div>
         <div id="cache-winner-tag" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
         </div>
@@ -263,7 +306,7 @@ table { border-collapse: collapse; }
 
       <!-- Cache Chart -->
       <div class="border border-slate-200 rounded p-3 mb-4 bg-white">
-        <div class="relative h-64 sm:h-72 w-full">
+        <div class="relative h-72 sm:h-80 w-full">
           <canvas id="cache-chart"></canvas>
         </div>
       </div>
@@ -274,12 +317,14 @@ table { border-collapse: collapse; }
           <thead class="bg-slate-50 text-slate-600 font-mono text-[11px] border-b border-slate-200">
             <tr>
               <th class="py-2 px-3">Provider</th>
-              <th class="py-2 px-3 text-right">Cache Hit Rate</th>
+              <th class="py-2 px-3 text-right font-bold text-teal-700">Cache Hit Rate</th>
+              <th class="py-2 px-3 text-right font-bold text-slate-900">Effective Input Rate</th>
+              <th class="py-2 px-3 text-right font-medium text-slate-800">Cached Rate ($/1M)</th>
+              <th class="py-2 px-3 text-right text-slate-600">Standard Rate ($/1M)</th>
+              <th class="py-2 px-3 text-right font-bold text-emerald-700">Cache Discount</th>
               <th class="py-2 px-3 text-right">Cached Tokens</th>
               <th class="py-2 px-3 text-right">Total Input Tokens</th>
-              <th class="py-2 px-3 text-right">Standard Rate ($/1M)</th>
-              <th class="py-2 px-3 text-right">Cached Rate ($/1M)</th>
-              <th class="py-2 px-3 text-right">Cache Savings</th>
+              <th class="py-2 px-3 text-right font-medium text-emerald-700">Cache Savings</th>
             </tr>
           </thead>
           <tbody id="cache-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
@@ -292,8 +337,9 @@ table { border-collapse: collapse; }
         <div class="font-semibold text-slate-800 mb-2">Formulas:</div>
         <ul class="space-y-1.5 text-[11px] font-mono text-slate-700">
           <li>• <span class="font-sans font-semibold text-slate-800">Cache Hit Rate (%)</span> = (Cached Prompt Tokens ÷ Total Input Tokens) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Cache Discount (%)</span> = ((Standard Input Rate − Cached Input Rate) ÷ Standard Input Rate) × 100</li>
+          <li>• <span class="font-sans font-semibold text-slate-800">Effective Blended Input Rate ($/1M)</span> = ((Uncached Tokens × Standard Rate) + (Cached Tokens × Cached Rate)) ÷ Total Input Tokens</li>
           <li>• <span class="font-sans font-semibold text-slate-800">Cache Savings ($)</span> = (Cached Tokens × [Standard Input Rate − Cached Input Rate]) ÷ 1,000,000</li>
-          <li>• <span class="font-sans font-semibold text-slate-800">Uncached Tokens</span> = Total Input Tokens − Cached Prompt Tokens</li>
         </ul>
       </div>
     </section>
@@ -461,19 +507,13 @@ function computeStats(rows) {
     // Cost & Pricing
     const costRuns = perfRuns.filter(r => r.pricing?.estimated_cost_usd != null);
     const costUsd = total(costRuns.map(r => r.pricing.estimated_cost_usd));
-    const costPerRequest = average(costRuns.map(r => r.pricing.cost_per_request_usd));
+    const rawCostPerRequest = average(costRuns.map(r => r.pricing.cost_per_request_usd));
     const inPrice = average(costRuns.map(r => r.pricing.input_usd_per_million));
     const outPrice = average(costRuns.map(r => r.pricing.output_usd_per_million));
     const cachedPrice = average(costRuns.map(r => r.pricing.cached_input_usd_per_million));
     const pricingMethods = [...new Set(costRuns.map(r => r.pricing.method).filter(Boolean))];
 
-    // Cache Hit Rate & Savings
-    const cacheHitRate = inTokens > 0 ? ((cachedTokens || 0) / inTokens) * 100 : 0;
-    const cacheSavings = (cachedTokens && inPrice != null && cachedPrice != null && inPrice > cachedPrice)
-      ? (cachedTokens * (inPrice - cachedPrice)) / 1000000
-      : 0;
-
-    // Reliability & SLO
+    // Reliability & SLO (computed early for accurate request & trace normalization)
     const relRuns = pRows.filter(r => r.phase === "performance" && r.reliability);
     const totalRequests = total(relRuns.map(r => r.reliability.total_requests));
     const succRequests = total(relRuns.map(r => r.reliability.successful_requests));
@@ -494,6 +534,26 @@ function computeStats(rows) {
     const http429s = errorMap["http_429"] || 0;
     const costPer1kAttempts = costUsd != null && totalRequests > 0 ? (costUsd / totalRequests) * 1000 : null;
     const costPer1kSuccessful = costUsd != null && succRequests > 0 ? (costUsd / succRequests) * 1000 : null;
+
+    // Cost / Request ($/req) & Trace Economics
+    const costPerRequest = (costUsd != null && succRequests > 0)
+      ? costUsd / succRequests
+      : (rawCostPerRequest != null ? rawCostPerRequest : (costUsd != null && totalRequests > 0 ? costUsd / totalRequests : null));
+    const totalTraces = total(perfRuns.map(r => r.performance?.trace_count || r.performance?.traces?.count)) || (succRequests > 0 ? succRequests : totalRequests) || 0;
+    const turnsPerTrace = totalTraces > 0 && succRequests > 0 ? (succRequests / totalTraces) : 1;
+    const costPerTrace = totalTraces > 0 && costUsd != null ? (costUsd / totalTraces) : costPerRequest;
+
+    // Cache Hit Rate, Discount & Effective Rate
+    const cacheHitRate = inTokens > 0 ? ((cachedTokens || 0) / inTokens) * 100 : 0;
+    const cacheDiscountPct = (inPrice != null && cachedPrice != null && inPrice > 0)
+      ? ((inPrice - cachedPrice) / inPrice) * 100
+      : (cachedPrice === 0 ? 100 : 0);
+    const effectiveInPrice = (inTokens > 0 && inPrice != null)
+      ? (((inTokens - (cachedTokens || 0)) * inPrice + (cachedTokens || 0) * (cachedPrice != null ? cachedPrice : inPrice)) / inTokens)
+      : inPrice;
+    const cacheSavings = (cachedTokens && inPrice != null && cachedPrice != null && inPrice > cachedPrice)
+      ? (cachedTokens * (inPrice - cachedPrice)) / 1000000
+      : 0;
 
     // Correctness
     const corrRuns = pRows.filter(r => r.phase === "correctness" && r.status === "completed" && r.correctness?.score != null);
@@ -516,7 +576,9 @@ function computeStats(rows) {
       tokTput, reqTput, ttftMean, ttftP50, ttftP90, ttftP95, ttftP99, ttftMin, ttftMax,
       itlMean, itlP50, itlP95, e2eMean, e2eP50, e2eP95, userTputMean, userTputP95, islMean, oslMean,
       perfRunCount: perfRuns.length, concurrencies, durations, workloadNames,
-      costUsd, costPerRequest, costPer1kAttempts, costPer1kSuccessful, inPrice, outPrice, cachedPrice, inTokens, outTokens, cachedTokens, cacheWriteTokens, totalTokens, pricingMethods,
+      costUsd, costPerRequest, costPerTrace, totalTraces, turnsPerTrace, costPer1kAttempts, costPer1kSuccessful,
+      inPrice, outPrice, cachedPrice, cacheDiscountPct, effectiveInPrice,
+      inTokens, outTokens, cachedTokens, cacheWriteTokens, totalTokens, pricingMethods,
       cacheHitRate, cacheSavings,
       totalRequests, succRequests, failRequests, http429s, relRate, errorRate, sloPassed, successSloTarget, ttftSloTarget, errorMap,
       corrScore, corrTask, corrMetric, corrSamples, corrStderr, corrCost, corrRunCount: corrRuns.length,
@@ -535,9 +597,11 @@ function render() {
 
   // Determine winners
   const perfWinner = [...stats].filter(s => s.tokTput != null).sort((a, b) => b.tokTput - a.tokTput)[0];
-  const costWinner = [...stats].filter(s => s.costUsd != null).sort((a, b) => a.costUsd - b.costUsd)[0];
+  const costWinner = [...stats].filter(s => s.costPer1kSuccessful != null).sort((a, b) => a.costPer1kSuccessful - b.costPer1kSuccessful)[0] || [...stats].filter(s => s.costUsd != null).sort((a, b) => a.costUsd - b.costUsd)[0];
   const relWinner = [...stats].filter(s => s.relRate != null).sort((a, b) => (b.relRate - a.relRate) || (a.failRequests - b.failRequests))[0];
-  const cacheWinner = [...stats].sort((a, b) => (b.cacheHitRate ?? 0) - (a.cacheHitRate ?? 0) || (a.cachedPrice ?? 999) - (b.cachedPrice ?? 999))[0];
+  const highestHitWinner = [...stats].filter(s => (s.cacheHitRate ?? 0) > 0).sort((a, b) => (b.cacheHitRate ?? 0) - (a.cacheHitRate ?? 0))[0];
+  const lowestCachedRateWinner = [...stats].filter(s => s.cachedPrice != null).sort((a, b) => a.cachedPrice - b.cachedPrice)[0];
+  const cacheWinner = highestHitWinner || lowestCachedRateWinner;
   const corrWinner = [...stats].filter(s => s.corrScore != null).sort((a, b) => b.corrScore - a.corrScore)[0];
   const hasCacheHits = stats.some(s => (s.cachedTokens || 0) > 0);
 
@@ -567,7 +631,7 @@ function render() {
 
   const costTag = document.getElementById("cost-winner-tag");
   if (costTag) costTag.innerHTML = costWinner
-    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest workload cost: ${costWinner.name} (${fmtUsd(costWinner.costUsd, 3)} spend · ${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k successful)</span>`
+    ? `<span class="cursor-help" data-tip-provider="${costWinner.id}" data-tip-type="cost">Lowest Cost: ${costWinner.name} (${fmtUsd(costWinner.costPerRequest, 4)}/req · ${fmtUsd(costWinner.costPer1kSuccessful, 3)}/1k succ)</span>`
     : "No data";
 
   const relTag = document.getElementById("rel-winner-tag");
@@ -576,9 +640,19 @@ function render() {
     : "No data";
 
   const cacheTag = document.getElementById("cache-winner-tag");
-  if (cacheTag) cacheTag.innerHTML = cacheWinner
-    ? `<span class="cursor-help" data-tip-provider="${cacheWinner.id}" data-tip-type="cache">${hasCacheHits ? `Leader: ${cacheWinner.name} (${fmtPct(cacheWinner.cacheHitRate, 1)} hit rate)` : (cacheWinner.cachedPrice != null ? `Best Cache Rate: ${cacheWinner.name} (${fmtUsd(cacheWinner.cachedPrice, 2)}/1M)` : "No cache data")}</span>`
-    : "No data";
+  if (cacheTag) {
+    if (highestHitWinner && lowestCachedRateWinner) {
+      if (highestHitWinner.id === lowestCachedRateWinner.id) {
+        cacheTag.innerHTML = `<span class="cursor-help" data-tip-provider="${highestHitWinner.id}" data-tip-type="cache">Top Cache: ${highestHitWinner.name} (${fmtPct(highestHitWinner.cacheHitRate, 1)} hit · ${fmtUsd(highestHitWinner.cachedPrice, 3)}/1M)</span>`;
+      } else {
+        cacheTag.innerHTML = `<span class="cursor-help" data-tip-provider="${highestHitWinner.id}" data-tip-type="cache">Highest Hit Rate: ${highestHitWinner.name} (${fmtPct(highestHitWinner.cacheHitRate, 1)})</span> · <span class="cursor-help" data-tip-provider="${lowestCachedRateWinner.id}" data-tip-type="cache">Lowest Cached Rate: ${lowestCachedRateWinner.name} (${fmtUsd(lowestCachedRateWinner.cachedPrice, 3)}/1M)</span>`;
+      }
+    } else if (highestHitWinner) {
+      cacheTag.innerHTML = `<span class="cursor-help" data-tip-provider="${highestHitWinner.id}" data-tip-type="cache">Top Hit Rate: ${highestHitWinner.name} (${fmtPct(highestHitWinner.cacheHitRate, 1)})</span>`;
+    } else {
+      cacheTag.innerHTML = "No cache data";
+    }
+  }
 
   const corrTag = document.getElementById("corr-winner-tag");
   if (corrTag) corrTag.innerHTML = corrWinner
@@ -616,6 +690,7 @@ function render() {
         <td class="py-2.5 px-3.5 text-right cursor-help ${isPerf ? 'font-bold text-blue-700' : ''}" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.tokTput, 1)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help" data-tip-provider="${s.id}" data-tip-type="perf">${num(s.ttftP95, 0)} ms</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isCost ? 'font-bold text-emerald-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costUsd, 3)}</td>
+        <td class="py-2.5 px-3.5 text-right cursor-help font-medium text-slate-800" data-tip-provider="${s.id}" data-tip-type="cost">${fmtUsd(s.costPerRequest, 4)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isRel ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="rel">${fmtPct(s.relRate)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isCache ? 'font-bold text-teal-700' : ''}" data-tip-provider="${s.id}" data-tip-type="cache">${fmtPct(s.cacheHitRate, 1)}</td>
         <td class="py-2.5 px-3.5 text-right cursor-help ${isCorr ? 'font-bold text-purple-700' : ''}" data-tip-provider="${s.id}" data-tip-type="corr">${fmtPct(s.corrScore)}</td>
@@ -648,6 +723,7 @@ function render() {
 
   // 1. RENDER SECTION DATA TABLES FIRST (Guaranteed Rendering)
   renderSectionTables(stats, rows);
+  renderTraceBreakdown(stats, rows);
 
   // 2. RENDER CHARTS USING CHART.JS (Protected by try/catch)
   try {
@@ -664,11 +740,15 @@ function providerTooltip(stats, detailLines) {
     filter: item => item.datasetIndex === 0,
     callbacks: {
       title: items => {
-        const stat = stats[items[0]?.dataIndex];
+        const item = items[0];
+        const stat = item?.raw?.stat || stats[item?.dataIndex];
         const model = modelSelect.value || uniqueModels[0] || "";
         return stat ? `${stat.name} · ${model}` : model;
       },
-      label: context => detailLines(stats[context.dataIndex])
+      label: context => {
+        const stat = context.raw?.stat || stats[context.dataIndex];
+        return stat ? detailLines(stat) : "";
+      }
     }
   };
 }
@@ -694,13 +774,15 @@ function perfDetailLines(s) {
 
 function costDetailLines(s) {
   return [
+    `Cost / Request: ${fmtUsd(s.costPerRequest, 4)}`,
+    `Cost / Trace: ${fmtUsd(s.costPerTrace, 4)} (${num(s.turnsPerTrace, 1)} turns/trace)`,
+    `Total Traces: ${s.totalTraces != null ? s.totalTraces.toLocaleString() : "—"}`,
     `Workload Spend: ${fmtUsd(s.costUsd, 4)}`,
     `Cost / 1k Successful: ${fmtUsd(s.costPer1kSuccessful, 3)}`,
     `Cost / 1k Attempts: ${fmtUsd(s.costPer1kAttempts, 3)}`,
-    `Cost / Request: ${fmtUsd(s.costPerRequest, 4)}`,
     `Prompt Rate: ${fmtUsd(s.inPrice, 2)} / 1M tokens`,
     `Completion Rate: ${fmtUsd(s.outPrice, 2)} / 1M tokens`,
-    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 2)} / 1M tokens` : null,
+    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 3)} / 1M tokens` : null,
     `Token Volume: ${s.inTokens?.toLocaleString() ?? 0} in · ${s.outTokens?.toLocaleString() ?? 0} out (${s.totalTokens?.toLocaleString() ?? 0} total)`,
     `Pricing Basis: ${s.pricingMethods.map(titleCase).join(", ") || "Standard"}`
   ].filter(Boolean);
@@ -719,15 +801,15 @@ const knownErrorLabels = {
 };
 
 const knownErrorColors = {
-  http_429: "#f43f5e",
-  http_5xx: "#ea580c",
-  http_4xx: "#f59e0b",
-  timeouts: "#8b5cf6",
-  connection_errors: "#0284c7",
-  parse_errors: "#ec4899",
-  context_overflow: "#b45309",
-  cancelled_requests: "#64748b",
-  other: "#94a3b8"
+  http_429: "#dc2626",
+  http_5xx: "#991b1b",
+  http_4xx: "#ef4444",
+  timeouts: "#f87171",
+  connection_errors: "#b91c1c",
+  parse_errors: "#fca5a5",
+  context_overflow: "#7f1d1d",
+  cancelled_requests: "#e11d48",
+  other: "#dc2626"
 };
 
 function relDetailLines(s) {
@@ -760,9 +842,10 @@ function corrDetailLines(s) {
 function cacheDetailLines(s) {
   return [
     `Cache Hit Rate: ${fmtPct(s.cacheHitRate, 1)}`,
-    `Cached Input Tokens: ${s.cachedTokens?.toLocaleString() ?? 0} of ${s.inTokens?.toLocaleString() ?? 0} total`,
+    `Effective Blended Rate: ${s.effectiveInPrice != null ? fmtUsd(s.effectiveInPrice, 3) + " / 1M tokens" : "—"}`,
+    `Cached Input Rate: ${s.cachedPrice != null ? fmtUsd(s.cachedPrice, 3) + " / 1M tokens (-" + fmtPct(s.cacheDiscountPct, 1) + " discount)" : "Standard"}`,
     `Standard Input Rate: ${fmtUsd(s.inPrice, 2)} / 1M tokens`,
-    s.cachedPrice != null ? `Cached Input Rate: ${fmtUsd(s.cachedPrice, 2)} / 1M tokens` : `Cached Input Rate: Standard`,
+    `Cached Tokens: ${s.cachedTokens?.toLocaleString() ?? 0} of ${s.inTokens?.toLocaleString() ?? 0} total`,
     `Realized Cache Savings: ${fmtUsd(s.cacheSavings, 4)}`,
     `TTL (Time-To-Live): Not exposed in LLM API protocols`
   ];
@@ -959,7 +1042,7 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
     });
   }
 
-  // 4. Cache Hit Rate Chart (Hit Rate % vs Cached Input Rate $/1M)
+  // 4. Cache Economics Chart (Hit Rate % & Discount % [Bars, Left Axis] vs Effective Input Rate $/1M [Line, Right Axis])
   if (cacheChartInstance) cacheChartInstance.destroy();
   const cacheCanvas = document.getElementById("cache-chart");
   if (cacheCanvas) {
@@ -970,17 +1053,38 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
         labels: labels,
         datasets: [
           {
+            type: "bar",
             label: "Cache Hit Rate (%) ↑",
             data: stats.map(s => s.cacheHitRate != null ? Number(s.cacheHitRate.toFixed(1)) : 0),
-            backgroundColor: stats.map(s => s.id === cacheWinId ? "#0d9488" : "#94a3b8"),
+            backgroundColor: "#0d9488",
+            borderColor: "#0f766e",
+            borderWidth: 1,
             borderRadius: 4,
             yAxisID: "y"
           },
           {
-            label: "Cached Rate ($/1M) ↓",
-            data: stats.map(s => s.cachedPrice != null ? Number(s.cachedPrice.toFixed(2)) : null),
-            backgroundColor: "#6366f1",
+            type: "bar",
+            label: "Cache Discount (%) ↑",
+            data: stats.map(s => s.cacheDiscountPct != null ? Number(s.cacheDiscountPct.toFixed(1)) : 0),
+            backgroundColor: "#10b981",
+            borderColor: "#059669",
+            borderWidth: 1,
             borderRadius: 4,
+            yAxisID: "y"
+          },
+          {
+            type: "line",
+            label: "Effective Blended Input Rate ($/1M) ↓",
+            data: stats.map(s => s.effectiveInPrice != null ? Number(s.effectiveInPrice.toFixed(3)) : null),
+            borderColor: "#0f172a",
+            backgroundColor: "#ffffff",
+            pointBorderColor: "#0f172a",
+            pointBackgroundColor: "#ffffff",
+            pointBorderWidth: 2.5,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            borderWidth: 2.5,
+            tension: 0.2,
             yAxisID: "y1"
           }
         ]
@@ -990,6 +1094,13 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
         plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: 12,
+              font: { size: 11, family: 'Inter', weight: '500' }
+            }
+          },
           tooltip: providerTooltip(stats, cacheDetailLines)
         },
         scales: {
@@ -998,18 +1109,22 @@ function renderChartJs(stats, perfWinId, costWinId, relWinId, cacheWinId, corrWi
             position: "left",
             min: 0,
             max: 100,
-            title: { display: true, text: "Cache Hit Rate (%)", color: "#0d9488", font: { weight: '600' } },
-            grid: { color: "#f3f4f6" },
+            title: { display: true, text: "Rate / Discount (%)", color: "#0d9488", font: { weight: '600', family: 'Inter' } },
+            grid: { color: "#f1f5f9" },
             ticks: { callback: v => v + "%" }
           },
           y1: {
             type: "linear",
             position: "right",
-            title: { display: true, text: "Cached Rate ($/1M)", color: "#6366f1", font: { weight: '600' } },
+            beginAtZero: true,
+            title: { display: true, text: "Effective Blended Input Rate ($/1M)", color: "#0f172a", font: { weight: '600', family: 'Inter' } },
             grid: { drawOnChartArea: false },
             ticks: { callback: v => "$" + Number(v).toFixed(2) }
           },
-          x: { grid: { display: false } }
+          x: {
+            grid: { display: false },
+            ticks: { font: { weight: '600', family: 'Inter' } }
+          }
         }
       }
     });
@@ -1078,8 +1193,10 @@ function renderSectionTables(stats, rows) {
     costTbody.innerHTML = stats.map(s => `
       <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cost">
         <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right font-bold text-slate-900">${fmtUsd(s.costPerRequest, 4)}</td>
+        <td class="py-2 px-3 text-right font-bold text-slate-900">${fmtUsd(s.costPerTrace, 4)}</td>
+        <td class="py-2 px-3 text-right text-slate-600">${s.totalTraces != null ? s.totalTraces.toLocaleString() : "—"} (${num(s.turnsPerTrace, 1)})</td>
         <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costUsd, 3)}</td>
-        <td class="py-2 px-3 text-right">${fmtUsd(s.costPer1kAttempts, 3)}</td>
         <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costPer1kSuccessful, 3)}</td>
         <td class="py-2 px-3 text-right">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
         <td class="py-2 px-3 text-right">${s.outPrice != null ? "$" + num(s.outPrice, 2) : "—"}</td>
@@ -1121,10 +1238,12 @@ function renderSectionTables(stats, rows) {
       <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cache">
         <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
         <td class="py-2 px-3 text-right font-bold text-teal-700">${fmtPct(s.cacheHitRate, 1)}</td>
+        <td class="py-2 px-3 text-right font-bold text-slate-900">${s.effectiveInPrice != null ? "$" + num(s.effectiveInPrice, 3) : "—"}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${s.cachedPrice != null ? "$" + num(s.cachedPrice, 3) : "—"}</td>
+        <td class="py-2 px-3 text-right text-slate-600">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
+        <td class="py-2 px-3 text-right font-bold text-emerald-700">${fmtPct(s.cacheDiscountPct, 1)}</td>
         <td class="py-2 px-3 text-right">${s.cachedTokens != null ? s.cachedTokens.toLocaleString() : "0"}</td>
         <td class="py-2 px-3 text-right">${s.inTokens != null ? s.inTokens.toLocaleString() : "—"}</td>
-        <td class="py-2 px-3 text-right">${s.inPrice != null ? "$" + num(s.inPrice, 2) : "—"}</td>
-        <td class="py-2 px-3 text-right font-medium text-slate-800">${s.cachedPrice != null ? "$" + num(s.cachedPrice, 2) : "—"}</td>
         <td class="py-2 px-3 text-right font-medium text-emerald-700">${fmtUsd(s.cacheSavings, 4)}</td>
       </tr>
     `).join("");
@@ -1145,6 +1264,39 @@ function renderSectionTables(stats, rows) {
       </tr>
     `).join("");
   }
+}
+
+function toggleTraceBreakdown() {
+  const drawer = document.getElementById("trace-breakdown-drawer");
+  const btn = document.getElementById("btn-toggle-trace") || document.getElementById("toggle-trace-modal-btn");
+  if (!drawer) return;
+  const isHidden = drawer.classList.contains("hidden");
+  if (isHidden) {
+    drawer.classList.remove("hidden");
+    if (btn) btn.innerHTML = "Hide Trace Breakdown ▴";
+  } else {
+    drawer.classList.add("hidden");
+    if (btn) btn.innerHTML = "Explore Trace Economics ▾";
+  }
+}
+
+function renderTraceBreakdown(stats, rows) {
+  const tbody = document.getElementById("trace-breakdown-body");
+  if (!tbody) return;
+  tbody.innerHTML = stats.map(s => {
+    const avgInTokPerTurn = s.succRequests > 0 && s.inTokens != null ? Math.round(s.inTokens / s.succRequests) : 0;
+    const avgOutTokPerTurn = s.succRequests > 0 && s.outTokens != null ? Math.round(s.outTokens / s.succRequests) : 0;
+    return `
+      <tr class="hover:bg-slate-50 cursor-help" data-tip-provider="${s.id}" data-tip-type="cost">
+        <td class="py-2 px-3 font-sans font-semibold text-slate-900">${esc(s.name)}</td>
+        <td class="py-2 px-3 text-right">${s.totalTraces != null ? s.totalTraces.toLocaleString() : "—"}</td>
+        <td class="py-2 px-3 text-right">${num(s.turnsPerTrace, 1)}</td>
+        <td class="py-2 px-3 text-right">${avgInTokPerTurn.toLocaleString()} in / ${avgOutTokPerTurn.toLocaleString()} out</td>
+        <td class="py-2 px-3 text-right font-bold text-slate-900">${fmtUsd(s.costPerTrace, 4)}</td>
+        <td class="py-2 px-3 text-right font-medium text-slate-800">${fmtUsd(s.costPerRequest, 4)}</td>
+      </tr>
+    `;
+  }).join("");
 }
 
 // Floating Minimal Tooltip Implementation
@@ -1209,9 +1361,11 @@ document.addEventListener("mouseover", e => {
     ]);
   } else if (tipType === "sec-cost") {
     showTooltip(e, `Cost Economics Methodology`, [
+      `Cost / Request: Total workload spend divided by completed requests.`,
+      `Cost / Trace: Total workload spend divided by completed traces.`,
+      `Turns / Trace: Average request turns executed per trace.`,
       `Workload Spend: Actual dollar expenditure incurred for completed run.`,
-      `$/1k Successful: Delivered spend per 1,000 requests delivering output.`,
-      `Token Rates: Contracted pricing per 1,000,000 tokens.`
+      `$/1k Successful: Delivered spend per 1,000 successful requests delivering output.`
     ]);
   } else if (tipType === "sec-rel") {
     showTooltip(e, `Reliability Methodology`, [
@@ -1225,10 +1379,11 @@ document.addEventListener("mouseover", e => {
       `Reported with sample-weighted mean and standard error.`
     ]);
   } else if (tipType === "sec-cache") {
-    showTooltip(e, `Cache Hit Rate Methodology`, [
-      `Prompt Cache Read Ratio: Percentage of input prompt tokens reported as cached by the provider (not internal GPU KV cache telemetry).`,
-      `Cached Rate: Discounted rate billed per 1M cached tokens.`,
-      `TTL: Cache expiration duration is internal to provider infrastructure and not exposed by APIs.`
+    showTooltip(e, `Cache Hit Rate & Prefix Economics Methodology`, [
+      `Cache Hit Rate: Percentage of input prompt tokens served from KV cache.`,
+      `Cache Discount: Price reduction on cached tokens relative to standard input rate.`,
+      `Effective Input Rate: Blended rate ($/1M) accounting for hit rate and discount.`,
+      `Cache Savings: Realized dollar savings compared to standard pricing.`
     ]);
   }
 });

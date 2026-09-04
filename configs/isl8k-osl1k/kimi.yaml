@@ -58,7 +58,7 @@ phases:
       values: [1]
     durationSeconds: 300
     warmup:
-      requestCount: 1
+      requestCount: 0
     useServerTokenCount: true
 
   correctness:
