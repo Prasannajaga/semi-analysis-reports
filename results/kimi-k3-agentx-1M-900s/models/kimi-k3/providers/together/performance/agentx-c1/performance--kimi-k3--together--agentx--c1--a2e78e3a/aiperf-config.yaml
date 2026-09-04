@@ -17,6 +17,8 @@ benchmark:
     type: concurrency
     concurrency: 1
     duration: 900
+    burstPhaseStarts: true
+    agenticWarmupGracePeriod: 180
   artifacts:
     dir: /data/semi-analysis-report/results/kimi-k3-agentx-20260904T121154Z-070ffb74/models/kimi-k3/providers/together/performance/agentx-c1/performance--kimi-k3--together--agentx--c1--a2e78e3a/artifacts
     summary:
@@ -30,7 +32,3 @@ benchmark:
     type: public
     dataset: semianalysis_cc_traces_weka_062126
     maxContextLength: 131072
-  warmup:
-    type: concurrency
-    requests: 1
-    concurrency: 1

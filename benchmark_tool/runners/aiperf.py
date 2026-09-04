@@ -71,6 +71,11 @@ def make_aiperf_config(config: BenchmarkConfig, job: Job, artifacts_dir: Path) -
             "dataset": phase.workload.dataset.name,
             "maxContextLength": phase.workload.dataset.max_context_length,
         }
+        benchmark["profiling"]["burstPhaseStarts"] = True
+        if config.reliability and config.reliability.slo:
+            benchmark["profiling"]["agenticWarmupGracePeriod"] = int(
+                config.reliability.slo.request_timeout_seconds
+            )
     elif isinstance(phase.workload, SyntheticWorkload):
         benchmark["dataset"] = {
             "name": "synthetic-performance",
@@ -82,7 +87,7 @@ def make_aiperf_config(config: BenchmarkConfig, job: Job, artifacts_dir: Path) -
                 "osl": phase.workload.output_tokens,
             },
         }
-    if phase.warmup.request_count:
+    if phase.warmup.request_count and not isinstance(phase.workload, AgentXWorkload):
         benchmark["warmup"] = {
             "type": "concurrency",
             "requests": phase.warmup.request_count,
@@ -166,16 +171,24 @@ def execute(
             ),
             "validation": validation,
         }
+    cmd = [
+        "aiperf",
+        "profile",
+        "--config",
+        str(path),
+        "--export-level",
+        "raw",
+        "--export-http-trace",
+    ]
+    if job.workload_type == "agentx":
+        cmd.append("--burst-phase-starts")
+        if config.reliability and config.reliability.slo:
+            cmd.extend([
+                "--agentic-warmup-grace-period",
+                str(int(config.reliability.slo.request_timeout_seconds)),
+            ])
     process = run_process(
-        [
-            "aiperf",
-            "profile",
-            "--config",
-            str(path),
-            "--export-level",
-            "raw",
-            "--export-http-trace",
-        ],
+        cmd,
         job_dir,
         _aiperf_environment(env_name, api_key),
         log_prefix="aiperf",
