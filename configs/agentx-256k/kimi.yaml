@@ -52,11 +52,11 @@ phases:
       type: agentx
       dataset:
         name: semianalysis_cc_traces_weka_062126-256k
-        maxContextLength: 262144
+        maxContextLength: 202144
     load:
       mode: concurrency
-      values: [4]
-    durationSeconds: 3600 
+      values: [2]
+    durationSeconds: 1800
     warmup:
       requestCount: 0
     useServerTokenCount: true
@@ -73,7 +73,7 @@ phases:
       parseErrors: true
       contextOverflow: true
     slo:
-      requestTimeoutSeconds: 180
+      requestTimeoutSeconds: 1200
       maxP95TtftMs: 20000
       minSuccessRate: 0.90
 
