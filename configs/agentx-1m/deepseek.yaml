@@ -58,7 +58,7 @@ phases:
         # maxContextLength: 262144
     load:
       mode: concurrency
-      values: [4]
+      values: [1]
     durationSeconds: 3600
     warmup:
       requestCount: 0
